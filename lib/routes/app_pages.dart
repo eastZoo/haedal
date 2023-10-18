@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:haedal/screens/main_screen.dart';
+import 'package:haedal/splash.dart';
 
 part 'app_routes.dart';
 
@@ -9,8 +9,8 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: "/",
-      page: () => const MainScreen(),
+      name: "/splash",
+      page: () => const SplashScreen(),
     ),
     // GetPage(
     //   name: "/login",
