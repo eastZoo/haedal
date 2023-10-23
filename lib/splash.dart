@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:haedal/login_screen.dart';
+import 'package:haedal/screens/login_screen.dart';
 import 'package:haedal/models/user.dart';
 import 'package:haedal/screens/main_screen.dart';
 import 'package:jwt_decode/jwt_decode.dart';
