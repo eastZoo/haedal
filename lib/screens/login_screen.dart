@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
-import 'package:haedal/widgets/square_tile.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -13,8 +12,6 @@ class LoginScreen extends StatelessWidget {
   // sign user in method
   void signUserIn() {
     print("LOGIN!!");
-    print(usernameController.text);
-    print(passwordController.text);
   }
 
   @override
@@ -27,26 +24,25 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 50),
-
+                const SizedBox(height: 20),
                 // logo
                 const Icon(
-                  Icons.lock,
-                  size: 100,
+                  Icons.brightness_high_sharp,
+                  size: 70,
                 ),
 
                 const SizedBox(height: 50),
 
                 // welcome back, you've been missed!
                 Text(
-                  'Welcome back you\'ve been missed!',
+                  'Haeon & Dongju',
                   style: TextStyle(
                     color: Colors.grey[700],
                     fontSize: 16,
                   ),
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
 
                 // username textfield
                 MyTextField(
@@ -73,7 +69,7 @@ class LoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        'Forgot Password?',
+                        '비밀번호를 잊으셨나요?',
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
@@ -103,7 +99,7 @@ class LoginScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Text(
-                          'Or continue with',
+                          '저희와 함께 하실래요?',
                           style: TextStyle(color: Colors.grey[700]),
                         ),
                       ),
@@ -117,40 +113,45 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
 
                 // google + apple sign in buttons
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // google button
-                    SquareTile(imagePath: 'assets/images/google.png'),
+                // const Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     // google button
+                //     SquareTile(imagePath: 'assets/images/google.png'),
 
-                    SizedBox(width: 25),
+                //     SizedBox(width: 25),
 
-                    // apple button
-                    SquareTile(imagePath: 'assets/images/apple.png')
-                  ],
-                ),
+                //     // apple button
+                //     SquareTile(imagePath: 'assets/images/apple.png')
+                //   ],
+                // ),
 
-                const SizedBox(height: 50),
+                // const SizedBox(height: 50),
 
                 // not a member? register now
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Not a member?',
+                      '아직 멤버가 아니신가요?',
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     const SizedBox(width: 4),
-                    const Text(
-                      'Register now',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+                    InkWell(
+                      child: const Text(
+                        '가입하러 가기',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/signup');
+                      },
+                    )
                   ],
                 )
               ],

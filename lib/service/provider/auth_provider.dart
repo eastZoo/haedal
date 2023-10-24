@@ -4,7 +4,6 @@ import 'package:haedal/service/endpoints.dart';
 
 class AuthProvider extends GetxController {
   onLogin() async {
-    return await ApiRequest(url: '${Endpoints.noticeUrl}/main-notice')
-        .ayncGet();
+    return await ApiRequest(url: '${Endpoints.authUrl}/main-notice').ayncGet();
   }
 }

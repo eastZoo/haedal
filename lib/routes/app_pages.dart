@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:haedal/screens/login_screen.dart';
+import 'package:haedal/screens/signup_screen.dart';
 import 'package:haedal/splash.dart';
 
 part 'app_routes.dart';
@@ -12,14 +14,14 @@ class AppPages {
       name: "/splash",
       page: () => const SplashScreen(),
     ),
-    // GetPage(
-    //   name: "/login",
-    //   page: () => const LoginScreen(),
-    // ),
-    // GetPage(
-    //   name: "/splash",
-    //   page: () => const SplashScreen(),
-    // ),
+    GetPage(
+      name: "/login",
+      page: () => LoginScreen(),
+    ),
+    GetPage(
+      name: "/signup",
+      page: () => SignupScreen(),
+    ),
     // GetPage(
     //   name: "/walk",
     //   page: () => const WalkMapScreen(),
