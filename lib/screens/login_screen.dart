@@ -10,7 +10,7 @@ class LoginScreen extends StatelessWidget {
   final passwordController = TextEditingController();
 
   // sign user in method
-  void signUserIn() {
+  void onSignIn() {
     print("LOGIN!!");
   }
 
@@ -47,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                 // username textfield
                 MyTextField(
                   controller: usernameController,
-                  hintText: 'Username',
+                  hintText: '이메일',
                   obscureText: false,
                 ),
 
@@ -56,7 +56,7 @@ class LoginScreen extends StatelessWidget {
                 // password textfield
                 MyTextField(
                   controller: passwordController,
-                  hintText: 'Password',
+                  hintText: '비밀번호',
                   obscureText: true,
                 ),
 
@@ -80,7 +80,8 @@ class LoginScreen extends StatelessWidget {
 
                 // sign in button
                 MyButton(
-                  onTap: signUserIn,
+                  title: "로그인",
+                  onTap: onSignIn,
                 ),
 
                 const SizedBox(height: 50),
@@ -142,7 +143,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(width: 4),
                     InkWell(
                       child: const Text(
-                        '가입하러 가기',
+                        '연결하러 가기',
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,

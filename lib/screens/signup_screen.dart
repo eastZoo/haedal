@@ -9,8 +9,8 @@ class SignupScreen extends StatelessWidget {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // sign user in method
-  void signUserIn() {
+  // 회원가입
+  void onSignUp() {
     print("LOGIN!!");
   }
 
@@ -47,7 +47,7 @@ class SignupScreen extends StatelessWidget {
                 // username textfield
                 MyTextField(
                   controller: usernameController,
-                  hintText: 'Username',
+                  hintText: '이메일',
                   obscureText: false,
                 ),
 
@@ -56,42 +56,16 @@ class SignupScreen extends StatelessWidget {
                 // password textfield
                 MyTextField(
                   controller: passwordController,
-                  hintText: 'Password',
+                  hintText: '비밀번호',
                   obscureText: true,
                 ),
 
-                const SizedBox(height: 10),
-
-                // password textfield
-                MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
-                ),
-
-                const SizedBox(height: 10),
-
-                // password textfield
-                MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
-                ),
-
-                const SizedBox(height: 10),
-
-                // password textfield
-                MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
-                ),
-
-                const SizedBox(height: 10),
+                const SizedBox(height: 25),
 
                 // sign in button
                 MyButton(
-                  onTap: signUserIn,
+                  title: "회원가입",
+                  onTap: onSignUp,
                 ),
 
                 const SizedBox(height: 50),
