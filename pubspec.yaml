@@ -30,6 +30,7 @@ dependencies:
   jwt_decode: ^0.3.1
   json_annotation: ^4.8.1
   dio: ^5.3.3
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
