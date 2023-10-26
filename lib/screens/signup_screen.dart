@@ -17,20 +17,51 @@ class _SignupScreenState extends State<SignupScreen> {
 
   final passwordController = TextEditingController();
 
+  // 인풋 에러 확인용 스테이트
   bool isEmailValid = true;
   bool isPasswordValid = true;
+
+  // 버튼 관련상태
+  bool email = false;
+  bool password = false;
 
   // 이메일 형식 판별 정규식
   RegExp emailRegex = RegExp(
     r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
   );
+  // 비밀번호 유효성 검사 정규식 ( 영문 숫자 포함 8자 이상 )
+  RegExp passwordRegex = RegExp(r'^(?=.*[0-9])[a-zA-Z0-9]{8,}$');
+
   String errorMsg = "";
 
   @override
   void initState() {
     super.initState();
     // 이메일 텍스트 얻어오는 컨트롤러 부착
-    emailController.addListener(() {});
+    emailController.addListener(() {
+      if (emailRegex.hasMatch(emailController.text)) {
+        setState(() {
+          email = emailController.text.isNotEmpty;
+        });
+      } else {
+        setState(() {
+          email = false;
+        });
+      }
+    });
+    // 비밀번호 얻어오는 컨트롤러 부착
+    passwordController.addListener(() {
+      // 영문 숫자 포함 8자 이상일 때만 true
+      if (passwordRegex.hasMatch(passwordController.text)) {
+        setState(() {
+          password = passwordController.text.isNotEmpty;
+        });
+      } else {
+        setState(() {
+          password = false;
+        });
+      }
+    });
     // 이메일 커서 포커스 감지하는 함수 부착
     userEmailfocusNode.addListener(() {
       if (!userEmailfocusNode.hasFocus) {
@@ -42,6 +73,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void dispose() {
     emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -132,9 +164,8 @@ class _SignupScreenState extends State<SignupScreen> {
               children: [
                 const SizedBox(height: 10),
                 // logo
-                const Icon(
-                  Icons.abc_rounded,
-                  size: 70,
+                Image.asset(
+                  "assets/icons/register-1.png",
                 ),
 
                 const SizedBox(height: 15),
@@ -180,8 +211,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 MyButton(
                   title: "회원가입",
                   onTap: onSignUp,
-                  disabled: emailController.text.isNotEmpty &&
-                      passwordController.text.isNotEmpty,
+                  available: email && password,
                 ),
 
                 const SizedBox(height: 50),

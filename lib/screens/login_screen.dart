@@ -116,23 +116,6 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                // google + apple sign in buttons
-                // const Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     // google button
-                //     SquareTile(imagePath: 'assets/images/google.png'),
-
-                //     SizedBox(width: 25),
-
-                //     // apple button
-                //     SquareTile(imagePath: 'assets/images/apple.png')
-                //   ],
-                // ),
-
-                // const SizedBox(height: 50),
-
-                // not a member? register now
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
