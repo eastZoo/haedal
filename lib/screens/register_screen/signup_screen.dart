@@ -42,6 +42,7 @@ class _SignupScreenState extends State<SignupScreen> {
       if (emailRegex.hasMatch(emailController.text)) {
         setState(() {
           email = emailController.text.isNotEmpty;
+          isEmailValid = true;
         });
       } else {
         setState(() {
@@ -132,14 +133,21 @@ class _SignupScreenState extends State<SignupScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white, shadowColor: Colors.transparent),
-            child: const Text(
-              '예',
-              style: TextStyle(color: Color(0xFF48C5C3)),
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shadowColor: Colors.transparent),
+              child: const Text(
+                '예',
+                style: TextStyle(color: Color(0xFF48C5C3)),
+              ),
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/code', // Replace with the route name of the page you want to navigate to
+                  (route) =>
+                      false, // This function makes sure all previous routes are removed
+                );
+              }),
         ],
       ),
     );
