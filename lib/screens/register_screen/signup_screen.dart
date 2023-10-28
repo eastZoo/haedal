@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
+import 'package:get/get.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -11,10 +13,12 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  // text editing controllers
+  final authCon = Get.put(AuthController());
+
+  // 이메일 텍스트 controllers
   final emailController = TextEditingController();
   FocusNode userEmailfocusNode = FocusNode();
-
+  // 비밀번호 텍스트 controllers
   final passwordController = TextEditingController();
 
   // 인풋 에러 확인용 스테이트
@@ -39,6 +43,8 @@ class _SignupScreenState extends State<SignupScreen> {
     super.initState();
     // 이메일 텍스트 얻어오는 컨트롤러 부착
     emailController.addListener(() {
+      // 공백제거
+
       if (emailRegex.hasMatch(emailController.text)) {
         setState(() {
           email = emailController.text.isNotEmpty;
@@ -89,7 +95,12 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
 // 이메일 텍스트필드에서 커서 Out 됬을때 실행되는 함수
-  void cursorMovedOutOfEmailTextField() {
+  void cursorMovedOutOfEmailTextField() async {
+    // 커서 아웃됬을때 공백 전부 삭제
+    emailController.text = emailController.text.replaceAll(" ", "");
+    // 이메일 중복 확인하는 API
+    await authCon.checkDuplicateEmail(emailController.text);
+
     // 이메일 필드가 <비어있으며> 커서 Out 됬을때
     if (emailController.text.isEmpty) {
       setState(() {
@@ -106,6 +117,14 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       return signUpToast();
     }
+    // 이미 존재하는 이메일일때
+    if (authCon.isDuplicateEmail) {
+      setState(() {
+        isEmailValid = false;
+        errorMsg = "이미 존재하는 메일 주소입니다. 다시 시도해주세요.";
+      });
+      return signUpToast();
+    }
 
     // 모든조건을 만족했을때
     return setState(() {
@@ -114,7 +133,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
 // 회원가입 버튼 클릭시 모달 창
-  Future<dynamic> _showdialog(BuildContext context) {
+  Future<dynamic> showdialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -140,22 +159,28 @@ class _SignupScreenState extends State<SignupScreen> {
                 '예',
                 style: TextStyle(color: Color(0xFF48C5C3)),
               ),
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/code', // Replace with the route name of the page you want to navigate to
-                  (route) =>
-                      false, // This function makes sure all previous routes are removed
-                );
+              onPressed: () async {
+                var result = await authCon.onSignUp(
+                    emailController.text, passwordController.text);
+
+                print("@@@@@@@@@@@@@@@ $result");
+                if (result) {
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/code',
+                    (route) => false,
+                  );
+                }
               }),
         ],
       ),
     );
   }
 
-  // 회원가입
-  void onSignUp() {
-    _showdialog(context);
+  // 회원가입 버튼 클릭시 모달창 pop
+  void onSignUpModal() {
+    showdialog(context);
   }
 
   @override
@@ -218,7 +243,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 // sign in button
                 MyButton(
                   title: "회원가입",
-                  onTap: onSignUp,
+                  onTap: onSignUpModal,
                   available: email && password,
                 ),
 

@@ -2,7 +2,7 @@ class Endpoints {
   Endpoints._();
 
   //production
-  static const String hostUrl = "http://localhost:3001";
+  static const String hostUrl = "http://172.30.1.44:3001";
 
   static const int receiveTimeout = 5000;
   static const int connectionTimeout = 3000;
