@@ -29,7 +29,7 @@ class ApiRequest {
     );
   }
 
-  ayncGet() async {
+  asyncGet() async {
     try {
       var dio = await _dio();
       Response response = await dio.get(url, queryParameters: data);
@@ -52,7 +52,7 @@ class ApiRequest {
     }
   }
 
-  ayncPost() async {
+  asyncPost() async {
     try {
       var dio = await _dio();
       Response response =
@@ -70,7 +70,7 @@ class ApiRequest {
     }
   }
 
-  ayncDelete() async {
+  asyncDelete() async {
     try {
       var dio = await _dio();
       Response response = await dio.delete(url, data: data);

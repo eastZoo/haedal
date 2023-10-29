@@ -84,6 +84,23 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
+// 모달창에서 로그인 승인 ( 예 클릭 시 )
+  void onSignup() async {
+    var result =
+        await authCon.onSignUp(emailController.text, passwordController.text);
+
+    print('result @@@@@@@@@@@ $result');
+    if (result) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/code',
+        (route) => false,
+      );
+    }
+  }
+
+  // 로그아웃 토스트 메세지
   void signUpToast() {
     Fluttertoast.showToast(
         msg: errorMsg,
@@ -155,24 +172,11 @@ class _SignupScreenState extends State<SignupScreen> {
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   shadowColor: Colors.transparent),
+              onPressed: onSignup,
               child: const Text(
                 '예',
                 style: TextStyle(color: Color(0xFF48C5C3)),
-              ),
-              onPressed: () async {
-                var result = await authCon.onSignUp(
-                    emailController.text, passwordController.text);
-
-                print("@@@@@@@@@@@@@@@ $result");
-                if (result) {
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/code',
-                    (route) => false,
-                  );
-                }
-              }),
+              )),
         ],
       ),
     );
