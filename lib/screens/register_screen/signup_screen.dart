@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/service/provider/auth_provider.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 import 'package:get/get.dart';
@@ -86,17 +87,22 @@ class _SignupScreenState extends State<SignupScreen> {
 
 // 모달창에서 로그인 승인 ( 예 클릭 시 )
   void onSignup() async {
-    var result =
-        await authCon.onSignUp(emailController.text, passwordController.text);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/code',
+      (route) => false,
+    );
+  }
 
-    print('result @@@@@@@@@@@ $result');
-    if (result) {
-      // ignore: use_build_context_synchronously
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/code',
-        (route) => false,
-      );
+  // 회원가입 모달창에서 아니오 클릭 시 회원가입 취소
+  void onCancelSignup() async {
+    Map<String, dynamic> dataSource = {
+      "userEmail": emailController.text,
+    };
+    var result = await AuthProvider().onCancelSignUp(dataSource);
+    print("result ${result["data"]["success"]}");
+    if (result["data"]["success"]) {
+      Navigator.of(context).pop();
     }
   }
 
@@ -162,11 +168,11 @@ class _SignupScreenState extends State<SignupScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white, shadowColor: Colors.transparent),
+            onPressed: onCancelSignup,
             child: const Text(
               '아니오',
               style: TextStyle(color: Color(0xFF48C5C3)),
             ),
-            onPressed: () => Navigator.of(context).pop(),
           ),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -183,7 +189,8 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   // 회원가입 버튼 클릭시 모달창 pop
-  void onSignUpModal() {
+  onSignUpModal() async {
+    await authCon.onSignUp(emailController.text, passwordController.text);
     showdialog(context);
   }
 

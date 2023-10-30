@@ -19,7 +19,13 @@ class AuthController extends GetxController {
   void onInit() async {
     super.onInit();
     print("ONINIT!!!");
-    await getConnectState();
+    var result = await getConnectState();
+
+    if (result != null) {
+      await getInviteCodeInfo();
+    }
+    print("result $result");
+    print(connectState);
   }
 
   // 회원가입
@@ -34,8 +40,8 @@ class AuthController extends GetxController {
       // 로그인 후 응답으로 부터 토큰 저장
       storage.write(key: "accessToken", value: res["data"]["accessToken"]);
       connectState = res["data"]["connectState"];
-      update();
 
+      update();
       return res["success"];
     } catch (e) {
       print(e);
@@ -57,6 +63,9 @@ class AuthController extends GetxController {
     // 토큰이 있을때만 연결상태 GET API 실행
     if (token != null) {
       var res = await AuthProvider().getConnectState();
+
+      print(res["data"]);
+
       connectState = int.parse(res["data"]);
       update();
       return res["success"];
@@ -65,6 +74,7 @@ class AuthController extends GetxController {
 
   // 승인코드 얻기 ( 승인코드 처리 )
   getInviteCodeInfo() async {
+    print(connectState);
     if (connectState == 1) {
       var res = await AuthProvider().getInviteCodeInfo();
       if (res["success"]) {

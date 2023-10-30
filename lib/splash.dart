@@ -53,6 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   return const MainScreen();
                 }
               }
+
               return LoginScreen();
             });
       },

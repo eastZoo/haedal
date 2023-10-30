@@ -8,6 +8,12 @@ class AuthProvider extends GetxController {
         .asyncPost();
   }
 
+  onCancelSignUp(data) async {
+    return await ApiRequest(
+            url: '${Endpoints.authUrl}/sign-up/cancel', data: data)
+        .asyncPost();
+  }
+
   // 중복이메일 확인
   getDuplicateEmailState(String userEmail) async {
     return await ApiRequest(url: '${Endpoints.authUrl}/check-id/$userEmail')
