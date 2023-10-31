@@ -6,6 +6,7 @@ class MyTextField extends StatelessWidget {
   final bool obscureText;
   final bool isValid;
   final focusNode;
+  final bool readOnly;
 
   const MyTextField({
     super.key,
@@ -14,6 +15,7 @@ class MyTextField extends StatelessWidget {
     required this.obscureText,
     this.isValid = true,
     this.focusNode,
+    this.readOnly = false,
   });
 
   @override
@@ -21,6 +23,7 @@ class MyTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
+        readOnly: readOnly,
         controller: controller,
         focusNode: focusNode,
         obscureText: obscureText,

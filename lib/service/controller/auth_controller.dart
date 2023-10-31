@@ -48,6 +48,30 @@ class AuthController extends GetxController {
     }
   }
 
+  //로그인
+
+  onSignIn(userEmail, password) async {
+    Map<String, dynamic> dataSource = {
+      "userEmail": userEmail,
+      "password": password,
+    };
+    try {
+      // 회원가입(로그인) API
+      var res = await AuthProvider().onSignIn(dataSource);
+
+      print("res[" "]");
+      print(res["data"]);
+      // 로그인 후 응답으로 부터 토큰 저장
+      storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+      connectState = res["data"]["connectState"];
+
+      update();
+      return res["success"];
+    } catch (e) {
+      print(e);
+    }
+  }
+
   // 중복이메일 확인
   checkDuplicateEmail(String userEmail) async {
     var res = await AuthProvider().getDuplicateEmailState(userEmail);

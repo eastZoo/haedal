@@ -48,7 +48,10 @@ class _CodeScreenState extends State<CodeScreen> {
   logOut() {
     const storage = FlutterSecureStorage();
     storage.delete(key: "accessToken");
+
     authCon.timer.cancel();
+    authCon.update();
+
     Navigator.pushNamedAndRemoveUntil(
       context,
       '/login',
@@ -59,8 +62,9 @@ class _CodeScreenState extends State<CodeScreen> {
   @override
   Widget build(BuildContext context) {
     String format(int second) {
-      var duration = Duration(seconds: second);
-      return duration.toString().split(".").first.substring(0, 8);
+      var duration = Duration(seconds: second).toString().split(".");
+
+      return duration[0];
     }
 
     return GetBuilder<AuthController>(
@@ -95,22 +99,37 @@ class _CodeScreenState extends State<CodeScreen> {
 
                       const SizedBox(height: 30),
 
-                      Text(
-                        format(authCon.accessCodeTimer),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF000000),
+                      // username textfield
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                        child: TextField(
+                          readOnly: true,
+                          controller: TextEditingController(
+                              text:
+                                  '${authCon.coupleConnectInfo?.code ?? "Loading.."}'),
+                          decoration: InputDecoration(
+                            labelText:
+                                '내 초대코드 (${format(authCon.accessCodeTimer)})',
+                            labelStyle: TextStyle(
+                              fontSize: 16, // Font size
+                              fontWeight: FontWeight.bold, // Font weight
+                              letterSpacing: 2.0, // Letter spacing
+                              wordSpacing: 4.0, // Word spacing
+                              color: Colors.grey[850],
+                            ),
+                            // isValid가 false면 에러메세지 아이콘
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey.shade400),
+                            ),
+                            fillColor: Colors.grey.shade200,
+                            filled: true,
+                          ),
                         ),
                       ),
-
-                      // username textfield
-                      MyTextField(
-                          controller: emailController,
-                          hintText: '내 초대코드',
-                          obscureText: false,
-                          focusNode: userEmailfocusNode,
-                          isValid: isEmailValid),
 
                       const SizedBox(height: 10),
 

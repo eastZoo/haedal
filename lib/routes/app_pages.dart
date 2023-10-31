@@ -17,7 +17,7 @@ class AppPages {
     ),
     GetPage(
       name: "/login",
-      page: () => LoginScreen(),
+      page: () => const LoginScreen(),
     ),
     GetPage(
       name: "/signup",

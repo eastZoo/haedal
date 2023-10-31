@@ -8,6 +8,11 @@ class AuthProvider extends GetxController {
         .asyncPost();
   }
 
+  onSignIn(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/sign-in', data: data)
+        .asyncPost();
+  }
+
   onCancelSignUp(data) async {
     return await ApiRequest(
             url: '${Endpoints.authUrl}/sign-up/cancel', data: data)
