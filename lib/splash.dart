@@ -31,7 +31,8 @@ class _SplashScreenState extends State<SplashScreen> {
             builder: (authCon) {
               // snapshot.data => accessToken
               // snapshot.hasData => token 있으면 true
-
+              print("SPLASH@!!!!!!!!!!!!!!");
+              print(authCon.connectState);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Scaffold(
                   body: Center(
@@ -54,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 }
               }
 
-              return LoginScreen();
+              return const LoginScreen();
             });
       },
     );

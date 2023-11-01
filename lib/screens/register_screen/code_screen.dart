@@ -15,25 +15,28 @@ class CodeScreen extends StatefulWidget {
 class _CodeScreenState extends State<CodeScreen> {
   final authCon = Get.put(AuthController());
 
+  bool inviteCode = false;
+
   // text editing controllers
-  final emailController = TextEditingController();
-  FocusNode userEmailfocusNode = FocusNode();
-
-  final passwordController = TextEditingController();
-
-  // 인풋 에러 확인용 스테이트
-  bool isEmailValid = true;
-  bool isPasswordValid = true;
-
-  // 버튼 관련상태
-  bool email = false;
-  bool password = false;
-
+  final inviteCodeController = TextEditingController();
   String errorMsg = "";
 
   @override
   void initState() {
     super.initState();
+    // 초대코드 텍스트 얻어오는 컨트롤러 부착
+    inviteCodeController.addListener(() {
+      // 초대코드 하나라도 입력하면 버튼 활성화
+      if (inviteCodeController.text.isNotEmpty) {
+        setState(() {
+          inviteCode = true;
+        });
+      } else {
+        setState(() {
+          inviteCode = false;
+        });
+      }
+    });
   }
 
   @override
@@ -42,34 +45,41 @@ class _CodeScreenState extends State<CodeScreen> {
     authCon.timer.cancel();
   }
 
-  // 회원가입
-  void onConnect() {}
-
-  logOut() {
-    const storage = FlutterSecureStorage();
-    storage.delete(key: "accessToken");
-
-    authCon.timer.cancel();
-    authCon.update();
-
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/login',
-      (route) => false,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     String format(int second) {
       var duration = Duration(seconds: second).toString().split(".");
-
       return duration[0];
     }
 
     return GetBuilder<AuthController>(
         init: AuthController(),
         builder: (authCon) {
+          // 로그아웃
+          void logOut() {
+            const storage = FlutterSecureStorage();
+            storage.delete(key: "accessToken");
+
+            authCon.timer.cancel();
+            authCon.update();
+
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/login',
+              (route) => false,
+            );
+          }
+
+          // 연결하기
+          void onConnect() async {
+            await authCon.onConnect(inviteCodeController.text);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/splash',
+              (route) => false,
+            );
+          }
+
           return Scaffold(
             resizeToAvoidBottomInset: true,
             backgroundColor: Colors.grey[300],
@@ -135,9 +145,9 @@ class _CodeScreenState extends State<CodeScreen> {
 
                       // password textfield
                       MyTextField(
-                        controller: passwordController,
+                        controller: inviteCodeController,
                         hintText: '전달받은 초대코드 입력',
-                        obscureText: true,
+                        obscureText: false,
                       ),
 
                       const SizedBox(height: 25),
@@ -146,7 +156,7 @@ class _CodeScreenState extends State<CodeScreen> {
                       MyButton(
                         title: "연결하기",
                         onTap: onConnect,
-                        available: email && password,
+                        available: inviteCode,
                       ),
 
                       const SizedBox(height: 50),

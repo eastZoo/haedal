@@ -45,33 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     // 이메일 텍스트 얻어오는 컨트롤러 부착
-    emailController.addListener(() {
-      // 공백제거
 
-      if (emailRegex.hasMatch(emailController.text)) {
-        setState(() {
-          email = emailController.text.isNotEmpty;
-          isEmailValid = true;
-        });
-      } else {
-        setState(() {
-          email = false;
-        });
-      }
-    });
-    // 비밀번호 얻어오는 컨트롤러 부착
-    passwordController.addListener(() {
-      // 영문 숫자 포함 8자 이상일 때만 true
-      if (passwordRegex.hasMatch(passwordController.text)) {
-        setState(() {
-          password = passwordController.text.isNotEmpty;
-        });
-      } else {
-        setState(() {
-          password = false;
-        });
-      }
-    });
     // 이메일 커서 포커스 감지하는 함수 부착
     userEmailfocusNode.addListener(() {
       if (!userEmailfocusNode.hasFocus) {
@@ -130,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       MyTextField(
                         controller: emailController,
                         hintText: '이메일',
+                        focusNode: userEmailfocusNode,
                         obscureText: false,
                       ),
 
@@ -166,9 +141,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () async => {
                           await authCon.onSignIn(
                               emailController.text, passwordController.text),
-                          Navigator.pushNamed(context, '/splash')
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/splash', (route) => false)
                         },
-                        available: email && password,
+                        available: true,
                       ),
 
                       const SizedBox(height: 50),

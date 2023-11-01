@@ -3,29 +3,49 @@ import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/couple_connect_info.dart';
+import 'package:haedal/screens/main_screen.dart';
+import 'package:haedal/screens/register_screen/code_screen.dart';
+import 'package:haedal/screens/register_screen/info_screen.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
 
 class AuthController extends GetxController {
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
+  CoupleConnectInfo? coupleConnectInfo;
+
   late bool isDuplicateEmail;
   late Timer timer;
-  CoupleConnectInfo? coupleConnectInfo;
-  final FlutterSecureStorage storage = const FlutterSecureStorage();
+
+  late RxInt connectState = 0.obs;
 
   // 24시간 초단위 환산
   int accessCodeTimer = 86400;
-  int connectState = 0;
 
   @override
   void onInit() async {
     super.onInit();
     print("ONINIT!!!");
     var result = await getConnectState();
-
+    print("ONINIT result : $result");
     if (result != null) {
       await getInviteCodeInfo();
     }
-    print("result $result");
-    print(connectState);
+
+    ever(connectState, (value) {
+      changedStatus(value);
+    });
+  }
+
+  changedStatus(value) {
+    print('changedStatus  $value');
+    if (value == 1) {
+      Get.offAll(() => const CodeScreen());
+    }
+    if (value == 2) {
+      Get.offAll(() => const InfoScreen());
+    }
+    if (value == 3) {
+      Get.offAll(() => const MainScreen());
+    }
   }
 
   // 회원가입
@@ -49,7 +69,6 @@ class AuthController extends GetxController {
   }
 
   //로그인
-
   onSignIn(userEmail, password) async {
     Map<String, dynamic> dataSource = {
       "userEmail": userEmail,
@@ -63,13 +82,21 @@ class AuthController extends GetxController {
       print(res["data"]);
       // 로그인 후 응답으로 부터 토큰 저장
       storage.write(key: "accessToken", value: res["data"]["accessToken"]);
-      connectState = res["data"]["connectState"];
+      connectState = RxInt(int.parse(res["data"]["connectState"]));
 
       update();
       return res["success"];
     } catch (e) {
       print(e);
     }
+  }
+
+  // 초대코드 연결
+  onConnect(String code) async {
+    Map<String, dynamic> dataSource = {
+      "code": code,
+    };
+    var res = await AuthProvider().onConnect(dataSource);
   }
 
   // 중복이메일 확인
@@ -83,14 +110,13 @@ class AuthController extends GetxController {
   getConnectState() async {
     const storage = FlutterSecureStorage();
     var token = await storage.read(key: "accessToken");
-    print(token);
     // 토큰이 있을때만 연결상태 GET API 실행
     if (token != null) {
       var res = await AuthProvider().getConnectState();
 
-      print(res["data"]);
+      print("getConnectState res :   ${res["data"]}");
 
-      connectState = int.parse(res["data"]);
+      connectState = RxInt(int.parse(res["data"]));
       update();
       return res["success"];
     }
@@ -98,10 +124,11 @@ class AuthController extends GetxController {
 
   // 승인코드 얻기 ( 승인코드 처리 )
   getInviteCodeInfo() async {
-    print(connectState);
+    print("getInviteCodeInfo : $connectState");
     if (connectState == 1) {
       var res = await AuthProvider().getInviteCodeInfo();
       if (res["success"]) {
+        print("getInviteCodeInfo res: ${res["data"]}");
         coupleConnectInfo = CoupleConnectInfo.fromJson(res["data"]);
         int targetTimeStamp = coupleConnectInfo?.updatedAt
                 ?.add(const Duration(hours: 24))
