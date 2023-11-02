@@ -13,7 +13,11 @@ class InfoScreen extends StatefulWidget {
 }
 
 class _InfoScreenState extends State<InfoScreen> {
-  final inviteCodeController = TextEditingController();
+  final nameController = TextEditingController();
+  final birthController = TextEditingController();
+  final firstDayController = TextEditingController();
+
+  String? selectedValue;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,25 @@ class _InfoScreenState extends State<InfoScreen> {
               '/login',
               (route) => false,
             );
+          }
+
+          // 개인정보 입력 후 시작하기
+          void onStartConnect() async {
+            Map<String, dynamic> dataSource = {
+              "sex": selectedValue,
+              "name": nameController.text,
+              "birth": birthController.text,
+              "firstDay": firstDayController.text
+            };
+            var result = await authCon.onStartConnect(dataSource);
+            print("onStartConnect   : $result");
+            if (result) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/main',
+                (route) => false,
+              );
+            }
           }
 
           return Scaffold(
@@ -70,9 +93,38 @@ class _InfoScreenState extends State<InfoScreen> {
 
                       const SizedBox(height: 10),
 
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('남자'),
+                              value: '1',
+                              groupValue: selectedValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedValue = value;
+                                });
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('여자'),
+                              value: '0',
+                              groupValue: selectedValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedValue = value;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+
                       // password textfield
                       MyTextField(
-                        controller: inviteCodeController,
+                        controller: nameController,
                         hintText: '이름',
                         obscureText: false,
                       ),
@@ -80,7 +132,7 @@ class _InfoScreenState extends State<InfoScreen> {
 
                       // password textfield
                       MyTextField(
-                        controller: inviteCodeController,
+                        controller: birthController,
                         hintText: '생일 (만 14세 이상 사용가능)',
                         obscureText: false,
                       ),
@@ -88,13 +140,16 @@ class _InfoScreenState extends State<InfoScreen> {
 
                       // password textfield
                       MyTextField(
-                        controller: inviteCodeController,
+                        controller: firstDayController,
                         hintText: '처음 만난 날 (선택입력)',
                         obscureText: false,
                       ),
 
                       const SizedBox(height: 10),
-                      MyButton(title: "시작하기", onTap: () {}, available: true),
+                      MyButton(
+                          title: "시작하기",
+                          onTap: onStartConnect,
+                          available: true),
 
                       const SizedBox(height: 10),
                       MyButton(title: "로그아웃", onTap: logOut, available: true),

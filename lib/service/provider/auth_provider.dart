@@ -50,4 +50,11 @@ class AuthProvider extends GetxController {
             url: '${Endpoints.authUrl}/code/connect', data: data)
         .asyncPost();
   }
+
+  // 개인정보 입력 최종 연결 요청
+  onStartConnect(data) async {
+    return await ApiRequest(
+            url: '${Endpoints.authUrl}/info/connect', data: data)
+        .asyncPost();
+  }
 }

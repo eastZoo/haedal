@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/couple_connect_info.dart';
-import 'package:haedal/screens/main_screen.dart';
-import 'package:haedal/screens/register_screen/code_screen.dart';
-import 'package:haedal/screens/register_screen/info_screen.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
 
 class AuthController extends GetxController {
@@ -28,23 +25,6 @@ class AuthController extends GetxController {
     print("ONINIT result : $result");
     if (result != null) {
       await getInviteCodeInfo();
-    }
-
-    ever(connectState, (value) {
-      changedStatus(value);
-    });
-  }
-
-  changedStatus(value) {
-    print('changedStatus  $value');
-    if (value == 1) {
-      Get.offAll(() => const CodeScreen());
-    }
-    if (value == 2) {
-      Get.offAll(() => const InfoScreen());
-    }
-    if (value == 3) {
-      Get.offAll(() => const MainScreen());
     }
   }
 
@@ -167,5 +147,17 @@ class AuthController extends GetxController {
     await AuthProvider().refreshInviteCode();
     accessCodeTimer = 86400;
     update();
+  }
+
+// 개인정보 입력 최종 연결 요청
+  onStartConnect(dataSource) async {
+    var res = await AuthProvider().onStartConnect(dataSource);
+    print("onStartConnect  : ${res["data"]}");
+    if (res["data"]["success"]) {
+      print(res["data"]["success"].runtimeType);
+      connectState = RxInt(res["data"]["connectState"]);
+
+      return res["data"]["success"];
+    }
   }
 }

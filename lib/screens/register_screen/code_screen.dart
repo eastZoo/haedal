@@ -42,6 +42,7 @@ class _CodeScreenState extends State<CodeScreen> {
   @override
   void dispose() {
     super.dispose();
+    inviteCodeController.dispose();
     authCon.timer.cancel();
   }
 
