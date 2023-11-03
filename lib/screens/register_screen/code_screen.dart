@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
@@ -58,11 +59,11 @@ class _CodeScreenState extends State<CodeScreen> {
         builder: (authCon) {
           // 로그아웃
           void logOut() {
-            const storage = FlutterSecureStorage();
-            storage.delete(key: "accessToken");
-
             authCon.timer.cancel();
             authCon.update();
+
+            const storage = FlutterSecureStorage();
+            storage.delete(key: "accessToken");
 
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -113,32 +114,61 @@ class _CodeScreenState extends State<CodeScreen> {
                       // username textfield
                       Padding(
                         padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                        child: TextField(
-                          readOnly: true,
-                          controller: TextEditingController(
-                              text:
-                                  '${authCon.coupleConnectInfo?.code ?? "Loading.."}'),
-                          decoration: InputDecoration(
-                            labelText:
-                                '내 초대코드 (${format(authCon.accessCodeTimer)})',
-                            labelStyle: TextStyle(
-                              fontSize: 16, // Font size
-                              fontWeight: FontWeight.bold, // Font weight
-                              letterSpacing: 2.0, // Letter spacing
-                              wordSpacing: 4.0, // Word spacing
-                              color: Colors.grey[850],
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                readOnly: true,
+                                controller: TextEditingController(
+                                    text:
+                                        '${authCon.coupleConnectInfo?.code ?? "Loading.."}'),
+                                decoration: InputDecoration(
+                                  labelText:
+                                      '내 초대코드 (${format(authCon.accessCodeTimer)})',
+                                  labelStyle: TextStyle(
+                                    fontSize: 16, // Font size
+                                    fontWeight: FontWeight.bold, // Font weight
+                                    letterSpacing: 2.0, // Letter spacing
+                                    wordSpacing: 4.0, // Word spacing
+                                    color: Colors.grey[850],
+                                  ),
+                                  // isValid가 false면 에러메세지 아이콘
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.grey.shade400),
+                                  ),
+                                  fillColor: Colors.grey.shade200,
+                                  filled: true,
+                                ),
+                              ),
                             ),
-                            // isValid가 false면 에러메세지 아이콘
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
+                            ElevatedButton(
+                              onPressed: () {
+                                Clipboard.setData(
+                                  ClipboardData(
+                                      text:
+                                          '${authCon.coupleConnectInfo?.code}'),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Text copied to clipboard'),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                  side: const BorderSide(
+                                    width: 1.0,
+                                    color: Colors.transparent,
+                                  )),
+                              child: const Icon(Icons.content_copy,
+                                  color: Colors.black),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.grey.shade400),
-                            ),
-                            fillColor: Colors.grey.shade200,
-                            filled: true,
-                          ),
+                          ],
                         ),
                       ),
 

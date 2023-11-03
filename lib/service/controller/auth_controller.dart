@@ -23,7 +23,8 @@ class AuthController extends GetxController {
     print("ONINIT!!!");
     var result = await getConnectState();
     print("ONINIT result : $result");
-    if (result != null) {
+    // 상태코드 1번 회원가입 절차중 초대코드( 타이머 작동 ) 입력 단계
+    if (result == 1) {
       await getInviteCodeInfo();
     }
   }
@@ -94,11 +95,11 @@ class AuthController extends GetxController {
     if (token != null) {
       var res = await AuthProvider().getConnectState();
 
-      print("getConnectState res :   ${res["data"]}");
-
+      print("getConnectState");
+      print(res["data"].runtimeType);
       connectState = RxInt(int.parse(res["data"]));
       update();
-      return res["success"];
+      return int.parse(res["data"]);
     }
   }
 
@@ -154,9 +155,10 @@ class AuthController extends GetxController {
     var res = await AuthProvider().onStartConnect(dataSource);
     print("onStartConnect  : ${res["data"]}");
     if (res["data"]["success"]) {
-      print(res["data"]["success"].runtimeType);
-      connectState = RxInt(res["data"]["connectState"]);
+      print(res["data"]["connectState"].runtimeType);
+      connectState = RxInt(int.parse(res["data"]["connectState"]));
 
+      update();
       return res["data"]["success"];
     }
   }

@@ -7,16 +7,17 @@ class MyTextField extends StatelessWidget {
   final bool isValid;
   final focusNode;
   final bool readOnly;
+  final onTap;
 
-  const MyTextField({
-    super.key,
-    required this.controller,
-    required this.hintText,
-    required this.obscureText,
-    this.isValid = true,
-    this.focusNode,
-    this.readOnly = false,
-  });
+  const MyTextField(
+      {super.key,
+      required this.controller,
+      required this.hintText,
+      required this.obscureText,
+      this.isValid = true,
+      this.focusNode,
+      this.readOnly = false,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class MyTextField extends StatelessWidget {
         controller: controller,
         focusNode: focusNode,
         obscureText: obscureText,
+        onTap: onTap,
         decoration: InputDecoration(
             // isValid가 false면 에러메세지 아이콘
             prefixIcon:

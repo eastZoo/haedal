@@ -18,6 +18,7 @@ class _InfoScreenState extends State<InfoScreen> {
   final firstDayController = TextEditingController();
 
   String? selectedValue;
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,23 @@ class _InfoScreenState extends State<InfoScreen> {
                 '/main',
                 (route) => false,
               );
+            }
+          }
+
+          // 만난날, 생일 데이트 피커 모달창
+          Future<void> _selectDate(
+              BuildContext context, TextEditingController controller) async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: selectedDate ?? DateTime.now(),
+              firstDate: DateTime(1980),
+              lastDate: DateTime(2050),
+            );
+            if (picked != null && picked != selectedDate) {
+              setState(() {
+                selectedDate = picked;
+                controller.text = "${picked.toLocal()}".split(' ')[0];
+              });
             }
           }
 
@@ -135,6 +153,10 @@ class _InfoScreenState extends State<InfoScreen> {
                         controller: birthController,
                         hintText: '생일 (만 14세 이상 사용가능)',
                         obscureText: false,
+                        readOnly: true,
+                        onTap: () {
+                          _selectDate(context, birthController);
+                        },
                       ),
                       const SizedBox(height: 10),
 
@@ -142,7 +164,11 @@ class _InfoScreenState extends State<InfoScreen> {
                       MyTextField(
                         controller: firstDayController,
                         hintText: '처음 만난 날 (선택입력)',
+                        readOnly: true,
                         obscureText: false,
+                        onTap: () {
+                          _selectDate(context, firstDayController);
+                        },
                       ),
 
                       const SizedBox(height: 10),
