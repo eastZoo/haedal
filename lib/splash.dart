@@ -40,17 +40,17 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 );
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                if (authCon.connectState == 0) {
+                if (authCon.connectState == RxInt(0)) {
                   return const Scaffold(
                     body: Center(
                       child: CircularProgressIndicator(),
                     ),
                   );
-                } else if (authCon.connectState == 1) {
+                } else if (authCon.connectState == RxInt(1)) {
                   return const CodeScreen();
-                } else if (authCon.connectState == 2) {
+                } else if (authCon.connectState == RxInt(2)) {
                   return const InfoScreen();
-                } else if (authCon.connectState == 3) {
+                } else if (authCon.connectState == RxInt(3)) {
                   return const MainScreen();
                 }
               }

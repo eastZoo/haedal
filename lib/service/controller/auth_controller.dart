@@ -55,21 +55,18 @@ class AuthController extends GetxController {
       "userEmail": userEmail,
       "password": password,
     };
-    try {
-      // 회원가입(로그인) API
-      var res = await AuthProvider().onSignIn(dataSource);
-
-      print("res[" "]");
-      print(res["data"]);
+    // 회원가입(로그인) API
+    var res = await AuthProvider().onSignIn(dataSource);
+    print(res["data"]);
+    print(res["data"]["connectState"].runtimeType);
+    if (res["data"]["success"]) {
       // 로그인 후 응답으로 부터 토큰 저장
       storage.write(key: "accessToken", value: res["data"]["accessToken"]);
-      connectState = RxInt(int.parse(res["data"]["connectState"]));
-
+      connectState = RxInt(res["data"]["connectState"]);
       update();
-      return res["success"];
-    } catch (e) {
-      print(e);
+      return res["data"];
     }
+    return res["data"];
   }
 
   // 초대코드 연결
