@@ -75,6 +75,15 @@ class AuthController extends GetxController {
       "code": code,
     };
     var res = await AuthProvider().onConnect(dataSource);
+    if (res["data"]["success"]) {
+      // 상태저장 => 2
+      print(res["data"]["connectState"].runtimeType);
+      print("onConnect");
+      connectState = RxInt(res["data"]["connectState"]);
+      update();
+      return res["data"];
+    }
+    return res["data"];
   }
 
   // 중복이메일 확인

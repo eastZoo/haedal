@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 
@@ -39,17 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
-  }
-
-  // 에러 토스트 메세지
-  void signUpToast() {
-    Fluttertoast.showToast(
-        msg: errorMsg,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.redAccent.shade100,
-        fontSize: 14,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_SHORT);
   }
 
   // 이메일 텍스트필드에서 커서 Out 됬을때 실행되는 함수
@@ -140,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {
                               errorMsg = result["msg"];
                             });
-                            return signUpToast();
+                            return CustomToast().signUpToast(errorMsg);
                           }
                         },
                         available: true,

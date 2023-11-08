@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 import 'package:get/get.dart';
@@ -29,6 +29,8 @@ class _SignupScreenState extends State<SignupScreen> {
   // 버튼 관련상태
   bool email = false;
   bool password = false;
+
+  bool isLoading = false;
 
   // 이메일 형식 판별 정규식
   RegExp emailRegex = RegExp(
@@ -102,20 +104,14 @@ class _SignupScreenState extends State<SignupScreen> {
     var result = await AuthProvider().onCancelSignUp(dataSource);
     print("result ${result["data"]["success"]}");
     if (result["data"]["success"]) {
+      setState(() {
+        isLoading = false;
+      });
       Navigator.of(context).pop();
     }
   }
 
   // 로그아웃 토스트 메세지
-  void signUpToast() {
-    Fluttertoast.showToast(
-        msg: errorMsg,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.redAccent.shade100,
-        fontSize: 14,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_SHORT);
-  }
 
 // 이메일 텍스트필드에서 커서 Out 됬을때 실행되는 함수
   void cursorMovedOutOfEmailTextField() async {
@@ -130,7 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
         isEmailValid = false;
         errorMsg = "이메일을 입력해 주세요";
       });
-      return signUpToast();
+      return CustomToast().signUpToast(errorMsg);
     }
     // 이메일 필드가 <이메일 형식에 맞지 않으며> 커서 Out 됬을때
     if (!emailRegex.hasMatch(emailController.text)) {
@@ -138,7 +134,7 @@ class _SignupScreenState extends State<SignupScreen> {
         isEmailValid = false;
         errorMsg = "올바른 이메일 형식이 아닙니다";
       });
-      return signUpToast();
+      return CustomToast().signUpToast(errorMsg);
     }
     // 이미 존재하는 이메일일때
     if (authCon.isDuplicateEmail) {
@@ -146,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
         isEmailValid = false;
         errorMsg = "이미 존재하는 메일 주소입니다. 다시 시도해주세요.";
       });
-      return signUpToast();
+      return CustomToast().signUpToast(errorMsg);
     }
 
     // 모든조건을 만족했을때
@@ -159,37 +155,50 @@ class _SignupScreenState extends State<SignupScreen> {
   Future<dynamic> showdialog(BuildContext context) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text(emailController.text),
-        content: const Text(
-            '잘못된 메일 주소로 가입 시 서비스 이용에 제한 및 불이익이 발생할 수 있습니다. 입력하신 아이디로 가입을 진행할까요?'),
-        actionsPadding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white, shadowColor: Colors.transparent),
-            onPressed: onCancelSignup,
-            child: const Text(
-              '아니오',
-              style: TextStyle(color: Color(0xFF48C5C3)),
-            ),
-          ),
-          ElevatedButton(
+      builder: (BuildContext context) => WillPopScope(
+        onWillPop: () async {
+          // WillPopScope return false면 뒤로가기(pop) 금지
+          onCancelSignup();
+          return false;
+        },
+        child: AlertDialog(
+          title: Text(emailController.text),
+          content: const Text(
+              '잘못된 메일 주소로 가입 시 서비스 이용에 제한 및 불이익이 발생할 수 있습니다. 입력하신 아이디로 가입을 진행할까요?'),
+          actionsPadding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
+          actions: [
+            ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   shadowColor: Colors.transparent),
-              onPressed: onSignup,
+              onPressed: onCancelSignup,
               child: const Text(
-                '예',
+                '아니오',
                 style: TextStyle(color: Color(0xFF48C5C3)),
-              )),
-        ],
+              ),
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shadowColor: Colors.transparent),
+                onPressed: onSignup,
+                child: const Text(
+                  '예',
+                  style: TextStyle(color: Color(0xFF48C5C3)),
+                )),
+          ],
+        ),
       ),
+      barrierDismissible: false,
     );
   }
 
   // 회원가입 버튼 클릭시 모달창 pop
   onSignUpModal() async {
+    setState(() {
+      isLoading = true;
+    });
+
     await authCon.onSignUp(emailController.text, passwordController.text);
     showdialog(context);
   }
@@ -255,7 +264,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 MyButton(
                   title: "회원가입",
                   onTap: onSignUpModal,
-                  available: email && password,
+                  available: email && password && !isLoading,
                 ),
 
                 const SizedBox(height: 50),

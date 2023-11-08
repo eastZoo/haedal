@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 
@@ -17,6 +18,8 @@ class _CodeScreenState extends State<CodeScreen> {
   final authCon = Get.put(AuthController());
 
   bool inviteCode = false;
+
+  bool isLoading = false;
 
   // text editing controllers
   final inviteCodeController = TextEditingController();
@@ -73,13 +76,23 @@ class _CodeScreenState extends State<CodeScreen> {
           }
 
           // 연결하기
-          void onConnect() async {
-            await authCon.onConnect(inviteCodeController.text);
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/splash',
-              (route) => false,
-            );
+          onConnect() async {
+            setState(() {
+              isLoading = true;
+            });
+            var result = await authCon.onConnect(inviteCodeController.text);
+            if (result["success"]) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/splash',
+                (route) => false,
+              );
+            } else {
+              setState(() {
+                isLoading = false;
+              });
+              CustomToast().signUpToast(result["msg"]);
+            }
           }
 
           return Scaffold(
@@ -187,7 +200,7 @@ class _CodeScreenState extends State<CodeScreen> {
                       MyButton(
                         title: "연결하기",
                         onTap: onConnect,
-                        available: inviteCode,
+                        available: inviteCode && !isLoading,
                       ),
 
                       const SizedBox(height: 50),
