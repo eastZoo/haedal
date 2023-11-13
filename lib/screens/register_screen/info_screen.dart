@@ -50,7 +50,7 @@ class _InfoScreenState extends State<InfoScreen> {
             if (result) {
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                '/main',
+                '/splash',
                 (route) => false,
               );
             }

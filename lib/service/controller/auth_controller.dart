@@ -102,7 +102,11 @@ class AuthController extends GetxController {
       var res = await AuthProvider().getConnectState();
 
       print("getConnectState");
+      print(res["data"]);
       print(res["data"].runtimeType);
+      if (res["data"] == "false") {
+        return await logOut();
+      }
       connectState = RxInt(int.parse(res["data"]));
       update();
       return int.parse(res["data"]);
@@ -167,5 +171,14 @@ class AuthController extends GetxController {
       update();
       return res["data"]["success"];
     }
+  }
+
+  // 로그아웃
+  logOut() async {
+    print("로그아웃!!!!!!");
+    const storage = FlutterSecureStorage();
+    storage.delete(key: "accessToken");
+
+    connectState.update(RxInt(0));
   }
 }

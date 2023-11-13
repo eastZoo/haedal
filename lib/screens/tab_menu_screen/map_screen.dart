@@ -1,5 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:haedal/widgets/main_appbar.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:haedal/service/controller/map_controller.dart';
+import 'package:haedal/widgets/loading_overlay.dart';
+import 'package:haedal/widgets/naver_map.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -9,14 +16,90 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  bool success = false;
+  final mapCon = Get.put(MapController());
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+    permissionHandler();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Get.delete<VisitMissionController>();
+  }
+
+  void initPlatformState() {
+    if (!mounted) return;
+  }
+
+  void permissionHandler() async {
+    if (await Permission.contacts.request().isGranted) {
+      // Either the permission was already granted before or the user just granted it.
+    }
+    // You can request multiple permissions at once.
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+      Permission.notification,
+    ].request();
+
+    var isit = statuses[Permission.location];
+
+    if (isit == PermissionStatus.granted) {
+      setState(() {
+        success = true;
+      });
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  Future<Position> determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Column(
-        children: [
-          MainAppbar(title: '지도'),
-        ],
-      ),
-    );
+    return success
+        ? GetBuilder<MapController>(
+            init: MapController(),
+            builder: (mapCon) {
+              print("mapCon.isinitialized  :${mapCon.isinitialized}");
+              return const LoadingOverlay(
+                child: SafeArea(
+                  child: Stack(
+                    children: [
+                      CustomNaverMap(),
+                    ],
+                  ),
+                ),
+              );
+            })
+        : Container();
   }
 }
