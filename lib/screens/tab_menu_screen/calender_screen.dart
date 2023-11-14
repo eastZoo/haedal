@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 
-class ChattingScreen extends StatefulWidget {
-  const ChattingScreen({super.key});
+class CalenderScreen extends StatefulWidget {
+  const CalenderScreen({super.key});
 
   @override
-  State<ChattingScreen> createState() => _ChattingScreenState();
+  State<CalenderScreen> createState() => _CalenderScreenState();
 }
 
-class _ChattingScreenState extends State<ChattingScreen> {
+class _CalenderScreenState extends State<CalenderScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

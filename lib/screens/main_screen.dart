@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
-import 'package:haedal/screens/tab_menu_screen/chatting_screen.dart';
+import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/home_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/map_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/more_screen.dart';
@@ -24,12 +24,12 @@ class _MainScreenState extends State<MainScreen> {
 
   final iconList = [
     Icons.map,
-    Icons.photo_album,
-    Icons.chat_outlined,
+    Icons.photo,
+    Icons.calendar_month_outlined,
     Icons.more_horiz,
   ];
 
-  final iconName = ['지도', '앨범', '채팅', '더보기'];
+  final iconName = ['지도', '앨범', '캘린더', '더보기'];
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
                           children: const [
                             MapScreen(),
                             AlbumScreen(),
-                            ChattingScreen(),
+                            CalenderScreen(),
                             MoreScreen(),
                             HomeScreen(),
                           ],
@@ -58,15 +58,19 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   floatingActionButtonLocation:
                       FloatingActionButtonLocation.miniCenterDocked,
-                  floatingActionButton: FloatingActionButton(
-                    backgroundColor: const Color(0xFFD4A7FB),
-                    onPressed: () {
-                      HapticFeedback.lightImpact();
-                      setState(() => _selectedIndex = 4);
-                    },
-                    child: const Icon(
-                      Icons.home,
-                      size: 20,
+                  floatingActionButton: SizedBox(
+                    height: 49,
+                    width: 49,
+                    child: FloatingActionButton(
+                      backgroundColor: const Color(0xFFD4A7FB),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => _selectedIndex = 4);
+                      },
+                      child: const Icon(
+                        Icons.add,
+                        size: 25,
+                      ),
                     ),
                   ),
                   bottomNavigationBar: AnimatedBottomNavigationBar.builder(
