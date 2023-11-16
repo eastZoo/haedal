@@ -3,6 +3,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:haedal/routes/app_pages.dart';
+import 'package:haedal/screens/add_album.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/home_screen.dart';
@@ -10,6 +12,7 @@ import 'package:haedal/screens/tab_menu_screen/map_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/more_screen.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
+import 'package:page_transition/page_transition.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -19,7 +22,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 4;
+  int _selectedIndex = 1;
   final autoSizeGroup = AutoSizeGroup();
 
   final iconList = [
@@ -35,10 +38,10 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
         init: AuthController(),
-        builder: (context) {
+        builder: (AuthCon) {
           return GetBuilder<MapController>(
               init: MapController(),
-              builder: (context) {
+              builder: (MapCon) {
                 return Scaffold(
                   body: Column(
                     children: [
@@ -50,7 +53,6 @@ class _MainScreenState extends State<MainScreen> {
                             AlbumScreen(),
                             CalenderScreen(),
                             MoreScreen(),
-                            HomeScreen(),
                           ],
                         ),
                       ),
@@ -65,7 +67,15 @@ class _MainScreenState extends State<MainScreen> {
                       backgroundColor: const Color(0xFFD4A7FB),
                       onPressed: () {
                         HapticFeedback.lightImpact();
-                        setState(() => _selectedIndex = 4);
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.bottomToTop,
+                            child: const AddAlbum(),
+                            isIos: true,
+                            duration: routingDuration,
+                          ),
+                        );
                       },
                       child: const Icon(
                         Icons.add,

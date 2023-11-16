@@ -90,12 +90,10 @@ class _MapScreenState extends State<MapScreen> {
             init: MapController(),
             builder: (mapCon) {
               print("mapCon.isinitialized  :${mapCon.isinitialized}");
-              return const LoadingOverlay(
+              return LoadingOverlay(
                 child: SafeArea(
                   child: Stack(
-                    children: [
-                      CustomNaverMap(),
-                    ],
+                    children: [const CustomNaverMap(), Container()],
                   ),
                 ),
               );

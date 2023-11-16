@@ -10,3 +10,5 @@ abstract class Routes {
   static const MAIN = '/main';
   static const ADDWALK = '/addWalk';
 }
+
+const routingDuration = Duration(milliseconds: 100);

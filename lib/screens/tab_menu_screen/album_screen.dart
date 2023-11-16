@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 
 class AlbumScreen extends StatefulWidget {
@@ -29,7 +31,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
-            "assets/images/haeon.jpg",
+            "assets/images/kei.jpg",
           ),
           fit: BoxFit.cover,
         ),
@@ -67,22 +69,51 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(children: [
-          const MainAppbar(title: '스토리 / 위치리스트'),
-          Expanded(
-            child: ScrollConfiguration(
-              behavior: const ScrollBehavior().copyWith(overscroll: false),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [for (num i = 1; i < 6; i++) postCard("CHOCOLATE")],
-                ),
-              ),
+    return GetBuilder<InfiniteScrollController>(
+        init: InfiniteScrollController(),
+        builder: (controller) {
+          return SafeArea(
+            child: Scaffold(
+              body: Column(children: [
+                const MainAppbar(title: '스토리 / 위치리스트'),
+                Expanded(
+                    child: Obx(
+                  () => ListView.separated(
+                    controller: controller.scrollController.value,
+                    itemBuilder: (_, index) {
+                      print(controller.hasMore.value);
+                      if (index < controller.data.length) {
+                        var datum = controller.data[index];
+                        return postCard("title");
+                      }
+                      if (controller.hasMore.value ||
+                          controller.isLoading.value) {
+                        return const Center(child: RefreshProgressIndicator());
+                      }
+                      return Container(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              const Text('데이터의 마지막 입니다'),
+                              IconButton(
+                                onPressed: () {
+                                  controller.reload();
+                                },
+                                icon: const Icon(Icons.refresh_outlined),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (_, index) => const Divider(),
+                    itemCount: controller.data.length + 1,
+                  ),
+                )),
+              ]),
             ),
-          )
-        ]),
-      ),
-    );
+          );
+        });
   }
 }
