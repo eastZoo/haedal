@@ -1,17 +1,8 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-
-import 'package:haedal/styles/colors.dart';
-import 'package:haedal/widgets/app_button.dart';
 import 'package:haedal/widgets/media_picker.dart';
-import 'package:haedal/widgets/photo_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:get/get.dart' as GET;
-import 'package:path/path.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class AddAlbum extends StatefulWidget {
@@ -23,8 +14,17 @@ class AddAlbum extends StatefulWidget {
 
 class _AddAlbumState extends State<AddAlbum> {
   List<AssetEntity> selectedAssetList = [];
-
   List<File> selectedFiles = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // pickAssets(
+    //   maxCount: 10,
+    //   requestType: RequestType.image,
+    // );
+    super.initState();
+  }
 
   Future convertAssetsToFiles(List<AssetEntity> assetEntities) async {
     for (var i = 0; i < assetEntities.length; i++) {
@@ -35,29 +35,29 @@ class _AddAlbumState extends State<AddAlbum> {
     }
   }
 
+  Future pickAssets({
+    required int maxCount,
+    required RequestType requestType,
+  }) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MediaPicker(maxCount, requestType, selectedAssetList);
+        },
+      ),
+    );
+    print('::: $selectedAssetList');
+    print('::: $result');
+    if (result?.isNotEmpty || result != null) {
+      setState(() {
+        selectedAssetList = result;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future pickAssets({
-      required int maxCount,
-      required RequestType requestType,
-    }) async {
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return MediaPicker(maxCount, requestType, selectedAssetList);
-          },
-        ),
-      );
-      if (result?.isNotEmpty ?? false) {
-        setState(() {
-          result.forEach((element) {
-            selectedAssetList.add(element);
-          });
-        });
-      }
-    }
-
     return SafeArea(
       child: Scaffold(
         body: GridView.builder(
@@ -110,7 +110,7 @@ class _AddAlbumState extends State<AddAlbum> {
           onPressed: () {
             pickAssets(
               maxCount: 10,
-              requestType: RequestType.video,
+              requestType: RequestType.image,
             );
           },
           child: const Icon(Iconsax.image5),

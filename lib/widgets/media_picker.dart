@@ -25,7 +25,7 @@ class _MediaPickerState extends State<MediaPicker> {
     setState(() {
       selectedAssetList = widget.selectedAssetList;
     });
-    MediaServices().loadAlbums(RequestType.common).then(
+    MediaServices().loadAlbums(widget.requestType).then(
       (value) {
         setState(() {
           albumList = value;

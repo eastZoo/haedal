@@ -31,7 +31,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
-            "assets/images/kei.jpg",
+            "assets/images/haeon.jpg",
           ),
           fit: BoxFit.cover,
         ),
