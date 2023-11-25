@@ -28,6 +28,10 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>In order to access your photo library</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>위치정보에 대한 권한요청</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>사진 등록에 대한 권한요청</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
