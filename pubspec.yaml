@@ -37,7 +37,6 @@ dependencies:
   image_picker: ^1.0.4
   http: ^1.1.0
   iconsax: ^0.0.8
-  photo_manager: ^2.8.1
 
 dev_dependencies:
   flutter_test:
