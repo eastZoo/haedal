@@ -3,15 +3,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:haedal/routes/app_pages.dart';
+import 'package:haedal/screens/add_image_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
-import 'package:haedal/screens/tab_menu_screen/home_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/map_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/more_screen.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
-import 'package:page_transition/page_transition.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -52,6 +50,7 @@ class _MainScreenState extends State<MainScreen> {
                             AlbumScreen(),
                             CalenderScreen(),
                             MoreScreen(),
+                            addImageScreen()
                           ],
                         ),
                       ),
