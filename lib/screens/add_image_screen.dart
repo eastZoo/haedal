@@ -1,60 +1,116 @@
-import 'package:camera/camera.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:haedal/widgets/image_picker/stateless_pickers.dart';
-import 'package:haedal/widgets/camera/camera_picker.dart';
-import 'package:haedal/widgets/camera/wechat_camera_picker.dart';
-import 'package:haedal/widgets/image_picker/restorable_picker.dart';
-import 'package:haedal/widgets/image_picker/insta_picker_interface.dart';
+import 'package:image_picker/image_picker.dart';
 
-const kDefaultColor = Colors.deepPurple;
-
-late List<CameraDescription> _cameras;
-
-class addImageScreen extends StatelessWidget {
-  const addImageScreen({super.key});
+class AddimageScreen extends StatefulWidget {
+  const AddimageScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
+  State<AddimageScreen> createState() => _AddimageScreenState();
 }
 
-class PickersScreen extends StatelessWidget {
-  const PickersScreen({super.key});
+class _AddimageScreenState extends State<AddimageScreen> {
+  final ImagePicker _picker = ImagePicker();
+  final List<XFile?> _pickedImages = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMultiImage();
+  }
+
+  // 이미지 여러개 불러오기
+  void getMultiImage() async {
+    final List<XFile> images = await _picker.pickMultiImage();
+
+    setState(() {
+      _pickedImages.addAll(images);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<InstaPickerInterface> pickers = [
-      const SinglePicker(),
-      const MultiplePicker(),
-      const RestorablePicker(),
-      CameraPicker(camera: _cameras.first),
-      const WeChatCameraPicker(),
-    ];
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Insta pickers')),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemBuilder: (BuildContext context, int index) {
-          final PickerDescription description = pickers[index].description;
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          child: Column(
+            children: [
+              _imageLoadButtons(),
+              const SizedBox(height: 20),
+              _gridPhoto(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-          return Card(
-            child: ListTile(
-              leading: Text(description.icon),
-              title: Text(description.label),
-              subtitle: description.description != null
-                  ? Text(description.description!)
-                  : null,
-              trailing: const Icon(Icons.chevron_right_rounded),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => pickers[index]),
+  // 화면 상단 버튼
+  Widget _imageLoadButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const SizedBox(width: 20),
+          SizedBox(
+            child: ElevatedButton(
+              onPressed: () => getMultiImage(),
+              child: const Text('Multi Image'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 불러온 이미지 gridView
+  Widget _gridPhoto() {
+    return Expanded(
+      child: _pickedImages.isNotEmpty
+          ? GridView(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+              ),
+              children: _pickedImages
+                  .where((element) => element != null)
+                  .map((e) => _gridPhotoItem(e!))
+                  .toList(),
+            )
+          : const SizedBox(),
+    );
+  }
+
+  Widget _gridPhotoItem(XFile e) {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.file(
+              File(e.path),
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned(
+            top: 5,
+            right: 5,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _pickedImages.remove(e);
+                });
+              },
+              child: const Icon(
+                Icons.cancel_rounded,
+                color: Colors.black87,
               ),
             ),
-          );
-        },
-        separatorBuilder: (_, __) => const SizedBox(height: 4),
-        itemCount: pickers.length,
+          )
+        ],
       ),
     );
   }
