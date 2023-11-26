@@ -44,6 +44,7 @@ class _MapScreenState extends State<MapScreen> {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
       Permission.storage,
+      Permission.activityRecognition,
       Permission.notification,
     ].request();
 
@@ -54,7 +55,7 @@ class _MapScreenState extends State<MapScreen> {
         success = true;
       });
     } else {
-      Navigator.pop(context);
+      permissionHandler();
     }
   }
 
