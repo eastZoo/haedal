@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart' as GET;
 import 'package:haedal/routes/app_pages.dart';
 import 'package:haedal/screens/add_image_screen.dart';
+import 'package:haedal/screens/select_photo_options_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/map_screen.dart';
@@ -160,6 +161,30 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  void _showSelectPhotoOptions() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25.0),
+        ),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.28,
+          maxChildSize: 0.28,
+          minChildSize: 0.20,
+          expand: false,
+          snap: true,
+          builder: (context, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: const SelectPhotoOptionsScreen(),
+            );
+          }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GET.GetBuilder<AuthController>(
@@ -193,7 +218,7 @@ class _MainScreenState extends State<MainScreen> {
                       backgroundColor: const Color(0xFFD4A7FB),
                       onPressed: () {
                         HapticFeedback.lightImpact();
-                        showAddPhoto();
+                        _showSelectPhotoOptions();
                       },
                       child: const Icon(
                         Icons.add,
