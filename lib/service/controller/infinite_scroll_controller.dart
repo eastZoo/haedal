@@ -22,7 +22,7 @@ class InfiniteScrollController extends GetxController {
 
   _getData() async {
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     int offset = data.length;
     var appendData = List<int>.generate(10, (i) => i + 1 + offset);
     data.addAll(appendData);
@@ -33,7 +33,7 @@ class InfiniteScrollController extends GetxController {
   reload() async {
     isLoading.value = true;
     data.clear();
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     _getData();
   }
 }

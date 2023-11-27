@@ -13,20 +13,10 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreenState extends State<AlbumScreen> {
-  Text _buildRatingStars(int rating) {
-    String stars = '';
-    for (int i = 0; i < rating; i++) {
-      stars += '⭐ ';
-    }
-    stars.trim();
-    return Text(stars);
-  }
-
 // 게시글 카드
   Widget postCard(title) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
-      height: 170,
+      height: 180,
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
