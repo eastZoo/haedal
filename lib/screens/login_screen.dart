@@ -124,7 +124,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           if (result["success"]) {
                             Navigator.pushNamedAndRemoveUntil(
-                                context, '/splash', (route) => false);
+                              context,
+                              '/splash',
+                              (route) => false,
+                            );
                           } else {
                             setState(() {
                               errorMsg = result["msg"];

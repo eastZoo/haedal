@@ -2,8 +2,10 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:haedal/routes/app_pages.dart';
 import 'package:haedal/screens/main_screen.dart';
+import 'package:haedal/screens/select_map_position_screen.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/app_button.dart';
 import 'package:haedal/widgets/custom_appbar.dart';
@@ -21,6 +23,12 @@ class AddimageScreen extends StatefulWidget {
 class _AddimageScreenState extends State<AddimageScreen> {
   final ImagePicker _picker = ImagePicker();
   final List<XFile?> _pickedImages = [];
+
+  final formKey = GlobalKey<FormState>();
+
+  String title = '';
+  String address = '';
+  NLatLng? currentLatLng;
 
   @override
   void initState() {
@@ -50,15 +58,104 @@ class _AddimageScreenState extends State<AddimageScreen> {
               title: "스토리 작성",
               actions: _addBtn(),
             ),
+            _FormWidget(),
             _thumbPhoto(),
             _gridPhoto(),
-            const SizedBox(height: 150),
           ],
         ),
       ),
     );
   }
 
+  // 위치 등록시 ( 이미지 or 글만 등록 선택 모달 )
+  void _SelectPositionPopScreen() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25.0),
+        ),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.95,
+          maxChildSize: 0.95,
+          minChildSize: 0.90,
+          expand: false,
+          snap: true,
+          builder: (context, scrollController) {
+            return const SelectMapPositionScreen();
+          }),
+    );
+  }
+
+  Widget _FormWidget() {
+    return Form(
+      key: formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            renderTextFormField(
+              label: '제목',
+              onSaved: (val) {},
+              validator: (val) {
+                if (val.length < 1) {
+                  return 'title은 필수사항입니다.';
+                }
+                if (val.length < 2) {
+                  return 'title은 두글자 이상 입력 해주셔야합니다.';
+                }
+                return null;
+              },
+            ),
+            renderTextFormField(
+                label: '위치',
+                onSaved: (val) {},
+                validator: (val) {
+                  if (val.length < 1) {
+                    return '위치는 필수사항입니다.';
+                  }
+
+                  return null;
+                },
+                onTap: () {
+                  _SelectPositionPopScreen();
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  renderTextFormField(
+      {required String label,
+      required FormFieldSetter onSaved,
+      required FormFieldValidator validator,
+      Function()? onTap}) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+        TextFormField(
+          onSaved: onSaved,
+          validator: validator,
+          onTap: onTap,
+        ),
+      ],
+    );
+  }
+
+  // 앱바 게시 버튼
   Widget _addBtn() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
