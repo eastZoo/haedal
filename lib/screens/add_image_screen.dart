@@ -2,7 +2,14 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:haedal/routes/app_pages.dart';
+import 'package:haedal/screens/main_screen.dart';
+import 'package:haedal/styles/colors.dart';
+import 'package:haedal/widgets/app_button.dart';
+import 'package:haedal/widgets/custom_appbar.dart';
+import 'package:haedal/widgets/main_appbar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 
 class AddimageScreen extends StatefulWidget {
   const AddimageScreen({super.key});
@@ -25,7 +32,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
   // 이미지 여러개 불러오기
   void getMultiImage() async {
     final List<XFile> images = await _picker.pickMultiImage();
-    if (images.isEmpty) {
+    if (images.isEmpty && _pickedImages.isEmpty) {
       return Navigator.pop(context);
     }
     setState(() {
@@ -37,16 +44,34 @@ class _AddimageScreenState extends State<AddimageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          child: Column(
-            children: [
-              _thumbPhoto(),
-              const SizedBox(height: 20),
-              _gridPhoto(),
-            ],
+        child: Column(
+          children: [
+            CustomAppbar(
+              title: "스토리 작성",
+              actions: _addBtn(),
+            ),
+            _thumbPhoto(),
+            _gridPhoto(),
+            const SizedBox(height: 150),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _addBtn() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+      child: GestureDetector(
+        child: Text(
+          "게시",
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: AppColors().mainColor,
           ),
         ),
+        onTap: () {},
       ),
     );
   }
@@ -56,7 +81,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
     return Expanded(
       child: _pickedImages.isNotEmpty
           ? Container(
-              margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
+              margin: const EdgeInsets.fromLTRB(0, 10, 0, 5.0),
               height: 1,
               width: double.infinity,
               decoration: BoxDecoration(
@@ -104,7 +129,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
       child: _pickedImages.isNotEmpty
           ? GridView(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+                crossAxisCount: 4,
               ),
               children: _pickedImages.asMap().entries.map((entry) {
                 int idx = entry.key;
@@ -122,65 +147,31 @@ class _AddimageScreenState extends State<AddimageScreen> {
   // gridView 이미지 박스 아이템 컴포넌트
   Widget _gridPhotoItem(XFile e, int idx) {
     return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: _pickedImages.length != idx + 1
-          ? Stack(
-              children: [
-                Positioned.fill(
-                  child: Image.file(
-                    File(e.path),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Positioned(
-                  top: 5,
-                  right: 5,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _pickedImages.removeAt(idx);
-                      });
-                    },
-                    child: const Icon(
-                      Icons.cancel_rounded,
-                      color: Colors.black87,
-                    ),
-                  ),
-                )
-              ],
-            )
-          : Stack(
-              children: [
-                Positioned(
-                  top: 35,
-                  right: 35,
-                  child: GestureDetector(
-                    onTap: () {
-                      getMultiImage();
-                    },
-                    child: Column(
-                      children: [
-                        Positioned.fill(
-                          child: Container(
-                              color: const Color(
-                                  0xFFD4A7FB) // Set the color for the Positioned.fill
-                              ),
-                        ),
-                        const Icon(
-                          Icons.add,
-                          color: Colors.black87,
-                          size: 25,
-                        ),
-                        const Text(
-                          "추가하기",
-                          style: TextStyle(fontSize: 12),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
+        padding: const EdgeInsets.all(2.0),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.file(
+                File(e.path),
+                fit: BoxFit.cover,
+              ),
             ),
-    );
+            Positioned(
+              top: 5,
+              right: 5,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _pickedImages.removeAt(idx);
+                  });
+                },
+                child: Icon(
+                  Icons.cancel_rounded,
+                  color: AppColors().semiGrey,
+                ),
+              ),
+            )
+          ],
+        ));
   }
 }
