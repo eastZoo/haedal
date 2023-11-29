@@ -72,7 +72,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Icon(
-              Icons.arrow_back,
+              Icons.arrow_back_ios,
               color: getTitleColor(),
             ),
           ),

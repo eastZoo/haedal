@@ -60,7 +60,7 @@ class MapController extends GetxController {
     options = options.copyWith(
       indoorLevelPickerEnable: false,
       logoAlign: NLogoAlign.leftTop,
-      minZoom: 10,
+      minZoom: 15,
       extent: const NLatLngBounds(
         southWest: NLatLng(31.43, 122.37),
         northEast: NLatLng(44.35, 132.0),
@@ -68,7 +68,7 @@ class MapController extends GetxController {
       symbolPerspectiveRatio: 0,
       initialCameraPosition: NCameraPosition(
         target: NLatLng(currentLatLng!.latitude, currentLatLng!.longitude),
-        zoom: 13.3,
+        zoom: 15,
       ),
     );
   }

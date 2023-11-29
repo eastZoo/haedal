@@ -5,6 +5,7 @@ import 'package:haedal/routes/app_pages.dart';
 import 'package:haedal/screens/add_image_screen.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/add_location_bottom_sheet.dart';
+import 'package:haedal/widgets/custom_appbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -94,15 +95,15 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
 
     void onMapTapped(NPoint point, NLatLng latLng) async {
       currentLatLng = latLng;
-      // final marker = NMarker(
-      //     id: 'mapPoint', position: NLatLng(latLng.latitude, latLng.longitude));
-      // mapController.addOverlay(marker);
+      final marker = NMarker(
+          id: 'mapPoint', position: NLatLng(latLng.latitude, latLng.longitude));
+      mapController.addOverlay(marker);
 
-      // String data = await WalkPositionController()
-      //     .getGeoLocation(latLng.latitude, latLng.longitude);
-      // setState(() {
-      //   address = data;
-      // });
+      String data = await WalkPositionController()
+          .getGeoLocation(latLng.latitude, latLng.longitude);
+      setState(() {
+        address = data;
+      });
 
       panelController.open();
     }
@@ -133,12 +134,15 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
 
     void onSelectedIndoorChanged(NSelectedIndoor? selectedIndoor) {}
 
-    return Container(
-      // color: Colors.grey.shade300,
-      padding: const EdgeInsets.all(20),
-      child: Stack(
-        alignment: AlignmentDirectional.topCenter,
-        clipBehavior: Clip.none,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "위치 저장",
+          style: TextStyle(fontSize: 16),
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFF676B85)),
+      ),
+      body: Stack(
         children: [
           Expanded(
             child: NaverMap(
@@ -151,56 +155,56 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
               onSelectedIndoorChanged: onSelectedIndoorChanged,
             ),
           ),
-          // AddLocationBottonSheet(
-          //   panelController: panelController,
-          //   inputController: inputController,
-          //   address: address,
-          //   onSaveLocation: onSaveLocation,
-          //   onChangedText: (text) {
-          //     inputText = text;
-          //   },
-          //   onClosedBottomSheet: () {
-          //     mapController.deleteOverlay(
-          //       const NOverlayInfo(type: NOverlayType.marker, id: "mapPoint"),
-          //     );
-          //   },
-          // ),
-          // Positioned(
-          //   top: 60, // Set the distance from the top
-          //   left: 20,
-          //   child: Container(
-          //     width: 100,
-          //     height: 40,
-          //     decoration: const BoxDecoration(
-          //       borderRadius: BorderRadius.all(Radius.circular(8)),
-          //       color: Colors.white,
-          //     ),
-          //     // color: Colors.white.withOpacity(0.7),
-          //     child: TextButton(
-          //       onPressed: () {
-          //         // mCtrl.zoomMyLocation();
-          //       },
-          //       child: const Row(
-          //         children: [
-          //           Icon(
-          //             Icons.near_me,
-          //             color: Colors.blue,
-          //           ),
-          //           SizedBox(
-          //             width: 5,
-          //           ),
-          //           Text(
-          //             '내 위치',
-          //             style: TextStyle(
-          //                 fontSize: 15,
-          //                 fontWeight: FontWeight.w500,
-          //                 color: Color(0xFF2B2E45)),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          AddLocationBottonSheet(
+            panelController: panelController,
+            inputController: inputController,
+            address: address,
+            onSaveLocation: onSaveLocation,
+            onChangedText: (text) {
+              inputText = text;
+            },
+            onClosedBottomSheet: () {
+              mapController.deleteOverlay(
+                const NOverlayInfo(type: NOverlayType.marker, id: "mapPoint"),
+              );
+            },
+          ),
+          Positioned(
+            top: 60, // Set the distance from the top
+            left: 20,
+            child: Container(
+              width: 100,
+              height: 40,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                color: Colors.white,
+              ),
+              // color: Colors.white.withOpacity(0.7),
+              child: TextButton(
+                onPressed: () {
+                  // mCtrl.zoomMyLocation();
+                },
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.near_me,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      '내 위치',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF2B2E45)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

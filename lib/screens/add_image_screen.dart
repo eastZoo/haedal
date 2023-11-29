@@ -24,6 +24,9 @@ class _AddimageScreenState extends State<AddimageScreen> {
   final ImagePicker _picker = ImagePicker();
   final List<XFile?> _pickedImages = [];
 
+  final titleTextController = TextEditingController();
+  final locationTextController = TextEditingController();
+
   final formKey = GlobalKey<FormState>();
 
   String title = '';
@@ -34,7 +37,18 @@ class _AddimageScreenState extends State<AddimageScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    titleTextController.addListener(() {
+      setState(() {
+        title = titleTextController.text;
+      });
+    });
     getMultiImage();
+  }
+
+  @override
+  void dispose() {
+    titleTextController.dispose();
+    super.dispose();
   }
 
   // 이미지 여러개 불러오기
@@ -58,80 +72,60 @@ class _AddimageScreenState extends State<AddimageScreen> {
               title: "스토리 작성",
               actions: _addBtn(),
             ),
-            _FormWidget(),
             _thumbPhoto(),
             _gridPhoto(),
+            _FormWidget(),
           ],
         ),
       ),
-    );
-  }
-
-  // 위치 등록시 ( 이미지 or 글만 등록 선택 모달 )
-  void _SelectPositionPopScreen() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25.0),
-        ),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.95,
-          maxChildSize: 0.95,
-          minChildSize: 0.90,
-          expand: false,
-          snap: true,
-          builder: (context, scrollController) {
-            return const SelectMapPositionScreen();
-          }),
     );
   }
 
   Widget _FormWidget() {
-    return Form(
-      key: formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            renderTextFormField(
-              label: '제목',
-              onSaved: (val) {},
-              validator: (val) {
-                if (val.length < 1) {
-                  return 'title은 필수사항입니다.';
-                }
-                if (val.length < 2) {
-                  return 'title은 두글자 이상 입력 해주셔야합니다.';
-                }
-                return null;
-              },
-            ),
-            renderTextFormField(
-                label: '위치',
-                onSaved: (val) {},
-                validator: (val) {
-                  if (val.length < 1) {
-                    return '위치는 필수사항입니다.';
-                  }
-
-                  return null;
-                },
-                onTap: () {
-                  _SelectPositionPopScreen();
-                }),
-          ],
+    return Expanded(
+      flex: 2,
+      child: Form(
+        key: formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              renderTextFormField(
+                label: '제목',
+                hintText: "음식점이름, 커스텀",
+                controller: titleTextController,
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              renderTextFormField(
+                  label: '위치 검색',
+                  hintText: "클릭으로 위치 검색",
+                  controller: locationTextController,
+                  readOnly: true,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: const SelectMapPositionScreen(),
+                      ),
+                    );
+                  }),
+            ],
+          ),
         ),
       ),
     );
   }
 
+// 스토리 작성 인풋 컨포넌트 위젯
   renderTextFormField(
       {required String label,
-      required FormFieldSetter onSaved,
-      required FormFieldValidator validator,
+      final controller,
+      final focusNode,
+      required hintText,
+      readOnly = false,
       Function()? onTap}) {
     return Column(
       children: [
@@ -146,11 +140,17 @@ class _AddimageScreenState extends State<AddimageScreen> {
             ),
           ],
         ),
-        TextFormField(
-          onSaved: onSaved,
-          validator: validator,
+        TextField(
+          controller: controller,
+          focusNode: focusNode,
+          readOnly: readOnly,
           onTap: onTap,
-        ),
+          decoration: InputDecoration(
+              fillColor: Colors.grey.shade200,
+              filled: true,
+              hintText: hintText,
+              hintStyle: TextStyle(color: Colors.grey[500])),
+        )
       ],
     );
   }
@@ -176,6 +176,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
   // 썸네일 이미지
   Widget _thumbPhoto() {
     return Expanded(
+      flex: 2,
       child: _pickedImages.isNotEmpty
           ? Container(
               margin: const EdgeInsets.fromLTRB(0, 10, 0, 5.0),
@@ -194,9 +195,9 @@ class _AddimageScreenState extends State<AddimageScreen> {
                   child: Container(
                     alignment: Alignment.center,
                     color: Colors.grey.withOpacity(0.2),
-                    child: const Text(
-                      "title",
-                      style: TextStyle(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -222,12 +223,12 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   // 불러온 이미지 gridView
   Widget _gridPhoto() {
+    var size = MediaQuery.of(context).size;
     return Expanded(
       child: _pickedImages.isNotEmpty
-          ? GridView(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-              ),
+          ? GridView.count(
+              crossAxisCount: 4,
+              childAspectRatio: 1,
               children: _pickedImages.asMap().entries.map((entry) {
                 int idx = entry.key;
                 XFile? image = entry.value;

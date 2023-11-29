@@ -49,7 +49,6 @@ class _MapScreenState extends State<MapScreen> {
     ].request();
 
     var isit = statuses[Permission.location];
-    print('ISISISISISISIT $isit');
     if (isit == PermissionStatus.granted) {
       setState(() {
         success = true;
@@ -90,11 +89,10 @@ class _MapScreenState extends State<MapScreen> {
         ? GetBuilder<MapController>(
             init: MapController(),
             builder: (mapCon) {
-              print("mapCon.isinitialized  :${mapCon.isinitialized}");
-              return LoadingOverlay(
+              return const LoadingOverlay(
                 child: SafeArea(
                   child: Stack(
-                    children: [const CustomNaverMap(), Container()],
+                    children: [CustomNaverMap()],
                   ),
                 ),
               );

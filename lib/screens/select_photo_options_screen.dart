@@ -19,22 +19,24 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
         alignment: AlignmentDirectional.topCenter,
         clipBehavior: Clip.none,
         children: [
+          // 스크롤 손잡이
           Positioned(
-            top: -35,
+            top: -10,
             child: Container(
               width: 50,
               height: 6,
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2.5),
-                color: Colors.white,
+                color: Colors.grey.shade400,
               ),
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          // 버튼 시작
           Column(children: [
+            const SizedBox(
+              height: 20,
+            ),
             SelectPhoto(
               onTap: () {
                 Navigator.push(
