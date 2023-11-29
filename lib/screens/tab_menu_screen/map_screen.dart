@@ -49,7 +49,7 @@ class _MapScreenState extends State<MapScreen> {
     ].request();
 
     var isit = statuses[Permission.location];
-
+    print('ISISISISISISIT $isit');
     if (isit == PermissionStatus.granted) {
       setState(() {
         success = true;

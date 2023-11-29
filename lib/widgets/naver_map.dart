@@ -27,6 +27,7 @@ class _CustomNaverMapState extends State<CustomNaverMap> {
     final mapCon = Get.put(MapController());
 
     void onMapReady(NaverMapController nController) async {
+      print("READTY@@@@@@@@@@@@@@@");
       nController.setLocationTrackingMode(NLocationTrackingMode.follow);
       mapCon.setMapController(nController);
       // mCtrl.changedStatus(mCtrl.status);
