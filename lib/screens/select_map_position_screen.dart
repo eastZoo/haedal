@@ -3,6 +3,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
 import 'package:haedal/screens/add_image_screen.dart';
+import 'package:haedal/service/controller/location_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/add_location_bottom_sheet.dart';
 import 'package:haedal/widgets/custom_appbar.dart';
@@ -99,7 +100,7 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
           id: 'mapPoint', position: NLatLng(latLng.latitude, latLng.longitude));
       mapController.addOverlay(marker);
 
-      String data = await WalkPositionController()
+      String data = await LocationController()
           .getGeoLocation(latLng.latitude, latLng.longitude);
       setState(() {
         address = data;
@@ -109,22 +110,22 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
     }
 
     void onSymbolTapped(NSymbolInfo symbol) async {
-      // NLatLng latLng = symbol.position;
+      NLatLng latLng = symbol.position;
 
-      // currentLatLng = latLng;
-      // final marker = NMarker(
-      //   id: 'mapPoint',
-      //   position: NLatLng(latLng.latitude, latLng.longitude),
-      // );
-      // mapController.addOverlay(marker);
+      currentLatLng = latLng;
+      final marker = NMarker(
+        id: 'mapPoint',
+        position: NLatLng(latLng.latitude, latLng.longitude),
+      );
+      mapController.addOverlay(marker);
 
-      // String data = await WalkPositionController()
-      //     .getGeoLocation(latLng.latitude, latLng.longitude);
-      // setState(() {
-      //   address = data;
-      // });
+      String data = await LocationController()
+          .getGeoLocation(latLng.latitude, latLng.longitude);
+      setState(() {
+        address = data;
+      });
 
-      // panelController.open();
+      panelController.open();
       // ignore: use_build_context_synchronously
     }
 
