@@ -145,16 +145,14 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
       ),
       body: Stack(
         children: [
-          Expanded(
-            child: NaverMap(
-              options: options,
-              onMapReady: onMapReady,
-              onMapTapped: onMapTapped,
-              onSymbolTapped: onSymbolTapped,
-              onCameraChange: onCameraChange,
-              onCameraIdle: onCameraIdle,
-              onSelectedIndoorChanged: onSelectedIndoorChanged,
-            ),
+          NaverMap(
+            options: options,
+            onMapReady: onMapReady,
+            onMapTapped: onMapTapped,
+            onSymbolTapped: onSymbolTapped,
+            onCameraChange: onCameraChange,
+            onCameraIdle: onCameraIdle,
+            onSelectedIndoorChanged: onSelectedIndoorChanged,
           ),
           AddLocationBottonSheet(
             panelController: panelController,
