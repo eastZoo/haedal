@@ -8,7 +8,10 @@ class MapController extends GetxController {
   late RxString status = "".obs;
   bool isinitialized = false;
   NaverMapViewOptions options = const NaverMapViewOptions();
+
+  NaverMapController? prevMapController;
   NaverMapController? mapController;
+
   Position? currentLatLng;
 
   late Stream<CompassEvent>? compassStream;
@@ -85,6 +88,19 @@ class MapController extends GetxController {
       target: NLatLng(currentLatLng!.latitude, currentLatLng!.longitude),
       zoom: 15,
     ));
+  }
+
+  void setPrevMapController(mapController) {
+    prevMapController = mapController;
+    update();
+  }
+
+  refetchWalkLocation() async {
+    // await fetchUserWalkLocation();
+    // String visitMissionStatus = await getVisitMissionStatus(4);
+    // status.value = visitMissionStatus;
+    // changedStatus(visitMissionStatus);
+    // update();
   }
 
   // 위치 가져오는 함수

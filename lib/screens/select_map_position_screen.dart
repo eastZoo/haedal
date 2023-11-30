@@ -183,7 +183,7 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
               // color: Colors.white.withOpacity(0.7),
               child: TextButton(
                 onPressed: () {
-                  // mCtrl.zoomMyLocation();
+                  mapCon.zoomMyLocation();
                 },
                 child: const Row(
                   children: [

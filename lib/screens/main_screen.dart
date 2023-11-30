@@ -35,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
   final iconName = ['지도', '앨범', '캘린더', '더보기'];
 
   // 이미지 등록시 ( 이미지 or 글만 등록 선택 모달 )
-  void _showSelectPhotoOptions() {
+  _showSelectPhotoOptions() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -90,9 +90,16 @@ class _MainScreenState extends State<MainScreen> {
                     width: 49,
                     child: FloatingActionButton(
                       backgroundColor: const Color(0xFFD4A7FB),
-                      onPressed: () {
+                      onPressed: () async {
                         HapticFeedback.lightImpact();
-                        _showSelectPhotoOptions();
+                        // 걷기지점 등록 버튼 클릭시 현재 지도 컨트롤러 변수에 저장
+                        MapCon.setPrevMapController(MapCon.mapController);
+                        var result = await _showSelectPhotoOptions();
+
+                        print("RESULT!!!!!!!!!!!!!");
+                        // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
+                        MapCon.setMapController(MapCon.prevMapController);
+                        MapCon.refetchWalkLocation();
                       },
                       child: const Icon(
                         Icons.add,
