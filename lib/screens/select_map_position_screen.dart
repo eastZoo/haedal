@@ -169,7 +169,7 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
             },
           ),
           Positioned(
-            top: 60, // Set the distance from the top
+            top: 25, // Set the distance from the top
             left: 20,
             child: Container(
               width: 100,

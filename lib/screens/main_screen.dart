@@ -66,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
         builder: (AuthCon) {
           return GET.GetBuilder<MapController>(
               init: MapController(),
-              builder: (MapCon) {
+              builder: (mapCon) {
                 return Scaffold(
                   body: Column(
                     children: [
@@ -93,13 +93,8 @@ class _MainScreenState extends State<MainScreen> {
                       onPressed: () async {
                         HapticFeedback.lightImpact();
                         // 걷기지점 등록 버튼 클릭시 현재 지도 컨트롤러 변수에 저장
-                        MapCon.setPrevMapController(MapCon.mapController);
-                        var result = await _showSelectPhotoOptions();
-
-                        print("RESULT!!!!!!!!!!!!!");
-                        // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
-                        MapCon.setMapController(MapCon.prevMapController);
-                        MapCon.refetchWalkLocation();
+                        mapCon.setPrevMapController(mapCon.mapController);
+                        _showSelectPhotoOptions();
                       },
                       child: const Icon(
                         Icons.add,
