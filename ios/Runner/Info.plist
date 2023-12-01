@@ -78,5 +78,11 @@
     <!-- Permission options for the `appTrackingTransparency` -->
     <key>NSUserTrackingUsageDescription</key>
     <string>appTrackingTransparency</string>
+
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

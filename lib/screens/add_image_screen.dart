@@ -1,17 +1,18 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:haedal/routes/app_pages.dart';
-import 'package:haedal/screens/main_screen.dart';
 import 'package:haedal/screens/select_map_position_screen.dart';
+import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/styles/colors.dart';
-import 'package:haedal/widgets/app_button.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/custom_appbar.dart';
-import 'package:haedal/widgets/main_appbar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kpostal/kpostal.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:path/path.dart' hide context;
 
 class AddimageScreen extends StatefulWidget {
   const AddimageScreen({super.key});
@@ -22,16 +23,21 @@ class AddimageScreen extends StatefulWidget {
 
 class _AddimageScreenState extends State<AddimageScreen> {
   final ImagePicker _picker = ImagePicker();
-  final List<XFile?> _pickedImages = [];
 
   final titleTextController = TextEditingController();
   final locationTextController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
+  List<String> dropdownList = ['음식점', '숙소', '카페'];
+
+  String errorMsg = "";
+
+  // 스토리 저장 시 전송 dataSource
   String title = '';
-  String address = '';
+  String category = '음식점';
   NLatLng? currentLatLng;
+  final List<File> _pickedImages = [];
 
   @override
   void initState() {
@@ -58,7 +64,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
       return Navigator.pop(context);
     }
     setState(() {
-      _pickedImages.addAll(images);
+      _pickedImages.addAll(images.map((xFile) => File(xFile.path)).toList());
     });
   }
 
@@ -81,80 +87,6 @@ class _AddimageScreenState extends State<AddimageScreen> {
     );
   }
 
-  Widget _FormWidget() {
-    return Expanded(
-      flex: 2,
-      child: Form(
-        key: formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              renderTextFormField(
-                label: '제목',
-                hintText: "음식점이름, 커스텀",
-                controller: titleTextController,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              renderTextFormField(
-                  label: '위치 검색',
-                  hintText: "클릭으로 위치 검색",
-                  controller: locationTextController,
-                  readOnly: true,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: const SelectMapPositionScreen(),
-                      ),
-                    );
-                  }),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-// 스토리 작성 인풋 컨포넌트 위젯
-  renderTextFormField(
-      {required String label,
-      final controller,
-      final focusNode,
-      required hintText,
-      readOnly = false,
-      Function()? onTap}) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12.0,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          readOnly: readOnly,
-          onTap: onTap,
-          decoration: InputDecoration(
-              fillColor: Colors.grey.shade200,
-              filled: true,
-              hintText: hintText,
-              hintStyle: TextStyle(color: Colors.grey[500])),
-        )
-      ],
-    );
-  }
-
   // 앱바 게시 버튼
   Widget _addBtn() {
     return Padding(
@@ -168,7 +100,28 @@ class _AddimageScreenState extends State<AddimageScreen> {
             color: AppColors().mainColor,
           ),
         ),
-        onTap: () {},
+        onTap: () async {
+          if (title.isEmpty || _pickedImages.isEmpty || currentLatLng == null) {
+            setState(() {
+              errorMsg = "입력하지 않은 값이 존재합니다.";
+            });
+            return CustomToast().signUpToast(errorMsg);
+          }
+          var images = [];
+          Map<String, dynamic> requestData = {};
+          for (int i = 0; i < _pickedImages.length; i++) {
+            images.add(
+              MultipartFile.fromFile(
+                _pickedImages[i].path,
+                filename: basename(_pickedImages[i].path),
+              ),
+            );
+            requestData["img${i + 1}"] = basename(_pickedImages[i].path);
+          }
+          requestData["images"] = images;
+
+          var res = await BoardProvider().create(requestData);
+        },
       ),
     );
   }
@@ -184,7 +137,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
               width: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: FileImage(File(_pickedImages.first!.path)),
+                  image: FileImage(File(_pickedImages.first.path)),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -231,7 +184,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
               childAspectRatio: 1,
               children: _pickedImages.asMap().entries.map((entry) {
                 int idx = entry.key;
-                XFile? image = entry.value;
+                File? image = entry.value;
 
                 return image != null
                     ? _gridPhotoItem(XFile(image.path), idx)
@@ -239,6 +192,185 @@ class _AddimageScreenState extends State<AddimageScreen> {
               }).toList(),
             )
           : const SizedBox(),
+    );
+  }
+
+  // 인풋 작성 폼 리스트 위젯
+  Widget _FormWidget() {
+    return Expanded(
+      flex: 2,
+      child: Form(
+        key: formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: renderTextFormField(
+                      label: '제목',
+                      hintText: "음식점이름, 커스텀",
+                      controller: titleTextController,
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10)),
+
+                    // dropdown below..
+                    child: DropdownButton<String>(
+                      value: category,
+                      onChanged: (dynamic value) {
+                        setState(() {
+                          category = value;
+                        });
+                      },
+                      items: dropdownList
+                          .map<DropdownMenuItem<String>>(
+                              (String value) => DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  ))
+                          .toList(),
+
+                      // add extra sugar..
+                      icon: const Icon(Icons.arrow_drop_down),
+                      iconSize: 42,
+                      underline: const SizedBox(),
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              renderTextFormField(
+                hintText: "지번, 도로명, 건물명으로 검색",
+                controller: locationTextController,
+                readOnly: true,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: const SelectMapPositionScreen()),
+                  );
+                },
+              ),
+              // 위치 검색 위젯
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 14, 8, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.gps_fixed_sharp,
+                          size: 15,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          width: 6,
+                        ),
+                        InkWell(
+                          child: Text(
+                            '주소 검색으로 위치 설정',
+                            style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.normal,
+                                fontSize: 15),
+                          ),
+                          onTap: () async {
+                            Kpostal? result = await Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.bottomToTop,
+                                child: KpostalView(
+                                  callback: (Kpostal result) {},
+                                  useLocalServer: false,
+                                  kakaoKey: '2313aec57928c855c20fa695fe0480d2',
+                                ),
+                              ),
+                            );
+                            print("!!! $result");
+
+                            if (result != null) {
+                              _updateSearchAddress(
+                                result.address,
+                                result.latitude,
+                                result.longitude,
+                              );
+                            }
+                          },
+                        )
+                      ],
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 15,
+                      color: Colors.grey[600],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+// 주소 검색 업데이트 함수
+  void _updateSearchAddress(String address, latitude, longitude) {
+    setState(() {
+      currentLatLng = NLatLng(latitude, longitude);
+      locationTextController.text = address;
+    });
+  }
+
+// 스토리 작성 인풋 컨포넌트 위젯
+  renderTextFormField(
+      {final String label = "",
+      final controller,
+      final focusNode,
+      required hintText,
+      readOnly = false,
+      Function()? onTap}) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            label.isNotEmpty
+                ? Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                : const SizedBox(),
+          ],
+        ),
+        TextField(
+          controller: controller,
+          focusNode: focusNode,
+          readOnly: readOnly,
+          onTap: onTap,
+          decoration: InputDecoration(
+              fillColor: Colors.transparent,
+              filled: true,
+              hintText: hintText,
+              hintStyle: TextStyle(color: Colors.grey[500])),
+        )
+      ],
     );
   }
 
