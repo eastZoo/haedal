@@ -63,34 +63,34 @@ class AddLocationBottonSheet extends StatelessWidget {
                 const SizedBox(
                   height: 15,
                 ),
-                const Text(
-                  "별명지정",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF797979),
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'NotoSansKR',
-                  ),
-                ),
-                const SizedBox(
-                  height: 3,
-                ),
-                TextField(
-                  controller: inputController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                    ),
-                    contentPadding: EdgeInsets.all(5),
-                    // enabledBorder:
-                  ),
-                  onChanged: onChangedText,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
+                // const Text(
+                //   "별명지정",
+                //   style: TextStyle(
+                //     fontSize: 14,
+                //     color: Color(0xFF797979),
+                //     fontWeight: FontWeight.w400,
+                //     fontFamily: 'NotoSansKR',
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 3,
+                // ),
+                // TextField(
+                //   controller: inputController,
+                //   decoration: const InputDecoration(
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.all(
+                //         Radius.circular(5),
+                //       ),
+                //     ),
+                //     contentPadding: EdgeInsets.all(5),
+                //     // enabledBorder:
+                //   ),
+                //   onChanged: onChangedText,
+                // ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
                 ValueListenableBuilder(
                     valueListenable: inputController,
                     builder: (context, value, child) {

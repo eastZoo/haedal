@@ -341,7 +341,10 @@ class _AddimageScreenState extends State<AddimageScreen> {
                     PageTransition(
                         type: PageTransitionType.bottomToTop,
                         child: const SelectMapPositionScreen()),
-                  );
+                  ).then((value) {
+                    print("Navigator.push!!!");
+                    print(value);
+                  });
                 },
               ),
               // 위치 검색 위젯

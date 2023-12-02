@@ -66,32 +66,13 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
     }
 
     void onSaveLocation() async {
-      //   Map<String, dynamic> dataSource = {
-      //     "address": address,
-      //     "lat": currentLatLng?.latitude,
-      //     "lng": currentLatLng?.longitude,
-      //     "name": inputText
-      //   };
+      Map<String, dynamic> dataSource = {
+        "address": address,
+        "lat": currentLatLng?.latitude,
+        "lng": currentLatLng?.longitude,
+      };
 
-      //   await WalkPositionController().createMyLocation(dataSource);
-      //   if (!mounted) return;
-      //   mCtrl.refetchWalkLocation();
-      //   Navigator.pop(buildContext);
-      // }
-
-      // void onMapTapped(NPoint point, NLatLng latLng) async {
-      //   currentLatLng = latLng;
-      //   final marker = NMarker(
-      //       id: 'mapPoint', position: NLatLng(latLng.latitude, latLng.longitude));
-      //   mapController.addOverlay(marker);
-
-      //   String data = await WalkPositionController()
-      //       .getGeoLocation(latLng.latitude, latLng.longitude);
-      //   setState(() {
-      //     address = data;
-      //   });
-
-      panelController.open();
+      Navigator.pop(context, dataSource);
     }
 
     void onMapTapped(NPoint point, NLatLng latLng) async {
