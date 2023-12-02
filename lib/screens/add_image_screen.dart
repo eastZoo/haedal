@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:haedal/screens/select_map_position_screen.dart';
+import 'package:haedal/service/controller/board_controller.dart';
 import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
@@ -22,6 +25,8 @@ class AddimageScreen extends StatefulWidget {
 }
 
 class _AddimageScreenState extends State<AddimageScreen> {
+  BoardController boardCon = Get.put(BoardController());
+
   final ImagePicker _picker = ImagePicker();
 
   final titleTextController = TextEditingController();
@@ -37,7 +42,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
   String title = '';
   String category = '음식점';
   NLatLng? currentLatLng;
-  final List<File> _pickedImages = [];
+  final List<XFile> _pickedImages = [];
 
   @override
   void initState() {
@@ -64,7 +69,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
       return Navigator.pop(context);
     }
     setState(() {
-      _pickedImages.addAll(images.map((xFile) => File(xFile.path)).toList());
+      _pickedImages.addAll(images);
     });
   }
 
@@ -101,26 +106,48 @@ class _AddimageScreenState extends State<AddimageScreen> {
           ),
         ),
         onTap: () async {
-          if (title.isEmpty || _pickedImages.isEmpty || currentLatLng == null) {
-            setState(() {
-              errorMsg = "입력하지 않은 값이 존재합니다.";
-            });
-            return CustomToast().signUpToast(errorMsg);
-          }
+          // if (title.isEmpty || _pickedImages.isEmpty || currentLatLng == null) {
+          //   setState(() {
+          //     errorMsg = "입력하지 않은 값이 존재합니다.";
+          //   });
+          //   return CustomToast().signUpToast(errorMsg);
+          // }
+
+          // final List<MultipartFile> files = _pickedImages
+          //     .map((img) => MultipartFile.fromFileSync(img.path,
+          //         filename: basename(img.path)))
+          //     .toList();
+
+          // FormData formData = FormData.fromMap({"images": files});
+
+          // print("requestData   : $formData");
+          // var res = await boardCon.postSubmit(formData);
+
+          var res;
           var images = [];
           Map<String, dynamic> requestData = {};
           for (int i = 0; i < _pickedImages.length; i++) {
             images.add(
-              MultipartFile.fromFile(
+              await MultipartFile.fromFile(
                 _pickedImages[i].path,
                 filename: basename(_pickedImages[i].path),
               ),
             );
-            requestData["img${i + 1}"] = basename(_pickedImages[i].path);
           }
+
+          var dataSource = {
+            "title": title,
+            "category": category,
+            "address": locationTextController.text,
+            "lat": currentLatLng?.latitude,
+            "lng": currentLatLng?.longitude,
+          };
+
+          requestData["postData"] = json.encode(dataSource);
           requestData["images"] = images;
 
-          var res = await BoardProvider().create(requestData);
+          print(requestData);
+          res = await boardCon.postSubmit(requestData);
         },
       ),
     );
@@ -184,7 +211,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
               childAspectRatio: 1,
               children: _pickedImages.asMap().entries.map((entry) {
                 int idx = entry.key;
-                File? image = entry.value;
+                XFile? image = entry.value;
 
                 return image != null
                     ? _gridPhotoItem(XFile(image.path), idx)
