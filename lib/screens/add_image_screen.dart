@@ -344,6 +344,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
                   ).then((value) {
                     print("Navigator.push!!!");
                     print(value);
+                    _updateSearchAddress(
+                        value["address"], value["lat"], value["lng"]);
                   });
                 },
               ),

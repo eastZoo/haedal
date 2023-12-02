@@ -91,17 +91,14 @@ class AddLocationBottonSheet extends StatelessWidget {
                 // const SizedBox(
                 //   height: 20,
                 // ),
-                ValueListenableBuilder(
-                    valueListenable: inputController,
-                    builder: (context, value, child) {
-                      return AppButton(
-                        width: double.infinity,
-                        minimumSize: const Size(double.infinity, 50),
-                        text: '$buttonTitle',
-                        color: AppColors().mainColor,
-                        onPressed: value.text.isEmpty ? null : onSaveLocation,
-                      );
-                    })
+
+                AppButton(
+                  width: double.infinity,
+                  minimumSize: const Size(double.infinity, 50),
+                  text: '$buttonTitle',
+                  color: AppColors().mainColor,
+                  onPressed: onSaveLocation,
+                )
               ],
             ),
           ),
