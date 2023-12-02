@@ -43,6 +43,7 @@ dependencies:
   insta_assets_picker: ^2.2.0
   wechat_camera_picker: ^4.1.1
   kpostal: ^0.5.1
+  cached_network_image: ^3.3.0
 
 dev_dependencies:
   flutter_test:

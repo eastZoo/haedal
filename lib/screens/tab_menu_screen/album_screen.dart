@@ -1,9 +1,12 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/widgets/main_appbar.dart';
+
+import '../../service/endpoints.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({super.key});
@@ -14,14 +17,15 @@ class AlbumScreen extends StatefulWidget {
 
 class _AlbumScreenState extends State<AlbumScreen> {
 // 게시글 카드
-  Widget postCard(title) {
+  Widget postCard(title, path) {
+    print("${Endpoints.hostUrl}/$path");
     return Container(
       height: 180,
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(
-            "assets/images/haeon.jpg",
+          image: CachedNetworkImageProvider(
+            "${Endpoints.hostUrl}/$path",
           ),
           fit: BoxFit.cover,
         ),
@@ -73,8 +77,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     itemBuilder: (_, index) {
                       print(controller.hasMore.value);
                       if (index < controller.data.length) {
-                        var datum = controller.data[index];
-                        return postCard("title");
+                        var data = controller.data[index];
+                        return postCard(
+                            data["title"], data["files"][0]["filename"]);
                       }
                       if (controller.hasMore.value ||
                           controller.isLoading.value) {
