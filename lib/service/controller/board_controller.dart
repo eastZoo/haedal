@@ -6,12 +6,14 @@ class BoardController extends GetxController {
     try {
       var res = await BoardProvider().create(requestData);
       var isSuccess = res["success"];
+      print(res);
       print(isSuccess);
       print("isSuccess");
       if (isSuccess == true) {
         return isSuccess;
       } else {
-        return res["msg"];
+        // res["msg"]
+        return false;
       }
     } catch (e) {
       print(e);

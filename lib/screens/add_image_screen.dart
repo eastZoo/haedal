@@ -12,6 +12,7 @@ import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/custom_appbar.dart';
+import 'package:haedal/widgets/loading_overlay.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:page_transition/page_transition.dart';
@@ -33,6 +34,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
   final locationTextController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
 
   List<String> dropdownList = ['음식점', '숙소', '카페'];
 
@@ -75,18 +78,21 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            CustomAppbar(
-              title: "스토리 작성",
-              actions: _addBtn(),
-            ),
-            _thumbPhoto(),
-            _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
-            _FormWidget(),
-          ],
+    return LoadingOverlay(
+      isLoading: isLoading,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              CustomAppbar(
+                title: "스토리 작성",
+                actions: _addBtn(),
+              ),
+              _thumbPhoto(),
+              _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
+              _FormWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -125,6 +131,11 @@ class _AddimageScreenState extends State<AddimageScreen> {
             return CustomToast().signUpToast(errorMsg);
           }
 
+          // 데이터 통신 전 로딩 상태 변경
+          setState(() {
+            isLoading = true;
+          });
+
           var res;
           var images = [];
           Map<String, dynamic> requestData = {};
@@ -148,8 +159,13 @@ class _AddimageScreenState extends State<AddimageScreen> {
           requestData["postData"] = json.encode(dataSource);
           requestData["images"] = images;
 
-          print(requestData);
           res = await boardCon.postSubmit(requestData);
+          setState(() {
+            isLoading = false;
+          });
+          if (res) {
+            Navigator.pop(context);
+          }
         },
       ),
     );
