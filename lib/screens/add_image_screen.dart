@@ -84,7 +84,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
               actions: _addBtn(),
             ),
             _thumbPhoto(),
-            _gridPhoto(),
+            _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
             _FormWidget(),
           ],
         ),
@@ -106,22 +106,24 @@ class _AddimageScreenState extends State<AddimageScreen> {
           ),
         ),
         onTap: () async {
-          // if (title.isEmpty || _pickedImages.isEmpty || currentLatLng == null) {
-          //   setState(() {
-          //     errorMsg = "입력하지 않은 값이 존재합니다.";
-          //   });
-          //   return CustomToast().signUpToast(errorMsg);
-          // }
-
-          // final List<MultipartFile> files = _pickedImages
-          //     .map((img) => MultipartFile.fromFileSync(img.path,
-          //         filename: basename(img.path)))
-          //     .toList();
-
-          // FormData formData = FormData.fromMap({"images": files});
-
-          // print("requestData   : $formData");
-          // var res = await boardCon.postSubmit(formData);
+          if (title.isEmpty) {
+            setState(() {
+              errorMsg = "제목(title)을 입력해주세요.";
+            });
+            return CustomToast().signUpToast(errorMsg);
+          }
+          if (_pickedImages.isEmpty) {
+            setState(() {
+              errorMsg = "추가된 이미지가 없습니다.";
+            });
+            return CustomToast().signUpToast(errorMsg);
+          }
+          if (currentLatLng == null) {
+            setState(() {
+              errorMsg = "사진과 함께 기억할 위치를 선택해주세요.";
+            });
+            return CustomToast().signUpToast(errorMsg);
+          }
 
           var res;
           var images = [];
@@ -197,7 +199,43 @@ class _AddimageScreenState extends State<AddimageScreen> {
                 ),
               ),
             )
-          : const SizedBox(),
+          : Container(
+              margin: const EdgeInsets.fromLTRB(0, 10, 0, 5.0),
+              height: 1,
+              width: double.infinity,
+              child: InkWell(
+                child: ClipRRect(
+                  // make sure we apply clip it properly
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                    child: Container(
+                      alignment: Alignment.center,
+                      color: Colors.grey.withOpacity(0.2),
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                          Text(
+                            "사진추가",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  getMultiImage();
+                },
+              )),
     );
   }
 
@@ -293,59 +331,59 @@ class _AddimageScreenState extends State<AddimageScreen> {
               // 위치 검색 위젯
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 14, 8, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.gps_fixed_sharp,
-                          size: 15,
-                          color: Colors.black,
-                        ),
-                        const SizedBox(
-                          width: 6,
-                        ),
-                        InkWell(
-                          child: Text(
+                child: InkWell(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.gps_fixed_sharp,
+                            size: 15,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Text(
                             '주소 검색으로 위치 설정',
                             style: TextStyle(
                                 color: Colors.grey[600],
                                 fontWeight: FontWeight.normal,
                                 fontSize: 15),
                           ),
-                          onTap: () async {
-                            Kpostal? result = await Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.bottomToTop,
-                                child: KpostalView(
-                                  callback: (Kpostal result) {},
-                                  useLocalServer: false,
-                                  kakaoKey: '2313aec57928c855c20fa695fe0480d2',
-                                ),
-                              ),
-                            );
-                            print("!!! $result");
+                        ],
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15,
+                        color: Colors.grey[600],
+                      ),
+                    ],
+                  ),
+                  onTap: () async {
+                    Kpostal? result = await Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: KpostalView(
+                          callback: (Kpostal result) {},
+                          useLocalServer: false,
+                          kakaoKey: '2313aec57928c855c20fa695fe0480d2',
+                        ),
+                      ),
+                    );
+                    print("!!! $result");
 
-                            if (result != null) {
-                              _updateSearchAddress(
-                                result.address,
-                                result.latitude,
-                                result.longitude,
-                              );
-                            }
-                          },
-                        )
-                      ],
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 15,
-                      color: Colors.grey[600],
-                    ),
-                  ],
+                    if (result != null) {
+                      _updateSearchAddress(
+                        result.address,
+                        result.latitude,
+                        result.longitude,
+                      );
+                    }
+                  },
                 ),
               ),
             ],
@@ -422,10 +460,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
                     _pickedImages.removeAt(idx);
                   });
                 },
-                child: Icon(
-                  Icons.cancel_rounded,
-                  color: AppColors().semiGrey,
-                ),
+                child: Icon(Icons.cancel_rounded,
+                    color: AppColors().semiGrey, size: 19),
               ),
             )
           ],
