@@ -8,9 +8,4 @@ class LocationProvider {
                 'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lon,$lat&sourcecrs=epsg:4326&orders=roadaddr&output=json')
         .asyncGet();
   }
-
-  // createMyLocation(data) async {
-  //   return await ApiRequest(url: '$Endpoints/walk/walking-point', data: data)
-  //       .asyncPost();
-  // }
 }

@@ -23,20 +23,21 @@ class InfiniteScrollController extends GetxController {
 
   _getData() async {
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1));
-    int offset = data.length;
-    var appendData = await InfiniteScrollProvider().albumListGenerate(offset);
 
-    print('InfiniteScrollProvider : $appendData');
-    data.addAll(appendData["data"]);
+    int offset = data.length;
+    print("offset");
+    print(offset);
+    var albumData = await InfiniteScrollProvider().albumListGenerate(offset);
+
+    print('InfiniteScrollProvider : $albumData');
+    data.addAll(albumData["data"]["appendData"]);
     isLoading.value = false;
-    hasMore.value = data.length < 30;
+    hasMore.value = data.length < albumData["data"]["total"];
   }
 
   reload() async {
     isLoading.value = true;
     data.clear();
-    await Future.delayed(const Duration(seconds: 1));
     _getData();
   }
 }

@@ -12,4 +12,5 @@ class Endpoints {
   static const String authUrl = "$hostUrl/auth";
   static const String userInfoUrl = "$hostUrl/user";
   static const String boardUrl = "$hostUrl/album-board";
+  static const String locationUrl = "$hostUrl/location";
 }

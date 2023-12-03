@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/user_location.dart';
+import 'package:haedal/service/provider/map_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MapController extends GetxController {
   late RxString status = "".obs;
@@ -14,8 +18,15 @@ class MapController extends GetxController {
 
   Position? currentLatLng;
 
+  UserLocation? selectedMarker;
+
+  // 마커 아이콘 클릭헀을때 마커 정보 패널 컨트롤러
+  final PanelController panelController = PanelController();
+
   late Stream<CompassEvent>? compassStream;
   late Stream<Position> geolocatorStream;
+
+  var locations = <UserLocation>[].obs;
 
   @override
   void onInit() async {
@@ -23,6 +34,8 @@ class MapController extends GetxController {
 
     var locStatus = await Permission.location.status;
     var activeStatus = await Permission.activityRecognition.status;
+
+    await fetchLocationMark();
 
     compassStream = FlutterCompass.events;
     // 위치권한 허용되어있으면
@@ -35,6 +48,8 @@ class MapController extends GetxController {
       ));
       geolocatorStream.listen(listenGeolocator);
     }
+    // 마커 로케이션 맵 레디
+    await setupMapOnReady();
     // 위치 가져오는 함수
     // await fetchUserWalkLocation();
     print("isinitialized @!@!@!@!@!@");
@@ -76,6 +91,54 @@ class MapController extends GetxController {
     );
   }
 
+  // UserWalkLocaion 기본 설정 값
+  NMarker getDefaultLocationMarker(UserLocation location) {
+    final marker = NMarker(
+      size: const Size(45, 55),
+      id: "maker_${location.id}",
+      icon: const NOverlayImage.fromAssetImage('assets/icons/marker.png'),
+      position: NLatLng(location.lat ?? 0, location.lng ?? 0),
+    );
+    marker.setOnTapListener((overlay) {
+      onSelectedMarker(location);
+    });
+    return marker;
+  }
+
+  //event marker
+  NMarker getEventLocationMarker(UserLocation location) {
+    final marker = NMarker(
+      size: const Size(45, 55),
+      id: "maker_${location.id}",
+      icon: const NOverlayImage.fromAssetImage('assets/icons/event_marker.png'),
+      position: NLatLng(location.lat ?? 0, location.lng ?? 0),
+    );
+    marker.setOnTapListener((overlay) {
+      onSelectedMarker(location);
+    });
+    return marker;
+  }
+
+// UserLocaion marker를 클릭 했을때
+  void onSelectedMarker(UserLocation location) {
+    panelController.close().then((value) async {
+      var marker = getDefaultLocationMarker(location);
+      marker.setIcon(const NOverlayImage.fromAssetImage(
+          'assets/icons/selected_marker.png'));
+
+      if (location.type == "event") {
+        marker = getEventLocationMarker(location);
+        marker.setIcon(const NOverlayImage.fromAssetImage(
+            'assets/icons/selected_event_marker.png'));
+      }
+
+      mapController?.addOverlay(marker);
+      selectedMarker = location;
+      update();
+      panelController.open();
+    });
+  }
+
 //지도 오픈 시 컨트롤러 저장
   void setMapController(mapController) {
     this.mapController = mapController;
@@ -104,23 +167,59 @@ class MapController extends GetxController {
   }
 
   // 위치 가져오는 함수
-  // fetchUserWalkLocation() async {
-  //   try {
-  //     var res = await VisitMissionProvider().getUserWalkLocation();
-  //     var isSuccess = res["success"];
-  //     if (isSuccess == true) {
-  //       var responseData = res["data"];
-  //       if (responseData != null && responseData != "") {
-  //         List<dynamic> list = responseData["locations"];
-  //         locations.assignAll(list
-  //             .map<UserWalkLocation>((item) => UserWalkLocation.fromJson(item))
-  //             .toList());
-  //       }
-  //     } else {
-  //       return res["msg"];
-  //     }
-  //   } catch (e) {
-  //     // throw Error();
-  //   }
-  // }
+  fetchLocationMark() async {
+    try {
+      var res = await MapProvider().getLocation();
+      print("res !!!!!!!!!!!!!");
+      print(res);
+      var isSuccess = res["success"];
+      if (isSuccess == true) {
+        var responseData = res["data"];
+        if (responseData != null && responseData != "") {
+          List<dynamic> list = responseData["locations"];
+          locations.assignAll(list
+              .map<UserLocation>((item) => UserLocation.fromJson(item))
+              .toList());
+        }
+      } else {
+        return res["msg"];
+      }
+    } catch (e) {
+      // throw Error();
+    }
+  }
+
+  setupMapOnReady() async {
+    try {
+      mapController?.clearOverlays();
+      // mapController?.addOverlay(userMarker!);
+      setLocationMarkers();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+// 로케이션 마커 화면에 패칭
+  void setLocationMarkers() {
+    try {
+      Set<NMarker> markers = {};
+      if (mapController != null) {
+        for (var location in locations) {
+          var marker = getDefaultLocationMarker(location);
+          if (location.type == "event") {
+            marker = getEventLocationMarker(location);
+          }
+
+          markers.add(marker);
+        }
+        // mapController?.addOverlay(userMarker!);
+        if (markers.isNotEmpty) {
+          mapController?.addOverlayAll(markers);
+        }
+      }
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
 }
