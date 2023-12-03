@@ -78,7 +78,7 @@ class MapController extends GetxController {
     options = options.copyWith(
       indoorLevelPickerEnable: false,
       logoAlign: NLogoAlign.leftTop,
-      minZoom: 15,
+      minZoom: 10,
       extent: const NLatLngBounds(
         southWest: NLatLng(31.43, 122.37),
         northEast: NLatLng(44.35, 132.0),
