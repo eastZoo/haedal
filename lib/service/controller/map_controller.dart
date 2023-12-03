@@ -176,7 +176,7 @@ class MapController extends GetxController {
       if (isSuccess == true) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
-          List<dynamic> list = responseData["locations"];
+          List<dynamic> list = responseData;
           locations.assignAll(list
               .map<UserLocation>((item) => UserLocation.fromJson(item))
               .toList());
