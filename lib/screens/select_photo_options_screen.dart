@@ -54,7 +54,8 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
 
                   // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
                   mapCon.setMapController(mapCon.prevMapController);
-                  mapCon.refetchWalkLocation();
+                  // 위치 리패칭을 통한 마커 새로고침
+                  mapCon.refetchLocation();
                 },
                 icon: Icons.image,
                 textLabel: '앨범에서 추가',

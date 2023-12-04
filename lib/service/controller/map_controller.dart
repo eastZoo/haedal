@@ -197,12 +197,11 @@ class MapController extends GetxController {
     if (value == "select") {}
   }
 
-  refetchWalkLocation() async {
-    // await fetchUserWalkLocation();
-    // String visitMissionStatus = await getVisitMissionStatus(4);
-    // status.value = visitMissionStatus;
-    // changedStatus(visitMissionStatus);
-    // update();
+  refetchLocation() async {
+    await fetchLocationMark();
+
+    changedStatus("basic");
+    update();
   }
 
   // 위치 가져오는 함수
