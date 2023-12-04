@@ -38,12 +38,13 @@ class _AddimageScreenState extends State<AddimageScreen> {
   bool isLoading = false;
 
   List<String> dropdownList = ['음식점', '숙소', '카페'];
+  String category = '음식점';
 
   String errorMsg = "";
 
   // 스토리 저장 시 전송 dataSource
   String title = '';
-  String category = '음식점';
+
   NLatLng? currentLatLng;
   final List<XFile> _pickedImages = [];
 

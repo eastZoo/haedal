@@ -47,10 +47,13 @@ class MapController extends GetxController {
       geolocatorStream.listen(listenGeolocator);
     }
 
-// 위치 가져오는 함수
+    // 위치 가져오는 함수
     await fetchLocationMark();
     print("isinitialized @!@!@!@!@!@");
     isinitialized = true;
+
+    // 지도에 마커 뿌리기
+    await setupMapOnReady();
     ever(status, (value) {
       changedStatus(value);
     });
@@ -91,12 +94,13 @@ class MapController extends GetxController {
     );
   }
 
-  // UserWalkLocaion 기본 설정 값
-  NMarker getDefaultLocationMarker(UserLocation location) {
+  // 음식점 marker
+  NMarker getRestaurantLocationMarker(UserLocation location) {
     final marker = NMarker(
       size: const Size(45, 55),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/marker.png'),
+      icon: const NOverlayImage.fromAssetImage(
+          'assets/icons/restaurant-marker.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -106,12 +110,28 @@ class MapController extends GetxController {
     return marker;
   }
 
-  //event marker
-  NMarker getEventLocationMarker(UserLocation location) {
+  //숙소 marker
+  NMarker getAccommodationLocationMarker(UserLocation location) {
     final marker = NMarker(
       size: const Size(45, 55),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/event_marker.png'),
+      icon: const NOverlayImage.fromAssetImage(
+          'assets/icons/accommodation-marker.png'),
+      position: NLatLng(
+          double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
+    );
+    marker.setOnTapListener((overlay) {
+      onSelectedMarker(location);
+    });
+    return marker;
+  }
+
+  //카페 marker
+  NMarker getCafeLocationMarker(UserLocation location) {
+    final marker = NMarker(
+      size: const Size(45, 55),
+      id: "maker_${location.id}",
+      icon: const NOverlayImage.fromAssetImage('assets/icons/cafe-marker.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -124,14 +144,24 @@ class MapController extends GetxController {
 // UserLocaion marker를 클릭 했을때
   void onSelectedMarker(UserLocation location) {
     panelController.close().then((value) async {
-      var marker = getDefaultLocationMarker(location);
+      var marker = getRestaurantLocationMarker(location);
       marker.setIcon(const NOverlayImage.fromAssetImage(
           'assets/icons/selected_marker.png'));
 
-      if (location.type == "event") {
-        marker = getEventLocationMarker(location);
+      if (location.category == "음식점") {
+        marker = getRestaurantLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/selected_event_marker.png'));
+            'assets/icons/selected_restaurant-marker.png'));
+      }
+      if (location.category == "숙소") {
+        marker = getAccommodationLocationMarker(location);
+        marker.setIcon(const NOverlayImage.fromAssetImage(
+            'assets/icons/selected_accommodation-marker.png'));
+      }
+      if (location.category == "카페") {
+        marker = getCafeLocationMarker(location);
+        marker.setIcon(const NOverlayImage.fromAssetImage(
+            'assets/icons/selected_cafe_marker.png'));
       }
 
       mapController?.addOverlay(marker);
@@ -184,12 +214,10 @@ class MapController extends GetxController {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
-          print("list : $list");
-          print("list : ${list.runtimeType}");
+
           locations.assignAll(list
               .map<UserLocation>((item) => UserLocation.fromJson(item))
               .toList());
-          print("CLEAR");
         }
       } else {
         return res["msg"];
@@ -216,12 +244,16 @@ class MapController extends GetxController {
       Set<NMarker> markers = {};
       if (mapController != null) {
         for (var location in locations) {
-          print("location  ::: $location");
-          var marker = getDefaultLocationMarker(location);
-          if (location.type == "event") {
-            marker = getEventLocationMarker(location);
+          var marker = getCafeLocationMarker(location);
+          if (location.category == "음식점") {
+            marker = getRestaurantLocationMarker(location);
           }
-
+          if (location.category == "숙소") {
+            marker = getAccommodationLocationMarker(location);
+          }
+          if (location.category == "카페") {
+            marker = getCafeLocationMarker(location);
+          }
           markers.add(marker);
         }
         // mapController?.addOverlay(userMarker!);

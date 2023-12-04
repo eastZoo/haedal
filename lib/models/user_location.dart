@@ -10,6 +10,7 @@ class UserLocation {
   String? userId;
   String? coupleId;
   String? title;
+  String? category;
   String? content;
   String? lat;
   String? lng;
@@ -24,6 +25,7 @@ class UserLocation {
     this.userId,
     this.coupleId,
     this.title,
+    this.category,
     this.content,
     this.lat,
     this.lng,
