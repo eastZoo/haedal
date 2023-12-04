@@ -6,26 +6,32 @@ part 'user_location.g.dart';
 
 @JsonSerializable()
 class UserLocation {
-  int id;
-  int? userId;
+  String id;
+  String? userId;
+  String? coupleId;
   String? title;
-  double? lat;
-  double? lng;
+  String? content;
+  String? lat;
+  String? lng;
   String? address;
   String? type;
   String? description;
-  DateTime? regTime;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   UserLocation({
     required this.id,
     this.userId,
+    this.coupleId,
     this.title,
+    this.content,
     this.lat,
     this.lng,
     this.address,
     this.type,
     this.description,
-    this.regTime,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory UserLocation.fromJson(Map<String, dynamic> json) =>

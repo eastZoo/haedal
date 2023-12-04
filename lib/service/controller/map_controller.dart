@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MapController extends GetxController {
-  late RxString status = "".obs;
+  late RxString status = "basic".obs;
   bool isinitialized = false;
   NaverMapViewOptions options = const NaverMapViewOptions();
 
@@ -35,8 +35,6 @@ class MapController extends GetxController {
     var locStatus = await Permission.location.status;
     var activeStatus = await Permission.activityRecognition.status;
 
-    await fetchLocationMark();
-
     compassStream = FlutterCompass.events;
     // 위치권한 허용되어있으면
     if (!locStatus.isDenied) {
@@ -48,12 +46,14 @@ class MapController extends GetxController {
       ));
       geolocatorStream.listen(listenGeolocator);
     }
-    // 마커 로케이션 맵 레디
-    await setupMapOnReady();
-    // 위치 가져오는 함수
-    // await fetchUserWalkLocation();
+
+// 위치 가져오는 함수
+    await fetchLocationMark();
     print("isinitialized @!@!@!@!@!@");
     isinitialized = true;
+    ever(status, (value) {
+      changedStatus(value);
+    });
   }
 
   @override
@@ -97,7 +97,8 @@ class MapController extends GetxController {
       size: const Size(45, 55),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker.png'),
-      position: NLatLng(location.lat ?? 0, location.lng ?? 0),
+      position: NLatLng(
+          double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
     marker.setOnTapListener((overlay) {
       onSelectedMarker(location);
@@ -111,7 +112,8 @@ class MapController extends GetxController {
       size: const Size(45, 55),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/event_marker.png'),
-      position: NLatLng(location.lat ?? 0, location.lng ?? 0),
+      position: NLatLng(
+          double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
     marker.setOnTapListener((overlay) {
       onSelectedMarker(location);
@@ -158,6 +160,13 @@ class MapController extends GetxController {
     update();
   }
 
+  changedStatus(value) {
+    if (value == "basic") {
+      setupMapOnReady();
+    }
+    if (value == "select") {}
+  }
+
   refetchWalkLocation() async {
     // await fetchUserWalkLocation();
     // String visitMissionStatus = await getVisitMissionStatus(4);
@@ -170,29 +179,31 @@ class MapController extends GetxController {
   fetchLocationMark() async {
     try {
       var res = await MapProvider().getLocation();
-      print("res !!!!!!!!!!!!!");
-      print(res);
       var isSuccess = res["success"];
       if (isSuccess == true) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
+          print("list : $list");
+          print("list : ${list.runtimeType}");
           locations.assignAll(list
               .map<UserLocation>((item) => UserLocation.fromJson(item))
               .toList());
+          print("CLEAR");
         }
       } else {
         return res["msg"];
       }
     } catch (e) {
+      print(e);
       // throw Error();
     }
   }
 
   setupMapOnReady() async {
     try {
+      print("setupMapOnReady");
       mapController?.clearOverlays();
-      // mapController?.addOverlay(userMarker!);
       setLocationMarkers();
     } catch (error) {
       print(error);
@@ -205,6 +216,7 @@ class MapController extends GetxController {
       Set<NMarker> markers = {};
       if (mapController != null) {
         for (var location in locations) {
+          print("location  ::: $location");
           var marker = getDefaultLocationMarker(location);
           if (location.type == "event") {
             marker = getEventLocationMarker(location);

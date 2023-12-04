@@ -7,28 +7,36 @@ part of 'user_location.dart';
 // **************************************************************************
 
 UserLocation _$UserLocationFromJson(Map<String, dynamic> json) => UserLocation(
-      id: json['id'] as int,
-      userId: json['userId'] as int?,
+      id: json['id'] as String,
+      userId: json['userId'] as String?,
+      coupleId: json['coupleId'] as String?,
       title: json['title'] as String?,
-      lat: json['lat'] as double?,
-      lng: json['lng'] as double,
+      content: json['content'] as String?,
+      lat: json['lat'] as String?,
+      lng: json['lng'] as String,
       address: json['address'] as String?,
       type: json['type'] as String?,
       description: json['description'] as String?,
-      regTime: json['regTime'] == null
+      createdAt: json['createdAt'] == null
           ? null
-          : DateTime.parse(json['regTime'] as String),
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
     );
 
 Map<String, dynamic> _$UserLocationToJson(UserLocation instance) =>
     <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
+      'coupleId': instance.coupleId,
       'title': instance.title,
+      'content': instance.content,
       'lat': instance.lat,
       'lng': instance.lng,
       'address': instance.address,
       'type': instance.type,
       'description': instance.description,
-      'regTime': instance.regTime?.toIso8601String(),
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
     };
