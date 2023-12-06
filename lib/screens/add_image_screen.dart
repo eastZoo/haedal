@@ -82,17 +82,28 @@ class _AddimageScreenState extends State<AddimageScreen> {
     return LoadingOverlay(
       isLoading: isLoading,
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text(
+            "스토리 작성",
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF676B85),
+            ),
+          ),
+          centerTitle: true,
+          actions: [_addBtn()],
+        ),
         body: SafeArea(
-          child: Column(
-            children: [
-              CustomAppbar(
-                title: "스토리 작성",
-                actions: _addBtn(),
-              ),
-              _thumbPhoto(),
-              _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
-              _FormWidget(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _thumbPhoto(),
+                _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
+                // _FormWidget(),
+              ],
+            ),
           ),
         ),
       ),
@@ -102,7 +113,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
   // 앱바 게시 버튼
   Widget _addBtn() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+      padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
       child: GestureDetector(
         child: Text(
           "게시",
@@ -174,12 +185,12 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   // 썸네일 이미지
   Widget _thumbPhoto() {
-    return Expanded(
-      flex: 2,
+    double width = MediaQuery.of(context).size.width;
+    return Container(
       child: _pickedImages.isNotEmpty
           ? Container(
               margin: const EdgeInsets.fromLTRB(0, 10, 0, 5.0),
-              height: 1,
+              height: width / 1.5,
               width: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -218,7 +229,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
             )
           : Container(
               margin: const EdgeInsets.fromLTRB(0, 10, 0, 5.0),
-              height: 1,
+              height: width / 1.5,
               width: double.infinity,
               child: InkWell(
                 child: ClipRRect(
@@ -258,8 +269,9 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   // 불러온 이미지 gridView
   Widget _gridPhoto() {
-    var size = MediaQuery.of(context).size;
-    return Expanded(
+    double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      height: width / 3,
       child: _pickedImages.isNotEmpty
           ? GridView.count(
               crossAxisCount: 4,
@@ -279,139 +291,138 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   // 인풋 작성 폼 리스트 위젯
   Widget _FormWidget() {
-    return Expanded(
-      flex: 2,
-      child: Form(
-        key: formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
+    double width = MediaQuery.of(context).size.width;
+
+    return Column(
+      children: [
+        Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: renderTextFormField(
-                      label: '제목',
-                      hintText: "음식점이름, 커스텀",
-                      controller: titleTextController,
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                    decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(10)),
-
-                    // dropdown below..
-                    child: DropdownButton<String>(
-                      value: category,
-                      onChanged: (dynamic value) {
-                        setState(() {
-                          category = value;
-                        });
-                      },
-                      items: dropdownList
-                          .map<DropdownMenuItem<String>>(
-                              (String value) => DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  ))
-                          .toList(),
-
-                      // add extra sugar..
-                      icon: const Icon(Icons.arrow_drop_down),
-                      iconSize: 42,
-                      underline: const SizedBox(),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
               renderTextFormField(
-                hintText: "지번, 도로명, 건물명으로 검색",
-                controller: locationTextController,
-                readOnly: true,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: const SelectMapPositionScreen()),
-                  ).then((value) {
-                    print("Navigator.push!!!");
-                    print(value);
-                    _updateSearchAddress(
-                        value["address"], value["lat"], value["lng"]);
-                  });
-                },
+                label: '제목',
+                hintText: "음식점이름, 커스텀",
+                controller: titleTextController,
               ),
-              // 위치 검색 위젯
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 14, 8, 8),
-                child: InkWell(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.gps_fixed_sharp,
-                            size: 15,
-                            color: Colors.black,
-                          ),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            '주소 검색으로 위치 설정',
-                            style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.normal,
-                                fontSize: 15),
-                          ),
-                        ],
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 15,
-                        color: Colors.grey[600],
-                      ),
-                    ],
-                  ),
-                  onTap: () async {
-                    Kpostal? result = await Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: KpostalView(
-                          callback: (Kpostal result) {},
-                          useLocalServer: false,
-                          kakaoKey: '2313aec57928c855c20fa695fe0480d2',
-                        ),
-                      ),
-                    );
-                    print("!!! $result");
+            ]
+            //     Container(
+            //       height: width,
+            //       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            //       decoration: BoxDecoration(
+            //           color: Colors.transparent,
+            //           borderRadius: BorderRadius.circular(10)),
 
-                    if (result != null) {
-                      _updateSearchAddress(
-                        result.address,
-                        result.latitude,
-                        result.longitude,
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            //       // dropdown below..
+            //       child: DropdownButton<String>(
+            //         value: category,
+            //         onChanged: (dynamic value) {
+            //           setState(() {
+            //             category = value;
+            //           });
+            //         },
+            //         items: dropdownList
+            //             .map<DropdownMenuItem<String>>(
+            //                 (String value) => DropdownMenuItem<String>(
+            //                       value: value,
+            //                       child: Text(value),
+            //                     ))
+            //             .toList(),
+
+            //         // add extra sugar..
+            //         icon: const Icon(Icons.arrow_drop_down),
+            //         iconSize: 42,
+            //         underline: const SizedBox(),
+            //       ),
+            //     )
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 15,
+            // ),
+            // renderTextFormField(
+            //   hintText: "지번, 도로명, 건물명으로 검색",
+            //   controller: locationTextController,
+            //   readOnly: true,
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       PageTransition(
+            //           type: PageTransitionType.bottomToTop,
+            //           child: const SelectMapPositionScreen()),
+            //     ).then((value) {
+            //       print("Navigator.push!!!");
+            //       print(value);
+            //       _updateSearchAddress(
+            //           value["address"], value["lat"], value["lng"]);
+            //     });
+            //   },
+            // ),
+            // 위치 검색 위젯
+
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(8, 14, 8, 8),
+            //   child: InkWell(
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Row(
+            //           mainAxisAlignment: MainAxisAlignment.start,
+            //           children: [
+            //             const Icon(
+            //               Icons.gps_fixed_sharp,
+            //               size: 15,
+            //               color: Colors.black,
+            //             ),
+            //             const SizedBox(
+            //               width: 6,
+            //             ),
+            //             Text(
+            //               '주소 검색으로 위치 설정',
+            //               style: TextStyle(
+            //                   color: Colors.grey[600],
+            //                   fontWeight: FontWeight.normal,
+            //                   fontSize: 15),
+            //             ),
+            //           ],
+            //         ),
+            //         Icon(
+            //           Icons.arrow_forward_ios_rounded,
+            //           size: 15,
+            //           color: Colors.grey[600],
+            //         ),
+            //       ],
+            //     ),
+            //     onTap: () async {
+            //       Kpostal? result = await Navigator.push(
+            //         context,
+            //         PageTransition(
+            //           type: PageTransitionType.bottomToTop,
+            //           child: KpostalView(
+            //             callback: (Kpostal result) {},
+            //             useLocalServer: false,
+            //             kakaoKey: '2313aec57928c855c20fa695fe0480d2',
+            //           ),
+            //         ),
+            //       );
+            //       print("!!! $result");
+
+            //       if (result != null) {
+            //         _updateSearchAddress(
+            //           result.address,
+            //           result.latitude,
+            //           result.longitude,
+            //         );
+            //       }
+            //     },
+            //   ),
+            // ),
+            // renderTextFormField(
+            //   label: '제목',
+            //   hintText: "음식점이름, 커스텀",
+            //   controller: titleTextController,
+            // ),
+            )
+      ],
     );
   }
 

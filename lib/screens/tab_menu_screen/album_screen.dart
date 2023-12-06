@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/widgets/main_appbar.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../service/endpoints.dart';
 
@@ -19,40 +20,49 @@ class _AlbumScreenState extends State<AlbumScreen> {
 // 게시글 카드
   Widget postCard(title, path) {
     print("${Endpoints.hostUrl}/$path");
-    return Container(
-      height: 180,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: CachedNetworkImageProvider(
-            "${Endpoints.hostUrl}/$path",
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          PageTransition(
+              type: PageTransitionType.bottomToTop, child: const SizedBox()),
+        );
+      },
+      child: Container(
+        height: 180,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: CachedNetworkImageProvider(
+              "${Endpoints.hostUrl}/$path",
+            ),
+            fit: BoxFit.cover,
           ),
-          fit: BoxFit.cover,
+          color: Colors.grey,
         ),
-        color: Colors.grey,
-      ),
-      child: ClipRRect(
-        // make sure we apply clip it properly
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-          child: Container(
-            alignment: Alignment.center,
-            color: Colors.grey.withOpacity(0.2),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    color: Colors.black, // Choose the color of the shadow
-                    blurRadius:
-                        5.0, // Adjust the blur radius for the shadow effect
-                    offset: Offset(1.0,
-                        1.0), // Set the horizontal and vertical offset for the shadow
-                  ),
-                ],
+        child: ClipRRect(
+          // make sure we apply clip it properly
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.2),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black, // Choose the color of the shadow
+                      blurRadius:
+                          5.0, // Adjust the blur radius for the shadow effect
+                      offset: Offset(1.0,
+                          1.0), // Set the horizontal and vertical offset for the shadow
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
