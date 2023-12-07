@@ -33,6 +33,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
   final titleTextController = TextEditingController();
   final locationTextController = TextEditingController();
   final memoTextController = TextEditingController();
+  // 스토리 작성 날짜
+  final storyDateController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
@@ -48,6 +50,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   NLatLng? currentLatLng;
   final List<XFile> _pickedImages = [];
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -59,6 +62,9 @@ class _AddimageScreenState extends State<AddimageScreen> {
       });
     });
     getMultiImage();
+    setState(() {
+      storyDateController.text = "${DateTime.now().toLocal()}".split(' ')[0];
+    });
   }
 
   @override
@@ -76,6 +82,23 @@ class _AddimageScreenState extends State<AddimageScreen> {
     setState(() {
       _pickedImages.addAll(images);
     });
+  }
+
+  // 스토리 해당 날짜
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1980),
+      lastDate: DateTime(2050),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        controller.text = "${picked.toLocal()}".split(' ')[0];
+      });
+    }
   }
 
   @override
@@ -428,6 +451,16 @@ class _AddimageScreenState extends State<AddimageScreen> {
             controller: memoTextController,
           ),
           const SizedBox(height: 12),
+          renderTextFormField(
+            label: '스토리 날짜',
+            hintText: "선택하지 않으면 오늘날짜로 자동 저장됩니다.",
+            controller: storyDateController,
+            readOnly: true,
+            onTap: () {
+              _selectDate(context, storyDateController);
+            },
+          ),
+          const SizedBox(height: 24),
         ],
       ),
     );
