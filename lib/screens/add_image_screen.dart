@@ -32,6 +32,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   final titleTextController = TextEditingController();
   final locationTextController = TextEditingController();
+  final memoTextController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
@@ -79,6 +80,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
     return LoadingOverlay(
       isLoading: isLoading,
       child: Scaffold(
@@ -96,16 +99,16 @@ class _AddimageScreenState extends State<AddimageScreen> {
           actions: [_addBtn()],
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _thumbPhoto(),
-                _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
-                // _FormWidget(),
-              ],
-            ),
+            child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // 고른 사진 중 첫번째 사진 썸네일
+              _thumbPhoto(),
+              _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
+              _FormWidget()
+            ],
           ),
-        ),
+        )),
       ),
     );
   }
@@ -293,136 +296,140 @@ class _AddimageScreenState extends State<AddimageScreen> {
   Widget _FormWidget() {
     double width = MediaQuery.of(context).size.width;
 
-    return Column(
-      children: [
-        Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              renderTextFormField(
-                label: '제목',
-                hintText: "음식점이름, 커스텀",
-                controller: titleTextController,
+              SizedBox(
+                width: width * 0.65,
+                child: renderTextFormField(
+                  label: '제목',
+                  hintText: "음식점이름, 커스텀",
+                  controller: titleTextController,
+                ),
               ),
-            ]
-            //     Container(
-            //       height: width,
-            //       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-            //       decoration: BoxDecoration(
-            //           color: Colors.transparent,
-            //           borderRadius: BorderRadius.circular(10)),
+              Container(
+                width: width * 0.3 - 10,
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(10)),
 
-            //       // dropdown below..
-            //       child: DropdownButton<String>(
-            //         value: category,
-            //         onChanged: (dynamic value) {
-            //           setState(() {
-            //             category = value;
-            //           });
-            //         },
-            //         items: dropdownList
-            //             .map<DropdownMenuItem<String>>(
-            //                 (String value) => DropdownMenuItem<String>(
-            //                       value: value,
-            //                       child: Text(value),
-            //                     ))
-            //             .toList(),
+                // dropdown below..
+                child: DropdownButton<String>(
+                  value: category,
+                  onChanged: (dynamic value) {
+                    setState(() {
+                      category = value;
+                    });
+                  },
+                  items: dropdownList
+                      .map<DropdownMenuItem<String>>(
+                          (String value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              ))
+                      .toList(),
 
-            //         // add extra sugar..
-            //         icon: const Icon(Icons.arrow_drop_down),
-            //         iconSize: 42,
-            //         underline: const SizedBox(),
-            //       ),
-            //     )
-            //   ],
-            // ),
-            // const SizedBox(
-            //   height: 15,
-            // ),
-            // renderTextFormField(
-            //   hintText: "지번, 도로명, 건물명으로 검색",
-            //   controller: locationTextController,
-            //   readOnly: true,
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       PageTransition(
-            //           type: PageTransitionType.bottomToTop,
-            //           child: const SelectMapPositionScreen()),
-            //     ).then((value) {
-            //       print("Navigator.push!!!");
-            //       print(value);
-            //       _updateSearchAddress(
-            //           value["address"], value["lat"], value["lng"]);
-            //     });
-            //   },
-            // ),
-            // 위치 검색 위젯
+                  // add extra sugar..
+                  icon: const Icon(Icons.arrow_drop_down),
+                  iconSize: 42,
+                  underline: const SizedBox(),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          renderTextFormField(
+            hintText: "지번, 도로명, 건물명으로 검색",
+            controller: locationTextController,
+            readOnly: true,
+            onTap: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                    type: PageTransitionType.bottomToTop,
+                    child: const SelectMapPositionScreen()),
+              ).then((value) {
+                print(value);
+                if (value == null) {
+                } else {
+                  _updateSearchAddress(
+                      value["address"], value["lat"], value["lng"]);
+                }
+              });
+            },
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+            child: InkWell(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.gps_fixed_sharp,
+                        size: 15,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                      Text(
+                        '주소 검색으로 위치 설정',
+                        style: TextStyle(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.normal,
+                            fontSize: 15),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 15,
+                    color: Colors.grey[600],
+                  ),
+                ],
+              ),
+              onTap: () async {
+                Kpostal? result = await Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.bottomToTop,
+                    child: KpostalView(
+                      callback: (Kpostal result) {},
+                      useLocalServer: false,
+                      kakaoKey: '2313aec57928c855c20fa695fe0480d2',
+                    ),
+                  ),
+                );
+                print("!!! $result");
 
-            // Padding(
-            //   padding: const EdgeInsets.fromLTRB(8, 14, 8, 8),
-            //   child: InkWell(
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: [
-            //         Row(
-            //           mainAxisAlignment: MainAxisAlignment.start,
-            //           children: [
-            //             const Icon(
-            //               Icons.gps_fixed_sharp,
-            //               size: 15,
-            //               color: Colors.black,
-            //             ),
-            //             const SizedBox(
-            //               width: 6,
-            //             ),
-            //             Text(
-            //               '주소 검색으로 위치 설정',
-            //               style: TextStyle(
-            //                   color: Colors.grey[600],
-            //                   fontWeight: FontWeight.normal,
-            //                   fontSize: 15),
-            //             ),
-            //           ],
-            //         ),
-            //         Icon(
-            //           Icons.arrow_forward_ios_rounded,
-            //           size: 15,
-            //           color: Colors.grey[600],
-            //         ),
-            //       ],
-            //     ),
-            //     onTap: () async {
-            //       Kpostal? result = await Navigator.push(
-            //         context,
-            //         PageTransition(
-            //           type: PageTransitionType.bottomToTop,
-            //           child: KpostalView(
-            //             callback: (Kpostal result) {},
-            //             useLocalServer: false,
-            //             kakaoKey: '2313aec57928c855c20fa695fe0480d2',
-            //           ),
-            //         ),
-            //       );
-            //       print("!!! $result");
-
-            //       if (result != null) {
-            //         _updateSearchAddress(
-            //           result.address,
-            //           result.latitude,
-            //           result.longitude,
-            //         );
-            //       }
-            //     },
-            //   ),
-            // ),
-            // renderTextFormField(
-            //   label: '제목',
-            //   hintText: "음식점이름, 커스텀",
-            //   controller: titleTextController,
-            // ),
-            )
-      ],
+                if (result != null) {
+                  _updateSearchAddress(
+                    result.address,
+                    result.latitude,
+                    result.longitude,
+                  );
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+          renderTextFormField(
+            label: '메모',
+            hintText: "메모",
+            multiLine: true,
+            controller: memoTextController,
+          ),
+          const SizedBox(height: 12),
+        ],
+      ),
     );
   }
 
@@ -439,6 +446,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
       {final String label = "",
       final controller,
       final focusNode,
+      final multiLine = false,
       required hintText,
       readOnly = false,
       Function()? onTap}) {
@@ -462,6 +470,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
           focusNode: focusNode,
           readOnly: readOnly,
           onTap: onTap,
+          maxLines: multiLine ? null : 1,
           decoration: InputDecoration(
               fillColor: Colors.transparent,
               filled: true,
