@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/album.dart';
+import 'package:haedal/screens/story_detail_screen.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 import 'package:page_transition/page_transition.dart';
@@ -18,14 +20,15 @@ class AlbumScreen extends StatefulWidget {
 
 class _AlbumScreenState extends State<AlbumScreen> {
 // 게시글 카드
-  Widget postCard(title, path) {
-    print("${Endpoints.hostUrl}/$path");
+  Widget postCard(AlbumBoard? data) {
+    print("data'!!!!!!!!!!!! : $data");
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           PageTransition(
-              type: PageTransitionType.bottomToTop, child: const SizedBox()),
+              type: PageTransitionType.rightToLeft,
+              child: StoryDetailScreen(albumBoard: data)),
         );
       },
       child: Container(
@@ -34,7 +37,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: CachedNetworkImageProvider(
-              "${Endpoints.hostUrl}/$path",
+              "${Endpoints.hostUrl}/${data?.files?.first.filename}",
             ),
             fit: BoxFit.cover,
           ),
@@ -48,7 +51,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
               alignment: Alignment.center,
               color: Colors.grey.withOpacity(0.2),
               child: Text(
-                title,
+                data!.title.toString(),
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -71,6 +74,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
     );
   }
 
+  // 메인 빌드!!
   @override
   Widget build(BuildContext context) {
     return GetBuilder<InfiniteScrollController>(
@@ -87,9 +91,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     itemBuilder: (_, index) {
                       print(controller.hasMore.value);
                       if (index < controller.data.length) {
-                        var data = controller.data[index];
-                        return postCard(
-                            data["title"], data["files"][0]["filename"]);
+                        AlbumBoard? data =
+                            AlbumBoard.fromJson(controller.data[index]);
+                        return postCard(data);
                       }
                       if (controller.hasMore.value ||
                           controller.isLoading.value) {
