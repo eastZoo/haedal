@@ -86,6 +86,8 @@ class AlbumBoard {
   final String? address;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? storyDate;
+
   final User? user;
   final List<FileData>? files;
 
@@ -101,6 +103,7 @@ class AlbumBoard {
     this.address,
     this.createdAt,
     this.updatedAt,
+    this.storyDate,
     this.user,
     this.files,
   });
@@ -119,6 +122,7 @@ class AlbumBoard {
       address: json['address'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
+      storyDate: DateTime.parse(json['storyDate']),
       user: User.fromJson(json['user']),
       files: (json['files'] as List<dynamic>)
           .map((file) => FileData.fromJson(file))

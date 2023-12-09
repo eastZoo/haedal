@@ -520,29 +520,30 @@ class _AddimageScreenState extends State<AddimageScreen> {
   // gridView 이미지 박스 아이템 컴포넌트
   Widget _gridPhotoItem(XFile e, int idx) {
     return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.file(
-                File(e.path),
-                fit: BoxFit.cover,
-              ),
+      padding: const EdgeInsets.all(2.0),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.file(
+              File(e.path),
+              fit: BoxFit.cover,
             ),
-            Positioned(
-              top: 5,
-              right: 5,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _pickedImages.removeAt(idx);
-                  });
-                },
-                child: Icon(Icons.cancel_rounded,
-                    color: AppColors().semiGrey, size: 19),
-              ),
-            )
-          ],
-        ));
+          ),
+          Positioned(
+            top: 5,
+            right: 5,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _pickedImages.removeAt(idx);
+                });
+              },
+              child: Icon(Icons.cancel_rounded,
+                  color: AppColors().semiGrey, size: 19),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

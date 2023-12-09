@@ -8,6 +8,7 @@ import 'package:haedal/screens/story_detail_screen.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:intl/intl.dart';
 
 import '../../service/endpoints.dart';
 
@@ -21,7 +22,10 @@ class AlbumScreen extends StatefulWidget {
 class _AlbumScreenState extends State<AlbumScreen> {
 // 게시글 카드
   Widget postCard(AlbumBoard? data) {
-    print("data'!!!!!!!!!!!! : $data");
+    DateTime dateTime = DateTime.parse(data!.storyDate.toString());
+
+    // Format the date
+    String formattedDate = DateFormat.yMMMMd("ko_KR").add_E().format(dateTime);
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -37,7 +41,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: CachedNetworkImageProvider(
-              "${Endpoints.hostUrl}/${data?.files?.first.filename}",
+              "${Endpoints.hostUrl}/${data.files?.first.filename}",
             ),
             fit: BoxFit.cover,
           ),
@@ -50,22 +54,44 @@ class _AlbumScreenState extends State<AlbumScreen> {
             child: Container(
               alignment: Alignment.center,
               color: Colors.grey.withOpacity(0.2),
-              child: Text(
-                data!.title.toString(),
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black, // Choose the color of the shadow
-                      blurRadius:
-                          5.0, // Adjust the blur radius for the shadow effect
-                      offset: Offset(1.0,
-                          1.0), // Set the horizontal and vertical offset for the shadow
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    formattedDate,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: Color.fromARGB(214, 255, 255, 255),
+                      shadows: [
+                        Shadow(
+                          color: Colors.black, // Choose the color of the shadow
+                          blurRadius:
+                              5.0, // Adjust the blur radius for the shadow effect
+                          offset: Offset(1.0,
+                              1.0), // Set the horizontal and vertical offset for the shadow
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Text(
+                    data.title.toString(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black, // Choose the color of the shadow
+                          blurRadius:
+                              5.0, // Adjust the blur radius for the shadow effect
+                          offset: Offset(1.0,
+                              1.0), // Set the horizontal and vertical offset for the shadow
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
