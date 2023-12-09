@@ -32,7 +32,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   final titleTextController = TextEditingController();
   final locationTextController = TextEditingController();
-  final memoTextController = TextEditingController();
+  final contentTextController = TextEditingController();
   // 스토리 작성 날짜
   final storyDateController = TextEditingController();
 
@@ -168,6 +168,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
             });
             return CustomToast().signUpToast(errorMsg);
           }
+          // 메모 유효성 추가 ?
+          // 날짜 유효성 추가 ?
 
           // 데이터 통신 전 로딩 상태 변경
           setState(() {
@@ -192,6 +194,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
             "address": locationTextController.text,
             "lat": currentLatLng?.latitude,
             "lng": currentLatLng?.longitude,
+            "content": contentTextController.text,
+            "storyDate": storyDateController.text
           };
 
           requestData["postData"] = json.encode(dataSource);
@@ -376,7 +380,6 @@ class _AddimageScreenState extends State<AddimageScreen> {
                     type: PageTransitionType.bottomToTop,
                     child: const SelectMapPositionScreen()),
               ).then((value) {
-                print(value);
                 if (value == null) {
                 } else {
                   _updateSearchAddress(
@@ -448,7 +451,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
             label: '메모',
             hintText: "메모",
             multiLine: true,
-            controller: memoTextController,
+            controller: contentTextController,
           ),
           const SizedBox(height: 12),
           renderTextFormField(

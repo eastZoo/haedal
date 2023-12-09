@@ -79,7 +79,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                           : _scrollController.initialScrollOffset;
 
                       // Calculate the title position based on the scroll offset
-                      double titlePosition = 100.0 - (offset - 180);
+                      double titlePosition = 100.0 - (offset - 200);
 
                       return Container(
                         padding: const EdgeInsets.only(bottom: 16.0),
@@ -113,27 +113,6 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
         ),
       ),
     );
-    // return Scaffold(
-    //   extendBodyBehindAppBar: true,
-    //   appBar: AppBar(
-    //     backgroundColor: Colors.transparent,
-    //     centerTitle: true,
-    //     elevation: 0,
-    //     leading: const BackButton(
-    //       color: Colors.white,
-    //     ),
-    //     actions: [_addBtn()],
-    //   ),
-    //   body: SingleChildScrollView(
-    //     child: Column(
-    //       children: [
-    //         _thumbPhoto(),
-    //         _thumbPhoto(),
-    //         _thumbPhoto(),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   Widget _addBtn(double position) {
