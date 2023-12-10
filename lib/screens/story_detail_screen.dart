@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:haedal/models/album.dart';
+import 'package:haedal/screens/photo_view_screen.dart';
 import 'package:haedal/styles/colors.dart';
 import '../../service/endpoints.dart';
 import 'package:haedal/styles/colors.dart';
@@ -28,14 +29,11 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    // Add a listener to the ScrollController
     _scrollController.addListener(_scrollListener);
   }
 
-  // Dispose of the ScrollController when the widget is disposed
   @override
   void dispose() {
     _scrollController.dispose();
@@ -49,13 +47,10 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
     setState(() {
       position = scrollPosition;
     });
-    print('Scroll Position: $scrollPosition');
   }
 
   @override
   Widget build(BuildContext context) {
-    print("albunm!!!! : $albumBoard");
-
     return Scaffold(
       body: NestedScrollView(
           controller: _scrollController,
@@ -116,14 +111,24 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
             padding: const EdgeInsets.only(top: 5),
             itemCount: albumBoard.files?.length,
             itemBuilder: (BuildContext context, int index) {
-              return postCard(albumBoard.files?[index]);
+              // content 내용이 0이 아니고 index가 처음일때
+              if (albumBoard.content.length != 0 && index == 0) {
+                return Column(
+                  children: [
+                    postCard(0, index, type: "text"),
+                    postCard(albumBoard.files?[index], index),
+                  ],
+                );
+              } else {
+                return postCard(albumBoard.files?[index], index);
+              }
             },
           ),
         ));
   }
 
   // 카드 리스트
-  Widget postCard(data) {
+  Widget postCard(data, index, {String type = "image"}) {
     print("data'!!!!!!!!!!!! : $data");
     return InkWell(
       onTap: () {},
@@ -161,22 +166,46 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
               ],
             ),
             ///////////////////////////////////////////////////////////////////////////
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Container(
-                height: 250,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      "${Endpoints.hostUrl}/${data?.filename}",
+            type == "image"
+                ? SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) {
+                              return PhotoViewScreen(
+                                  albumBoard: albumBoard, currentIndex: index);
+                            },
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 250,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                              "${Endpoints.hostUrl}/${data?.filename}",
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
-                    fit: BoxFit.cover,
+                  )
+                : SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Text('${albumBoard.content}'),
+                      ),
+                    ),
                   ),
-                  color: Colors.grey,
-                ),
-              ),
-            ),
             //////////////////////////////////////////////////////////////////////////
             Padding(
               padding: const EdgeInsets.all(8.0),
