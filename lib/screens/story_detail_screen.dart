@@ -58,59 +58,68 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
 
     return Scaffold(
       body: NestedScrollView(
-        controller: _scrollController,
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            automaticallyImplyLeading: true,
-            expandedHeight: 200,
-            flexibleSpace: FlexibleSpaceBar(
-              background: _thumbPhoto(),
-            ),
-            actions: [_addBtn(position)],
-            leading: BackButton(
-              color: position < 150 ? Colors.white : AppColors().mainColor,
-            ),
-            title: position < 150
-                ? null
-                : AnimatedBuilder(
-                    animation: _scrollController,
-                    builder: (BuildContext context, Widget? child) {
-                      double offset = _scrollController.hasClients
-                          ? _scrollController.offset
-                          : _scrollController.initialScrollOffset;
-
-                      // Calculate the title position based on the scroll offset
-                      double titlePosition = 100.0 - (offset - 160);
-
-                      return Container(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Transform.translate(
-                          offset: Offset(0, titlePosition),
-                          child: Text(
-                            'Scrolling Title',
-                            style: TextStyle(
-                                fontSize: 17, color: AppColors().mainColor),
-                          ),
-                        ),
-                      );
-                    },
+          controller: _scrollController,
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverAppBar(
+                  automaticallyImplyLeading: true,
+                  expandedHeight: 200,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: _thumbPhoto(),
                   ),
-            centerTitle: true,
-            pinned: true,
-          ),
-        ],
-        body: Container(
+                  actions: [_addBtn(position)],
+                  leading: BackButton(
+                    color:
+                        position < 150 ? Colors.white : AppColors().mainColor,
+                  ),
+                  title: position < 150
+                      ? null
+                      : AnimatedBuilder(
+                          animation: _scrollController,
+                          builder: (BuildContext context, Widget? child) {
+                            double offset = _scrollController.hasClients
+                                ? _scrollController.offset
+                                : _scrollController.initialScrollOffset;
+
+                            // Calculate the title position based on the scroll offset
+                            double titlePosition = 100.0 - (offset - 160);
+
+                            return Container(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Transform.translate(
+                                offset: Offset(0, titlePosition),
+                                child: Text(
+                                  'Scrolling Title',
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      color: AppColors().mainColor),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                  centerTitle: true,
+                  pinned: true,
+                ),
+              ],
+          body: _getDrawerItemWidget()),
+    );
+  }
+
+  Widget _getDrawerItemWidget() {
+    return MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        child: Container(
           color: const Color.fromARGB(255, 234, 234, 234),
           child: ListView.builder(
+            padding: const EdgeInsets.only(top: 5),
             itemCount: albumBoard.files?.length,
             itemBuilder: (BuildContext context, int index) {
               return postCard(albumBoard.files?[index]);
             },
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   // 카드 리스트
