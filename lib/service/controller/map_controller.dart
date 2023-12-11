@@ -3,6 +3,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/album.dart';
 import 'package:haedal/models/user_location.dart';
 import 'package:haedal/service/provider/map_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,7 +19,7 @@ class MapController extends GetxController {
 
   Position? currentLatLng;
 
-  UserLocation? selectedMarker;
+  AlbumBoard? selectedMarker;
 
   // 마커 아이콘 클릭헀을때 마커 정보 패널 컨트롤러
   final PanelController panelController = PanelController();
@@ -26,7 +27,7 @@ class MapController extends GetxController {
   late Stream<CompassEvent>? compassStream;
   late Stream<Position> geolocatorStream;
 
-  var locations = <UserLocation>[].obs;
+  var locations = <AlbumBoard>[].obs;
 
   @override
   void onInit() async {
@@ -95,7 +96,7 @@ class MapController extends GetxController {
   }
 
   // 음식점 marker
-  NMarker getRestaurantLocationMarker(UserLocation location) {
+  NMarker getRestaurantLocationMarker(AlbumBoard location) {
     final marker = NMarker(
       size: const Size(45, 55),
       id: "maker_${location.id}",
@@ -111,7 +112,7 @@ class MapController extends GetxController {
   }
 
   //숙소 marker
-  NMarker getAccommodationLocationMarker(UserLocation location) {
+  NMarker getAccommodationLocationMarker(AlbumBoard location) {
     final marker = NMarker(
       size: const Size(45, 55),
       id: "maker_${location.id}",
@@ -127,7 +128,7 @@ class MapController extends GetxController {
   }
 
   //카페 marker
-  NMarker getCafeLocationMarker(UserLocation location) {
+  NMarker getCafeLocationMarker(AlbumBoard location) {
     final marker = NMarker(
       size: const Size(45, 55),
       id: "maker_${location.id}",
@@ -142,7 +143,7 @@ class MapController extends GetxController {
   }
 
 // UserLocaion marker를 클릭 했을때
-  void onSelectedMarker(UserLocation location) {
+  void onSelectedMarker(AlbumBoard location) {
     panelController.close().then((value) async {
       var marker = getRestaurantLocationMarker(location);
       marker.setIcon(const NOverlayImage.fromAssetImage(
@@ -166,6 +167,7 @@ class MapController extends GetxController {
 
       mapController?.addOverlay(marker);
       selectedMarker = location;
+      print(location);
       update();
       panelController.open();
     });
@@ -214,9 +216,12 @@ class MapController extends GetxController {
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
 
+          print("lisr!!!!!! $list");
           locations.assignAll(list
-              .map<UserLocation>((item) => UserLocation.fromJson(item))
+              .map<AlbumBoard>((item) => AlbumBoard.fromJson(item))
               .toList());
+
+          print("location@@ : $locations");
         }
       } else {
         return res["msg"];
@@ -243,6 +248,7 @@ class MapController extends GetxController {
       Set<NMarker> markers = {};
       if (mapController != null) {
         for (var location in locations) {
+          print("@!@! : ${location.files}");
           var marker = getCafeLocationMarker(location);
           if (location.category == "음식점") {
             marker = getRestaurantLocationMarker(location);
@@ -267,6 +273,7 @@ class MapController extends GetxController {
   }
 
   updateSelectedMarker(marker) {
+    print(marker);
     selectedMarker = marker;
     update();
   }

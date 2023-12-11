@@ -93,10 +93,7 @@ class _MapScreenState extends State<MapScreen> {
               return const LoadingOverlay(
                 child: SafeArea(
                   child: Stack(
-                    children: [
-                      CustomNaverMap(),
-                      MissionBottonSheet(),
-                    ],
+                    children: [CustomNaverMap(), MissionBottonSheet()],
                   ),
                 ),
               );

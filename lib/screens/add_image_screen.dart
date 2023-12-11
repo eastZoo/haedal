@@ -63,7 +63,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
     });
     getMultiImage();
     setState(() {
-      storyDateController.text = "${DateTime.now().toLocal()}".split(' ')[0];
+      storyDateController.text = "${DateTime.now().toLocal()}".split(".")[0];
     });
   }
 
@@ -96,7 +96,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        controller.text = "${picked.toLocal()}".split(' ')[0];
+        controller.text = "${picked.toLocal()}";
       });
     }
   }
@@ -455,7 +455,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
           ),
           const SizedBox(height: 12),
           renderTextFormField(
-            label: '스토리 날짜',
+            label: '스토리 날짜 (미선택 시 현재 날짜 자동 저장)',
             hintText: "선택하지 않으면 오늘날짜로 자동 저장됩니다.",
             controller: storyDateController,
             readOnly: true,

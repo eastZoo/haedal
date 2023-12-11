@@ -72,6 +72,13 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                       : AnimatedBuilder(
                           animation: _scrollController,
                           builder: (BuildContext context, Widget? child) {
+                            // 앱바 날짜 타이틀
+                            DateTime dateTime =
+                                DateTime.parse(albumBoard.storyDate.toString());
+                            String formattedDate = DateFormat.yMMMMd("ko_KR")
+                                .add_E()
+                                .format(dateTime);
+
                             double offset = _scrollController.hasClients
                                 ? _scrollController.offset
                                 : _scrollController.initialScrollOffset;
@@ -84,7 +91,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                               child: Transform.translate(
                                 offset: Offset(0, titlePosition),
                                 child: Text(
-                                  'Scrolling Title',
+                                  formattedDate,
                                   style: TextStyle(
                                       fontSize: 17,
                                       color: AppColors().mainColor),
@@ -129,7 +136,6 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
 
   // 카드 리스트
   Widget postCard(data, index, {String type = "image"}) {
-    print("data'!!!!!!!!!!!! : $data");
     return InkWell(
       onTap: () {},
       child: Container(

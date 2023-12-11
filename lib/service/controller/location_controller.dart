@@ -15,7 +15,7 @@ class LocationController extends GetxController {
       return gusi;
     }
     if (res["data"]["status"]["code"] == 3) {
-      String msg = "별명을 입력해주세요.";
+      String msg = "주소데이터를 찾을 수 없는 위치.";
       return msg;
     }
   }
