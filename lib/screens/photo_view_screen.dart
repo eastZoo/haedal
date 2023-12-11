@@ -4,9 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:haedal/models/album.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import '../../service/endpoints.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class PhotoViewScreen extends StatefulWidget {
   final AlbumBoard? albumBoard;
@@ -27,6 +29,8 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
 
   late PageController _controller;
 
+  String msg = "";
+
   @override
   void initState() {
     _controller = PageController(initialPage: currentIndex);
@@ -40,20 +44,28 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
   }
 
   void downloadImage(imageUrl) async {
+    print("!!!!!!!!!!!!!!!!!!!!!!!!! $imageUrl");
     setState(() {
       _isDownloading = true;
     });
 
-    // var response = await Dio()
-    //     .get(imageUrl, options: Options(responseType: ResponseType.bytes));
+    var response = await Dio()
+        .get(imageUrl, options: Options(responseType: ResponseType.bytes));
 
-    // final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+    final result =
+        await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
 
-    // if (result["isSuccess"]) {
-    //   print("다운로드가 완료되었습니다.");
-    // } else {
-    //   print("다운로드에 오류가 발생했습니다.");
-    // }
+    if (result["isSuccess"]) {
+      setState(() {
+        msg = "다운로드가 완료되었습니다.";
+      });
+      CustomToast().signUpToast(msg, type: "success");
+    } else {
+      setState(() {
+        msg = "다운로드에 오류가 발생했습니다.";
+      });
+      CustomToast().signUpToast(msg);
+    }
 
     setState(() {
       _isDownloading = false;
@@ -139,7 +151,7 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                     InkWell(
                       onTap: () {
                         downloadImage(
-                            albumBoard?.files?[currentIndex].filename);
+                            "${Endpoints.hostUrl}/${albumBoard?.files?[currentIndex].filename}");
                       },
                       child: const Icon(
                         Icons.more_vert,

@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
+import 'package:haedal/widgets/mission_bottom_sheet.dart';
 import 'package:haedal/widgets/naver_map.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -92,7 +93,10 @@ class _MapScreenState extends State<MapScreen> {
               return const LoadingOverlay(
                 child: SafeArea(
                   child: Stack(
-                    children: [CustomNaverMap()],
+                    children: [
+                      CustomNaverMap(),
+                      MissionBottonSheet(),
+                    ],
                   ),
                 ),
               );

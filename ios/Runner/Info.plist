@@ -79,10 +79,14 @@
     <key>NSUserTrackingUsageDescription</key>
     <string>appTrackingTransparency</string>
 
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Our application needs Permission to save photos</string>
+
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+
 </dict>
 </plist>

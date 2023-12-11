@@ -501,18 +501,35 @@ class _AddimageScreenState extends State<AddimageScreen> {
                 : const SizedBox(),
           ],
         ),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          readOnly: readOnly,
-          onTap: onTap,
-          maxLines: multiLine ? null : 1,
-          decoration: InputDecoration(
-              fillColor: Colors.transparent,
-              filled: true,
-              hintText: hintText,
-              hintStyle: TextStyle(color: Colors.grey[500])),
-        )
+        multiLine
+            ? Container(
+                margin: const EdgeInsets.all(12),
+                height: 5 * 24.0,
+                child: TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  readOnly: readOnly,
+                  onTap: onTap,
+                  maxLines: multiLine ? 5 : 1,
+                  decoration: InputDecoration(
+                      fillColor: Colors.transparent,
+                      filled: true,
+                      hintText: hintText,
+                      hintStyle: TextStyle(color: Colors.grey[500])),
+                ),
+              )
+            : TextField(
+                controller: controller,
+                focusNode: focusNode,
+                readOnly: readOnly,
+                onTap: onTap,
+                maxLines: multiLine ? null : 1,
+                decoration: InputDecoration(
+                    fillColor: Colors.transparent,
+                    filled: true,
+                    hintText: hintText,
+                    hintStyle: TextStyle(color: Colors.grey[500])),
+              )
       ],
     );
   }
