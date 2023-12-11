@@ -265,4 +265,9 @@ class MapController extends GetxController {
       print(e);
     }
   }
+
+  updateSelectedMarker(marker) {
+    selectedMarker = marker;
+    update();
+  }
 }
