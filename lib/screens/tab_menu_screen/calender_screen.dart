@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/widgets/calendar.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 
 class CalenderScreen extends StatefulWidget {
@@ -13,9 +14,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Column(
-        children: [
-          MainAppbar(title: '일정'),
-        ],
+        children: [MainAppbar(title: '일정'), Calendar()],
       ),
     );
   }
