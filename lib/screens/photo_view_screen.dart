@@ -106,7 +106,7 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
             bottom: 20, // Set the distance from the top
             child: Container(
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              height: 40,
+              height: 60,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -121,7 +121,7 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                     const InkWell(
                       child: Icon(
                         Icons.near_me,
-                        color: Colors.white,
+                        color: Colors.grey,
                         size: 25,
                       ),
                     ),
@@ -131,7 +131,7 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                     const InkWell(
                       child: Icon(
                         Icons.favorite_outline_rounded,
-                        color: Colors.white,
+                        color: Colors.grey,
                         size: 25,
                       ),
                     ),
@@ -141,7 +141,7 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                     const InkWell(
                       child: Icon(
                         Icons.ios_share_sharp,
-                        color: Colors.white,
+                        color: Colors.grey,
                         size: 25,
                       ),
                     ),
@@ -153,10 +153,14 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                         downloadImage(
                             "${Endpoints.hostUrl}/${albumBoard?.files?[currentIndex].filename}");
                       },
-                      child: const Icon(
-                        Icons.more_vert,
-                        color: Colors.white,
-                        size: 25,
+                      child: const SizedBox(
+                        width: 60,
+                        height: 80,
+                        child: Icon(
+                          Icons.download,
+                          color: Colors.white,
+                          size: 25,
+                        ),
                       ),
                     ),
                   ],
@@ -164,6 +168,24 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
               ),
             ),
           ),
+
+          //뒤로가기 버튼
+          Positioned(
+            top: 30,
+            left: 10,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                child: const Icon(
+                  Icons.arrow_back_ios_new_outlined,
+                  color: Colors.white,
+                  size: 25,
+                ),
+              ),
+            ),
+          )
         ]),
       ),
     );

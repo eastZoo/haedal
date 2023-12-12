@@ -12,14 +12,14 @@ import 'package:intl/intl.dart';
 
 import '../../service/endpoints.dart';
 
-class AlbumScreen extends StatefulWidget {
-  const AlbumScreen({super.key});
+class CategoryStoryScreen extends StatefulWidget {
+  const CategoryStoryScreen({super.key});
 
   @override
-  State<AlbumScreen> createState() => _AlbumScreenState();
+  State<CategoryStoryScreen> createState() => _CategoryStoryScreenState();
 }
 
-class _AlbumScreenState extends State<AlbumScreen> {
+class _CategoryStoryScreenState extends State<CategoryStoryScreen> {
 // 게시글 카드
   Widget postCard(AlbumBoard? data) {
     DateTime dateTime = DateTime.parse(data!.storyDate.toString());
@@ -110,8 +110,20 @@ class _AlbumScreenState extends State<AlbumScreen> {
         builder: (controller) {
           return SafeArea(
             child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                title: const Text(
+                  "카테고리",
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF676B85),
+                  ),
+                ),
+                centerTitle: true,
+                actions: const [],
+              ),
               body: Column(children: [
-                const MainAppbar(title: '스토리 / 위치리스트'),
                 Expanded(
                     child: Obx(
                   () => ListView.separated(

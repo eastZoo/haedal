@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/screens/photo_view_screen.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/app_button.dart';
@@ -10,8 +11,8 @@ import '../../service/endpoints.dart';
 
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class MissionBottonSheet extends StatelessWidget {
-  const MissionBottonSheet({super.key});
+class BottonSheet extends StatelessWidget {
+  const BottonSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class MissionBottonSheet extends StatelessWidget {
       }
 
       void openBottonSheet() {}
-      print("****** ${Endpoints.hostUrl}/${mapCon.selectedMarker?.title}");
+
       return SlidingUpPanel(
         minHeight: 0,
         renderPanelSheet: false,
@@ -53,19 +54,34 @@ class MissionBottonSheet extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 100,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: mapCon.selectedMarker?.files != null
-                              ? DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    "${Endpoints.hostUrl}/${mapCon.selectedMarker?.files?.first.filename}",
-                                  ),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+                      // 핀클릭 시 올라오는 슬라이드 패널 이미지 클릭시 이미지 자세히보기 페이지로 이동
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) {
+                                return PhotoViewScreen(
+                                    albumBoard: mapCon.selectedMarker,
+                                    currentIndex: 0);
+                              },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: mapCon.selectedMarker?.files != null
+                                ? DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                      "${Endpoints.hostUrl}/${mapCon.selectedMarker?.files?.first.filename}",
+                                    ),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -90,8 +106,8 @@ class MissionBottonSheet extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           Container(
-                            width: 60,
-                            height: 18,
+                            width: 65,
+                            height: 20,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(3),
                               color: AppColors().mainColor,
@@ -100,7 +116,7 @@ class MissionBottonSheet extends StatelessWidget {
                             child: Text(
                               "${mapCon.selectedMarker?.category}",
                               style: const TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 12,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
