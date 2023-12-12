@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/album.dart';
 import 'package:haedal/screens/story_detail_screen.dart';
+import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 import 'package:page_transition/page_transition.dart';
@@ -105,16 +106,16 @@ class _CategoryStoryScreenState extends State<CategoryStoryScreen> {
   // 메인 빌드!!
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<InfiniteScrollController>(
-        init: InfiniteScrollController(),
+    return GetBuilder<CategoryBoardController>(
+        init: CategoryBoardController(),
         builder: (controller) {
           return SafeArea(
             child: Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.white,
-                title: const Text(
-                  "카테고리",
-                  style: TextStyle(
+                title: Text(
+                  "${controller.category}",
+                  style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF676B85),

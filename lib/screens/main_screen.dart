@@ -86,10 +86,12 @@ class _MainScreenState extends State<MainScreen> {
                   floatingActionButtonLocation:
                       FloatingActionButtonLocation.miniCenterDocked,
                   floatingActionButton: SizedBox(
-                    height: 49,
-                    width: 49,
+                    height: 60,
+                    width: 60,
                     child: FloatingActionButton(
                       backgroundColor: const Color(0xFFD4A7FB),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100)),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
                         // 걷기지점 등록 버튼 클릭시 현재 지도 컨트롤러 변수에 저장
@@ -98,7 +100,18 @@ class _MainScreenState extends State<MainScreen> {
                       },
                       child: const Icon(
                         Icons.add,
-                        size: 25,
+                        size: 28,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color:
+                                Colors.grey, // Choose the color of the shadow
+                            blurRadius:
+                                1.0, // Adjust the blur radius for the shadow effect
+                            offset: Offset(1.0,
+                                1.0), // Set the horizontal and vertical offset for the shadow
+                          ),
+                        ],
                       ),
                     ),
                   ),

@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/screens/category_story_screen.dart';
 import 'package:haedal/screens/photo_view_screen.dart';
+import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/app_button.dart';
@@ -16,6 +18,8 @@ class BottonSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categoryCon = Get.put(CategoryBoardController());
+
     return GetBuilder<MapController>(builder: (mapCon) {
       void closedBottonSheet() {
         if (mapCon.selectedMarker != null) {
@@ -105,20 +109,38 @@ class BottonSheet extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Container(
-                            width: 65,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: AppColors().mainColor,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "${mapCon.selectedMarker?.category}",
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                          InkWell(
+                            onTap: () async {
+                              var result = await categoryCon.setCategory(
+                                  "${mapCon.selectedMarker?.category}");
+
+                              print("@@@@@@@@@ $result");
+                              if (result) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) {
+                                      return const CategoryStoryScreen();
+                                    },
+                                  ),
+                                );
+                              }
+                            },
+                            child: Container(
+                              width: 65,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: AppColors().mainColor,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "${mapCon.selectedMarker?.category}",
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           )
                         ],

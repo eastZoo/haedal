@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
 import 'package:haedal/screens/add_image_screen.dart';
+import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,8 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     InfiniteScrollController infiniteCon = Get.put(InfiniteScrollController());
+    CategoryBoardController categoryBoardCon =
+        Get.put(CategoryBoardController());
     return GetBuilder<MapController>(builder: (mapCon) {
       return Container(
         // color: Colors.grey.shade300,
@@ -58,7 +61,11 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
                   mapCon.setMapController(mapCon.prevMapController);
                   // 위치 리패칭을 통한 마커 새로고침
                   mapCon.refetchLocation();
+
+                  // 메인 앨범 메뉴 리프래쉬
                   infiniteCon.reload();
+                  // 카테고리별 메뉴 리프래쉬
+                  categoryBoardCon.reload();
                 },
                 icon: Icons.image,
                 textLabel: '앨범에서 추가',

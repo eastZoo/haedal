@@ -14,7 +14,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
     return const Scaffold(
       body: Column(
         children: [
-          MainAppbar(title: '채팅'),
+          MainAppbar(title: '일정'),
         ],
       ),
     );
