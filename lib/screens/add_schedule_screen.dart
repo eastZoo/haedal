@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
+import 'package:haedal/widgets/custom_switch.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 import 'package:intl/intl.dart';
 
@@ -18,31 +19,20 @@ class AddScheduleScreen extends StatefulWidget {
 class _AddScheduleScreenState extends State<AddScheduleScreen> {
   _AddScheduleScreenState(this.selectedDay);
   DateTime? selectedDay;
-
+  bool isSwitched = false;
   TextEditingController titleTextController = TextEditingController();
-  // _addCurrentDaySchedule() {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(
-  //         top: Radius.circular(25.0),
-  //       ),
-  //     ),
-  //     builder: (context) => DraggableScrollableSheet(
-  //         initialChildSize: 0.9,
-  //         maxChildSize: 0.9,
-  //         minChildSize: 0.8,
-  //         expand: false,
-  //         snap: true,
-  //         builder: (context, scrollController) {
-  //           return SingleChildScrollView(
-  //             controller: scrollController,
-  //             child: AddScheduleScreen(selectedDay: selectedDay),
-  //           );
-  //         }),
-  //   );
-  // }
+
+  void toggleSwitch(bool value) {
+    if (isSwitched == false) {
+      setState(() {
+        isSwitched = true;
+      });
+    } else {
+      setState(() {
+        isSwitched = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +84,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                   )
                 ],
               ),
-              // 메인 타이틀 ( 요일 , 추가 아이콘 )
+              // 제목
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -106,6 +96,27 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                     ),
                   ),
                 ],
+              ),
+              // 시간
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "종일",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    CustomSwitch(
+                      onChanged: toggleSwitch,
+                      value: isSwitched,
+                      trackHeight: 20,
+                      trackWidth: 40,
+                      toggleHeight: 20,
+                      toggleWidth: 20,
+                    )
+                  ],
+                ),
               ),
             ],
           ),
@@ -123,19 +134,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
       Function()? onTap}) {
     return Column(
       children: [
-        Row(
-          children: [
-            label.isNotEmpty
-                ? Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  )
-                : const SizedBox(),
-          ],
-        ),
         TextField(
           controller: controller,
           focusNode: focusNode,
@@ -149,7 +147,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                   color: Colors.grey[500],
                   fontWeight: FontWeight.bold,
                   fontSize: 20)),
-        )
+        ),
       ],
     );
   }
