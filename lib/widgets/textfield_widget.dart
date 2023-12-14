@@ -16,16 +16,16 @@ class TextFieldWidget extends StatelessWidget {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
+        color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(8),
       ),
-      height: 55,
       child: TextField(
         style: const TextStyle(fontSize: 18),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
-            hintText: "title"),
+            hintText: hintText,
+            hintStyle: const TextStyle(fontSize: 15)),
         maxLines: maxLine,
       ),
     );

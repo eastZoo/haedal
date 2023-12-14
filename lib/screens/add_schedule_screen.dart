@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,9 @@ import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/styles/app_style.dart';
 import 'package:haedal/widgets/custom_switch.dart';
+import 'package:haedal/widgets/date_time_widget.dart';
 import 'package:haedal/widgets/my_textfield.dart';
+import 'package:haedal/widgets/radio_widget.dart';
 import 'package:haedal/widgets/textfield_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -55,41 +58,41 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Container(
-              //   width: 50,
-              //   height: 3,
-              //   transformAlignment: Alignment.center,
-              //   margin: const EdgeInsets.only(bottom: 10),
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.circular(2.5),
-              //     color: Colors.grey.shade400,
-              //   ),
-              // ),
-              // 앱바
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     InkWell(
-              //       onTap: () {},
-              //       child: const SizedBox(
-              //         width: 40,
-              //         child: Icon(
-              //           Icons.close,
-              //           size: 24,
-              //         ),
-              //       ),
-              //     ),
-              //     InkWell(
-              //       onTap: () {},
-              //       child: const SizedBox(
-              //           width: 40,
-              //           child: Text(
-              //             "저장",
-              //             style: TextStyle(fontSize: 15),
-              //           )),
-              //     )
-              //   ],
-              // ),
+              Container(
+                width: 50,
+                height: 3,
+                transformAlignment: Alignment.center,
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2.5),
+                  color: Colors.grey.shade400,
+                ),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {},
+                    child: const SizedBox(
+                      width: 40,
+                      child: Icon(
+                        Icons.close,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {},
+                    child: const SizedBox(
+                        width: 40,
+                        child: Text(
+                          "저장",
+                          style: TextStyle(fontSize: 15),
+                        )),
+                  )
+                ],
+              ),
               const Gap(20),
               const SizedBox(
                 width: double.infinity,
@@ -119,14 +122,90 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 hintText: "Title",
               ),
               const Gap(6),
-              const TextFieldWidget(maxLine: 1, hintText: 'Add Task Name'),
-              const Gap(12),
               const Text('Description', style: AppStyle.headingOne),
               const Gap(6),
-              const TextFieldWidget(maxLine: 5, hintText: 'Add Descriptions'),
+              const TextFieldWidget(maxLine: 4, hintText: 'Add Descriptions'),
               const Gap(12),
               const Text('Category', style: AppStyle.headingOne),
-              RadioListTile(value: 1, groupValue: 0, onChanged: (value) {})
+              const Row(
+                children: [
+                  Expanded(
+                    child: RadioWidget(
+                        categColor: Colors.green, titleRadio: 'LRN'),
+                  ),
+                  Expanded(
+                    child:
+                        RadioWidget(categColor: Colors.blue, titleRadio: 'WRK'),
+                  ),
+                  Expanded(
+                    child: RadioWidget(
+                        categColor: Colors.amberAccent, titleRadio: 'Gen'),
+                  )
+                ],
+              ),
+
+              // 날짜 섹션
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DateTimeWidget(
+                    titleText: 'Date',
+                    valueText: 'dd/mm/yy',
+                    iconSection: CupertinoIcons.calendar,
+                  ),
+                  Gap(20),
+                  DateTimeWidget(
+                    titleText: 'Time',
+                    valueText: 'hh : mm',
+                    iconSection: CupertinoIcons.clock,
+                  ),
+                ],
+              ),
+              const Gap(10),
+              // 버튼 섹션
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue.shade800,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ), // RoundedRectangleBorder
+                        side: BorderSide(
+                          color: Colors.blue.shade800,
+                        ), // BorderSide
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () {},
+                      child: const Text('Cancel'),
+                    ), // ElevatedButton
+                  ), // Expanded
+                  const Gap(20),
+                  Expanded(
+                    child: Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade800,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ), // RoundedRectangleBorder
+                          side: BorderSide(
+                            color: Colors.blue.shade800,
+                          ), // BorderSide
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onPressed: () {},
+                        child: const Text('Create'),
+                      ), // ElevatedButton
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
