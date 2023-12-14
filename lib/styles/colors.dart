@@ -10,6 +10,7 @@ class AppColors {
 
   AppColors._internal();
   Color mainColor = const Color(0xFF674FA3);
+  Color subColor = const Color.fromARGB(255, 191, 171, 242);
   Color subContainer = const Color(0xFFF6F8FF);
   Color subContainerText = const Color(0xFF8C9DF8);
   Color statusWarning = const Color(0xFFFFA800);

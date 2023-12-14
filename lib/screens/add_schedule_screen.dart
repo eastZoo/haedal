@@ -58,21 +58,12 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 50,
-                height: 3,
-                transformAlignment: Alignment.center,
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(2.5),
-                  color: Colors.grey.shade400,
-                ),
-              ),
-
+              const Gap(12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
+                    radius: 10,
                     onTap: () {},
                     child: const SizedBox(
                       width: 40,
@@ -88,28 +79,13 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         width: 40,
                         child: Text(
                           "저장",
-                          style: TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 17),
                         )),
                   )
                 ],
               ),
-              const Gap(20),
-              const SizedBox(
-                width: double.infinity,
-                child: Text(
-                  "일정 등록",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                ),
-              ),
-              Divider(
-                thickness: 1.2,
-                color: Colors.grey.shade300,
-              ),
-              const Gap(6),
+
+              const Gap(12),
               // 제목
               const Text(
                 "할 일",
@@ -122,27 +98,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 hintText: "Title",
               ),
               const Gap(6),
-              const Text('Description', style: AppStyle.headingOne),
+              const Text('메모', style: AppStyle.headingOne),
               const Gap(6),
-              const TextFieldWidget(maxLine: 4, hintText: 'Add Descriptions'),
+              const TextFieldWidget(maxLine: 4, hintText: '메모를 적어주세요.'),
               const Gap(12),
-              const Text('Category', style: AppStyle.headingOne),
-              const Row(
-                children: [
-                  Expanded(
-                    child: RadioWidget(
-                        categColor: Colors.green, titleRadio: 'LRN'),
-                  ),
-                  Expanded(
-                    child:
-                        RadioWidget(categColor: Colors.blue, titleRadio: 'WRK'),
-                  ),
-                  Expanded(
-                    child: RadioWidget(
-                        categColor: Colors.amberAccent, titleRadio: 'Gen'),
-                  )
-                ],
-              ),
 
               // 날짜 섹션
               const Row(
@@ -162,50 +121,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 ],
               ),
               const Gap(10),
-              // 버튼 섹션
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue.shade800,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ), // RoundedRectangleBorder
-                        side: BorderSide(
-                          color: Colors.blue.shade800,
-                        ), // BorderSide
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      onPressed: () {},
-                      child: const Text('Cancel'),
-                    ), // ElevatedButton
-                  ), // Expanded
-                  const Gap(20),
-                  Expanded(
-                    child: Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade800,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ), // RoundedRectangleBorder
-                          side: BorderSide(
-                            color: Colors.blue.shade800,
-                          ), // BorderSide
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onPressed: () {},
-                        child: const Text('Create'),
-                      ), // ElevatedButton
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
         ),

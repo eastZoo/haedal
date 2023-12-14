@@ -4,20 +4,36 @@ import 'package:haedal/screens/add_schedule_screen.dart';
 import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
+import 'package:haedal/widgets/calendar_widget.dart';
 import 'package:intl/intl.dart';
 
 class ShowCurrentScheduleScreen extends StatefulWidget {
+  ShowCurrentScheduleScreen(
+      {super.key, required this.selectedDay, this.appointments});
   DateTime? selectedDay;
-  ShowCurrentScheduleScreen({super.key, required this.selectedDay});
+  dynamic appointments;
 
   @override
   State<ShowCurrentScheduleScreen> createState() =>
-      _ShowCurrentScheduleScreenState(selectedDay);
+      _ShowCurrentScheduleScreenState(selectedDay, appointments);
 }
 
 class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
-  _ShowCurrentScheduleScreenState(this.selectedDay);
+  _ShowCurrentScheduleScreenState(this.selectedDay, this.appointments);
   DateTime? selectedDay;
+  dynamic appointments;
+  List<dynamic>? data;
+
+  @override
+  void initState() {
+    super.initState();
+    print(appointments);
+    for (Meeting appointment in appointments) {
+      // Do something with each Meeting instance
+
+      print(appointment.eventName);
+    }
+  }
 
   _showAddCurrentDaySchedule() {
     showModalBottomSheet(
@@ -29,9 +45,9 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
         ),
       ),
       builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.85,
-          minChildSize: 0.8,
+          initialChildSize: 0.7,
+          maxChildSize: 0.7,
+          minChildSize: 0.65,
           expand: false,
           snap: true,
           builder: (context, scrollController) {
@@ -91,10 +107,34 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                   )
                 ],
               ),
+
+              //일정 리스트 뷰
+              Expanded(
+                child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    Meeting appointment = appointments[index];
+
+                    if (appointments.isEmpty) {
+                      return const Text("일정이 없습니다");
+                    }
+
+                    return postCard(appointment);
+                  },
+                  separatorBuilder: (_, index) => const Divider(),
+                  itemCount: 3,
+                ),
+              )
             ],
           ),
         ),
       );
     });
+  }
+
+  Widget postCard(Meeting? data) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Text("${data?.eventName}"),
+    );
   }
 }

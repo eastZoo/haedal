@@ -122,16 +122,17 @@ class _AddimageScreenState extends State<AddimageScreen> {
           actions: [_addBtn()],
         ),
         body: SafeArea(
-            child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // 고른 사진 중 첫번째 사진 썸네일
-              _thumbPhoto(),
-              _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
-              _FormWidget()
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // 고른 사진 중 첫번째 사진 썸네일
+                _thumbPhoto(),
+                _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
+                _FormWidget()
+              ],
+            ),
           ),
-        )),
+        ),
       ),
     );
   }

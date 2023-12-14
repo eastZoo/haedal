@@ -48,6 +48,7 @@ dependencies:
   image_gallery_saver: ^2.0.3
   intl: ^0.18.1
   gap: ^3.0.1
+  syncfusion_flutter_calendar: ^23.2.7
 
 dev_dependencies:
   flutter_test:
