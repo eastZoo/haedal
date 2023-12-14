@@ -22,7 +22,6 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
   _ShowCurrentScheduleScreenState(this.selectedDay, this.appointments);
   DateTime? selectedDay;
   dynamic appointments;
-  List<dynamic>? data;
 
   @override
   void initState() {
@@ -33,6 +32,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
 
       print(appointment.eventName);
     }
+    print(appointments.runtimeType);
   }
 
   _showAddCurrentDaySchedule() {
@@ -108,22 +108,20 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                 ],
               ),
 
+              Text(
+                '${appointments[0].eventName} '
+                '${appointments[0].from.toString()}일 '
+                '${appointments[0].to.toString()}요일',
+                style: textStyle,
+              ),
               //일정 리스트 뷰
-              Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    Meeting appointment = appointments[index];
-
-                    if (appointments.isEmpty) {
-                      return const Text("일정이 없습니다");
-                    }
-
-                    return postCard(appointment);
-                  },
-                  separatorBuilder: (_, index) => const Divider(),
-                  itemCount: 3,
-                ),
-              )
+              // ListView.separated(
+              //   itemBuilder: (context, index) {
+              //     return const Text("ff");
+              //   },
+              //   separatorBuilder: (_, index) => const Divider(),
+              //   itemCount: appointments.length + 1,
+              // ),
             ],
           ),
         ),

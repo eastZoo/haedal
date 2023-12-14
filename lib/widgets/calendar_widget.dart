@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:haedal/screens/show_current_schedule_screen.dart';
 import 'package:haedal/screens/select_photo_options_screen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -114,16 +115,14 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         ),
         onTap: (CalendarTapDetails details) {
           dynamic appointments = details.appointments;
-
           DateTime selectedDay = details.date!;
+
           setState(
             () {
               prevSelectedDay = this.selectedDay;
               this.selectedDay = selectedDay;
             },
           );
-
-          print(appointments);
 
           if (prevSelectedDay == selectedDay) {
             _showCurrentDaySchedule(appointments);
