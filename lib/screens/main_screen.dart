@@ -25,6 +25,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 2; // 앨범 초기 메인
+  int _prevSelectedIndex = 2; // 앨범 초기 메인
   final autoSizeGroup = AutoSizeGroup();
 
   final iconList = [
@@ -104,25 +105,35 @@ class _MainScreenState extends State<MainScreen> {
                     currentIndex: _selectedIndex,
                     onTap: (index) {
                       setState(() {
+                        _prevSelectedIndex = _selectedIndex;
                         _selectedIndex = index;
                       });
+
+                      if (_prevSelectedIndex == 2 && _selectedIndex == 2) {
+                        HapticFeedback.lightImpact();
+                        mapCon.setPrevMapController(mapCon.mapController);
+                        _showSelectPhotoOptions();
+                      }
                     },
 
-                    items: const [
-                      BottomNavigationBarItem(
+                    items: [
+                      const BottomNavigationBarItem(
                           icon: Icon(Icons.map_outlined, size: 22),
                           label: '지도'),
-                      BottomNavigationBarItem(
+                      const BottomNavigationBarItem(
                           icon: Icon(Icons.check_box_outlined, size: 22),
                           label: "메모"),
                       BottomNavigationBarItem(
-                          icon:
-                              Icon(Icons.photo_camera_back_outlined, size: 22),
+                          icon: Icon(
+                              _selectedIndex == 2
+                                  ? Icons.add
+                                  : Icons.photo_camera_back_outlined,
+                              size: 22),
                           label: '앨범'),
-                      BottomNavigationBarItem(
+                      const BottomNavigationBarItem(
                           icon: Icon(Icons.calendar_month_outlined, size: 22),
                           label: '일정'),
-                      BottomNavigationBarItem(
+                      const BottomNavigationBarItem(
                           icon: Icon(Icons.more_horiz, size: 22), label: '더보기')
                     ],
                     unselectedLabelStyle: const TextStyle(fontSize: 10),

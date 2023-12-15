@@ -133,22 +133,32 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                         width: 6,
                         height: 54,
                       ),
-                      Expanded(
-                          child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ),
-                        child: Row(
-                          children: [
-                            ListTile(
-                              title: Text(appointments![index].eventName),
-                              subtitle: appointments![index].isAllDay
-                                  ? const Text("종일")
-                                  : Text("$startTime - $endTime"),
-                            )
-                          ],
-                        ),
-                      ))
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 8, 8, 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    appointments![index].eventName,
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  appointments![index].isAllDay
+                                      ? const Text(
+                                          "종일",
+                                        )
+                                      : Text('$startTime - $endTime'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 );

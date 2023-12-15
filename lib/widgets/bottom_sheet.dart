@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/screens/category_story_screen.dart';
 import 'package:haedal/screens/photo_view_screen.dart';
+import 'package:haedal/screens/story_detail_screen.dart';
 import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/styles/colors.dart';
@@ -74,7 +75,7 @@ class BottonSheet extends StatelessWidget {
                         },
                         child: Container(
                           width: 100,
-                          height: 120,
+                          height: 110,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             image: mapCon.selectedMarker?.files != null
@@ -88,27 +89,47 @@ class BottonSheet extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
+
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "${mapCon.selectedMarker?.title}",
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.55,
-                            child: Text(
-                              "${mapCon.selectedMarker?.address}",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors().textGrey),
-                              overflow: TextOverflow.clip,
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) {
+                                    return StoryDetailScreen(
+                                        albumBoard: mapCon.selectedMarker);
+                                  },
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${mapCon.selectedMarker?.title}",
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.55,
+                                  child: Text(
+                                    "${mapCon.selectedMarker?.address}",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors().textGrey),
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20),
                           InkWell(
                             onTap: () async {
                               var result = await categoryCon.setCategory(

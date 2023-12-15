@@ -86,32 +86,28 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           monthCellStyle: MonthCellStyle(
               // 달력 날짜 사이즈 설정
               textStyle: const TextStyle(
-                fontSize: 8,
+                fontSize: 12,
                 color: Colors.black,
               ),
               // 이전날짜
               trailingDatesTextStyle: TextStyle(
                 fontStyle: FontStyle.italic,
-                fontSize: 8,
-                fontFamily: 'Arial',
+                fontSize: 10,
+                fontFamily: 'Pretendard',
                 color: Colors.grey.shade400,
               ),
               // 이후날짜
               leadingDatesTextStyle: TextStyle(
                 fontStyle: FontStyle.italic,
-                fontSize: 8,
-                fontFamily: 'Arial',
+                fontSize: 10,
+                fontFamily: 'Pretendard',
                 color: Colors.grey.shade400,
               )),
-          agendaStyle: const AgendaStyle(
-            // 셀클릭시 아래 아젠다 에서 폰트크기
-            appointmentTextStyle: TextStyle(fontSize: 11),
-          ),
         ),
         todayTextStyle: const TextStyle(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Arial',
+          fontFamily: 'Pretendard',
         ),
         onTap: (CalendarTapDetails details) async {
           dynamic appointments = details.appointments;
@@ -128,8 +124,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             meetings.add(Meeting(item.eventName, item.from, item.to,
                 AppColors().mainColor, item.isAllDay));
           }
-
-          print(meetings);
 
           if (prevSelectedDay == selectedDay) {
             await _showCurrentDaySchedule(meetings);
