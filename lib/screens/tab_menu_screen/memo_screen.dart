@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MemoScreen extends StatefulWidget {
+  const MemoScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MemoScreen> createState() => _MemoScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MemoScreenState extends State<MemoScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Column(
         children: [
-          MainAppbar(title: '홈'),
+          MainAppbar(title: '메모'),
         ],
       ),
     );

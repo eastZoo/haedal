@@ -15,26 +15,17 @@ class CalenderScreen extends StatefulWidget {
 class _CalenderScreenState extends State<CalenderScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return const SafeArea(
+      child: Scaffold(
         backgroundColor: Colors.white,
-        title: const Text(
-          "캘린더",
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF676B85),
-          ),
+        body: Column(
+          children: [
+            MainAppbar(title: '스토리 / 위치리스트'),
+            // 달력 위젯
+            CalendarWidget(),
+          ],
         ),
-        leading: Icon(
-          Icons.menu,
-          size: 18,
-          color: AppColors().mainColor,
-        ),
-        centerTitle: true,
-        actions: const [],
       ),
-      body: const CalendarWidget(),
     );
   }
 }

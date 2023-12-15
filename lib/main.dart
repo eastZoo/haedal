@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
       ..displayDuration = const Duration(milliseconds: 1500)
       ..loadingStyle = EasyLoadingStyle.custom
       ..indicatorType = EasyLoadingIndicatorType.ring
-      ..indicatorColor = Colors.blueAccent
-      ..backgroundColor = Colors.blue.shade100
+      ..indicatorColor = Colors.white
+      ..backgroundColor = Colors.white
       ..textColor = Colors.blueAccent
       ..maskType = EasyLoadingMaskType.custom
       ..maskColor = Colors.black.withOpacity(0.2)
@@ -42,15 +42,8 @@ class MyApp extends StatelessWidget {
 
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(
-          navigationBarTheme: const NavigationBarThemeData(
-            labelTextStyle: MaterialStatePropertyAll(
-              TextStyle(fontSize: 14),
-            ),
-            iconTheme: MaterialStatePropertyAll(
-              IconThemeData(size: 30, opticalSize: 50),
-            ),
-          ),
+        theme: ThemeData(
+          fontFamily: 'Pretendard',
         ),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

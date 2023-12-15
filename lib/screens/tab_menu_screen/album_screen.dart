@@ -80,13 +80,13 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     data.title.toString(),
                     style: const TextStyle(
                       fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                       shadows: [
                         Shadow(
                           color: Colors.black, // Choose the color of the shadow
                           blurRadius:
-                              5.0, // Adjust the blur radius for the shadow effect
+                              6.0, // Adjust the blur radius for the shadow effect
                           offset: Offset(1.0,
                               1.0), // Set the horizontal and vertical offset for the shadow
                         ),

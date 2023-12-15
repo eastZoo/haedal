@@ -224,7 +224,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                         padding: const EdgeInsets.only(left: 2.0),
                         child: Icon(
                           Icons.favorite_outline_rounded,
-                          color: AppColors().mainColor,
+                          color: AppColors().mainDisabledColor,
                           size: 20,
                         ),
                       ),
@@ -235,7 +235,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                         padding: const EdgeInsets.only(left: 13.0),
                         child: Icon(
                           Icons.chat_bubble_outline_rounded,
-                          color: AppColors().mainColor,
+                          color: AppColors().mainDisabledColor,
                           size: 20,
                         ),
                       ),
@@ -246,7 +246,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                         padding: const EdgeInsets.only(left: 13.0),
                         child: Icon(
                           Icons.near_me_outlined,
-                          color: AppColors().mainColor,
+                          color: AppColors().mainDisabledColor,
                           size: 20,
                         ),
                       )

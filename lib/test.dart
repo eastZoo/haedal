@@ -26,7 +26,8 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
   @override
   void initState() {
     super.initState();
-    print("init : $appointments");
+
+    print("INIT!!!!!!");
   }
 
   _showAddCurrentDaySchedule() {
@@ -77,29 +78,29 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
           ),
 
           // 메인 타이틀 ( 요일 , 추가 아이콘 )
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${selectedDay?.month}월 '
-                '${selectedDay?.day}일 '
-                '${DateFormat('E', 'ko_KR').format(selectedDay!)}요일',
-                style: textStyle,
-              ),
-              InkWell(
-                onTap: () {
-                  _showAddCurrentDaySchedule();
-                },
-                child: const SizedBox(
-                  width: 40,
-                  child: Icon(
-                    Icons.add_circle,
-                    size: 28,
-                  ),
-                ),
-              )
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       '${selectedDay?.month}월 '
+          //       '${selectedDay?.day}일 '
+          //       '${DateFormat('E', 'ko_KR').format(selectedDay!)}요일',
+          //       style: textStyle,
+          //     ),
+          //     InkWell(
+          //       onTap: () {
+          //         _showAddCurrentDaySchedule();
+          //       },
+          //       child: const SizedBox(
+          //         width: 40,
+          //         child: Icon(
+          //           Icons.add_circle,
+          //           size: 28,
+          //         ),
+          //       ),
+          //     )
+          //   ],
+          // ),
           const SizedBox(height: 8.0),
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 200, minHeight: 56.0),
@@ -107,19 +108,8 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
               shrinkWrap: true,
               itemCount: appointments?.length,
               itemBuilder: (context, index) {
-                String startTime =
-                    DateFormat.Hm('ko_KR').format(appointments![index].from);
-
-                String endTime =
-                    DateFormat.Hm('ko_KR').format(appointments![index].to);
-                return Container(
-                  margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  width: double.infinity,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                return Padding(
+                  padding: const EdgeInsets.all(2.0),
                   child: Row(
                     children: [
                       Container(
@@ -131,24 +121,8 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                           ),
                         ),
                         width: 6,
-                        height: 54,
+                        height: 40,
                       ),
-                      Expanded(
-                          child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ),
-                        child: Row(
-                          children: [
-                            ListTile(
-                              title: Text(appointments![index].eventName),
-                              subtitle: appointments![index].isAllDay
-                                  ? const Text("종일")
-                                  : Text("$startTime - $endTime"),
-                            )
-                          ],
-                        ),
-                      ))
                     ],
                   ),
                 );
@@ -160,3 +134,4 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
     );
   }
 }
+// 

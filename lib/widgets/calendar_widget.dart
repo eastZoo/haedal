@@ -27,7 +27,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   }
 
   // 달력 날짜 두번 탭 시 슬라이드업 패널
-  _showCurrentDaySchedule(appointment) {
+  _showCurrentDaySchedule(List<Meeting> appointment) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -43,21 +43,18 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           expand: false,
           snap: true,
           builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: ShowCurrentScheduleScreen(
-                selectedDay: selectedDay,
-                appointments: appointment,
-              ),
-            );
+            return ShowCurrentScheduleScreen(
+                selectedDay: selectedDay, appointments: appointment);
           }),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.95,
+    return Container(
+      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      alignment: Alignment.center,
+      height: MediaQuery.of(context).size.height * 0.75,
       width: MediaQuery.of(context).size.width,
       child: SfCalendar(
         view: CalendarView.month,
@@ -73,7 +70,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         ),
         showNavigationArrow: true,
         appointmentTextStyle: const TextStyle(
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Pretendard',
           color: Colors.white,
         ),
         allowAppointmentResize: true,
@@ -91,12 +89,14 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 fontSize: 8,
                 color: Colors.black,
               ),
+              // 이전날짜
               trailingDatesTextStyle: TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 8,
                 fontFamily: 'Arial',
                 color: Colors.grey.shade400,
               ),
+              // 이후날짜
               leadingDatesTextStyle: TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 8,
@@ -113,10 +113,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           fontWeight: FontWeight.bold,
           fontFamily: 'Arial',
         ),
-        onTap: (CalendarTapDetails details) {
+        onTap: (CalendarTapDetails details) async {
           dynamic appointments = details.appointments;
           DateTime selectedDay = details.date!;
-
+          final List<Meeting> meetings = <Meeting>[];
           setState(
             () {
               prevSelectedDay = this.selectedDay;
@@ -124,8 +124,15 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             },
           );
 
+          for (Meeting item in appointments) {
+            meetings.add(Meeting(item.eventName, item.from, item.to,
+                AppColors().mainColor, item.isAllDay));
+          }
+
+          print(meetings);
+
           if (prevSelectedDay == selectedDay) {
-            _showCurrentDaySchedule(appointments);
+            await _showCurrentDaySchedule(meetings);
           }
         },
       ),
@@ -139,11 +146,10 @@ List<Meeting> _getDataSource() {
   final DateTime startTime =
       DateTime(today.year, today.month, today.day, 9, 0, 0);
   final DateTime endTime = startTime.add(const Duration(hours: 2));
-  meetings
-      .add(Meeting('데이투', startTime, endTime, AppColors().mainColor, false));
+  meetings.add(Meeting('데이투', startTime, endTime, AppColors().mainColor, true));
   meetings.add(Meeting('뭐할까', startTime, endTime, AppColors().subColor, false));
-  meetings
-      .add(Meeting('밥약속', startTime, endTime, AppColors().mainColor, false));
+  meetings.add(Meeting('밥약속', startTime, endTime, AppColors().mainColor, true));
+
   meetings.add(Meeting('수련회', DateTime(2023, 12, 12, 13, 12, 11),
       DateTime(2023, 12, 12, 15, 12, 11), AppColors().mainColor, false));
   return meetings;
