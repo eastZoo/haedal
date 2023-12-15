@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:haedal/screens/add_schedule_screen.dart';
-import 'package:haedal/service/controller/category_board_controller.dart';
-import 'package:haedal/service/controller/infinite_scroll_controller.dart';
-import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/calendar_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -103,67 +99,81 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
           const SizedBox(height: 8.0),
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 200, minHeight: 56.0),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: appointments?.length,
-              itemBuilder: (context, index) {
-                String startTime =
-                    DateFormat.Hm('ko_KR').format(appointments![index].from);
+            child: appointments!.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: appointments?.length,
+                    itemBuilder: (context, index) {
+                      String startTime = DateFormat.Hm('ko_KR')
+                          .format(appointments![index].from);
 
-                String endTime =
-                    DateFormat.Hm('ko_KR').format(appointments![index].to);
-                return Container(
-                  margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  width: double.infinity,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            bottomLeft: Radius.circular(12),
-                          ),
+                      String endTime = DateFormat.Hm('ko_KR')
+                          .format(appointments![index].to);
+                      return Container(
+                        margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                        width: double.infinity,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        width: 6,
-                        height: 54,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 8, 8, 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
+                          children: [
+                            // 왼쪽 라벨 색깔
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  bottomLeft: Radius.circular(12),
+                                ),
+                              ),
+                              width: 6,
+                              height: 54,
+                            ),
+                            // 라벨을 제외한 컨텐츠 박스
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    appointments![index].eventName,
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          15, 8, 8, 8),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            appointments![index].eventName,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          appointments![index].isAllDay
+                                              ? const Text(
+                                                  "종일",
+                                                )
+                                              : Text('$startTime - $endTime'),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  appointments![index].isAllDay
-                                      ? const Text(
-                                          "종일",
-                                        )
-                                      : Text('$startTime - $endTime'),
+                                  const Expanded(
+                                    flex: 1,
+                                    child: Text("이름"),
+                                  )
                                 ],
                               ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  )
+                : const Text("등록된 일정이 없습니다."),
           ),
         ],
       ),
