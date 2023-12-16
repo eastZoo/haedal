@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/map_controller.dart';
+import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/styles/app_style.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/date_time_widget.dart';
 import 'package:haedal/widgets/textfield_widget.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class AddScheduleScreen extends StatefulWidget {
   DateTime? selectedDay;
@@ -19,12 +21,14 @@ class AddScheduleScreen extends StatefulWidget {
 
 class _AddScheduleScreenState extends State<AddScheduleScreen> {
   _AddScheduleScreenState(this.selectedDay);
+  ScheduleController scheduleCon = Get.put(ScheduleController());
+
   DateTime? selectedDay;
   bool _isMemoChecked = false;
   bool _isDateChecked = true;
 
   TextEditingController titleTextController = TextEditingController();
-
+  TextEditingController contentTextController = TextEditingController();
 // 일정 시작 날짜
   final startTodoDayController = TextEditingController();
   // 일정 시작 시간
@@ -39,6 +43,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
 
   TimeOfDay initalStartTime = TimeOfDay.now();
   TimeOfDay initalEndTime = TimeOfDay.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      startTodoDayController.text = "${DateTime.now().toLocal()}".split(".")[0];
+      startTodoTimeController.text = TimeOfDay.now().toString();
+
+      endTodoDayController.text = "${DateTime.now().toLocal()}".split(".")[0];
+      endTodoTimeController.text = TimeOfDay.now().toString();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +85,23 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                   ),
                   InkWell(
                     borderRadius: BorderRadius.circular(10),
-                    onTap: () {},
+                    onTap: () async {
+                      Map<String, dynamic> dataSource = {
+                        "title": titleTextController.text,
+                        "content": contentTextController.text.isEmpty
+                            ? "null"
+                            : contentTextController.text,
+                        "allDay": _isDateChecked.toString(),
+                        // "startDate": _isDateChecked
+                        //     ? null
+                        //     : "${startTodoDayController.text.split(' ')[0]} ${startTodoTimeController.text.substring(10, 15)}:00",
+                        // "endDate": _isDateChecked
+                        //     ? null
+                        //     : "${endTodoDayController.text.split(' ')[0]} ${endTodoTimeController.text.substring(10, 15)}:00",
+                      };
+                      print("datasouce : $dataSource");
+                      await scheduleCon.scheduleSubmit(dataSource);
+                    },
                     child: const SizedBox(
                         width: 60,
                         height: 40,
@@ -93,7 +126,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 textAlign: TextAlign.end,
               ),
               const Gap(6),
-              const TextFieldWidget(
+              TextFieldWidget(
+                controller: titleTextController,
                 maxLine: 1,
                 hintText: "Title",
               ),
@@ -124,7 +158,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
               ),
               const Gap(6),
               _isMemoChecked
-                  ? const TextFieldWidget(maxLine: 3, hintText: '메모를 적어주세요.')
+                  ? TextFieldWidget(
+                      controller: contentTextController,
+                      maxLine: 3,
+                      hintText: '메모를 적어주세요.')
                   : const SizedBox(),
               const Gap(12),
               Row(
@@ -237,7 +274,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                 if (picked != initalEndDay && picked != null) {
                                   setState(() {
                                     initalEndDay = picked;
-                                    startTodoDayController.text =
+                                    endTodoDayController.text =
                                         "${picked.toLocal()}";
                                   });
                                 }
@@ -257,7 +294,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                 if (picked != initalEndTime && picked != null) {
                                   setState(() {
                                     initalEndTime = picked;
-                                    startTodoTimeController.text = "$picked";
+                                    endTodoTimeController.text = "$picked";
                                   });
 
                                   print("TIME ::: $picked");
@@ -270,6 +307,15 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                     )
                   : const SizedBox(),
               const Gap(10),
+              Center(
+                heightFactor: 2,
+                child: Image.asset(
+                  "assets/icons/clipboard.png",
+                  height: 100,
+                  width: 100,
+                  color: Colors.grey.shade300,
+                ),
+              ),
             ],
           ),
         ),

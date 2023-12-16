@@ -3,7 +3,7 @@ import 'package:haedal/service/endpoints.dart';
 
 class ScheduleProvider {
   create(data) async {
-    return await ApiRequest(url: '${Endpoints.boardUrl}/create', data: data)
+    return await ApiRequest(url: '${Endpoints.caledarUrl}/create', data: data)
         .formPost();
   }
 }
