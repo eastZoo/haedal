@@ -36,8 +36,6 @@ class CategoryBoardController extends GetxController {
   }
 
   setCategory(currentCategory) {
-    print("@!@!@@ $currentCategory");
-
     // 현재 카테고리 이름과 같지 않다면 리스트 초기화
     if (category != currentCategory) {
       data.clear();

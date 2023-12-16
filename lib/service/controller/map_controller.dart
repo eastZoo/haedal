@@ -50,7 +50,7 @@ class MapController extends GetxController {
 
     // 위치 가져오는 함수
     await fetchLocationMark();
-    print("isinitialized @!@!@!@!@!@");
+
     isinitialized = true;
 
     // 지도에 마커 뿌리기
@@ -248,7 +248,6 @@ class MapController extends GetxController {
       Set<NMarker> markers = {};
       if (mapController != null) {
         for (var location in locations) {
-          print("@!@! : ${location.files}");
           var marker = getCafeLocationMarker(location);
           if (location.category == "음식점") {
             marker = getRestaurantLocationMarker(location);

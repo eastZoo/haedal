@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:haedal/screens/show_current_schedule_screen.dart';
 import 'package:haedal/screens/select_photo_options_screen.dart';
+import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:haedal/styles/colors.dart';
@@ -54,104 +56,93 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      alignment: Alignment.center,
-      height: MediaQuery.of(context).size.height * 0.75,
-      width: MediaQuery.of(context).size.width,
-      child: SfCalendar(
-        view: CalendarView.month,
-        dataSource: MeetingDataSource(_getDataSource()),
-        controller: controller,
-        // 달력 뷰 세팅
-        headerStyle: const CalendarHeaderStyle(
-          textStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        showNavigationArrow: true,
-        appointmentTextStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontFamily: 'Pretendard',
-          color: Colors.white,
-        ),
-        allowAppointmentResize: true,
-        monthViewSettings: MonthViewSettings(
-          // 달력에 있는 일정 표시 방법 ( 점 , 타이틀 )
-          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-          appointmentDisplayCount: 4,
-          // 밑에 클릭 시 설명
-          // showAgenda: true,
-          // 아래 설명 창 높이
-          // agendaViewHeight: 180,
-          // 달력 스타일 설정
-          monthCellStyle: MonthCellStyle(
-              // 달력 날짜 사이즈 설정
-              textStyle: const TextStyle(
-                fontSize: 12,
-                color: Colors.black,
+    return GetBuilder<ScheduleController>(
+        init: ScheduleController(),
+        builder: (ScheduleCon) {
+          return Container(
+            margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height * 0.75,
+            width: MediaQuery.of(context).size.width,
+            child: SfCalendar(
+              view: CalendarView.month,
+              dataSource: MeetingDataSource(ScheduleCon.meetings),
+              controller: controller,
+              // 달력 뷰 세팅
+              headerStyle: const CalendarHeaderStyle(
+                textStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
               ),
-              // 이전날짜
-              trailingDatesTextStyle: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 10,
+              showNavigationArrow: true,
+              appointmentTextStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
                 fontFamily: 'Pretendard',
-                color: Colors.grey.shade400,
+                color: Colors.white,
               ),
-              // 이후날짜
-              leadingDatesTextStyle: TextStyle(
-                fontStyle: FontStyle.italic,
+              allowAppointmentResize: true,
+              monthViewSettings: MonthViewSettings(
+                // 달력에 있는 일정 표시 방법 ( 점 , 타이틀 )
+                appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                appointmentDisplayCount: 4,
+                // 밑에 클릭 시 설명
+                // showAgenda: true,
+                // 아래 설명 창 높이
+                // agendaViewHeight: 180,
+                // 달력 스타일 설정
+                monthCellStyle: MonthCellStyle(
+                    // 달력 날짜 사이즈 설정
+                    textStyle: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
+                    // 이전날짜
+                    trailingDatesTextStyle: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 10,
+                      fontFamily: 'Pretendard',
+                      color: Colors.grey.shade400,
+                    ),
+                    // 이후날짜
+                    leadingDatesTextStyle: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 10,
+                      fontFamily: 'Pretendard',
+                      color: Colors.grey.shade400,
+                    )),
+              ),
+              todayTextStyle: const TextStyle(
                 fontSize: 10,
+                fontWeight: FontWeight.bold,
                 fontFamily: 'Pretendard',
-                color: Colors.grey.shade400,
-              )),
-        ),
-        todayTextStyle: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Pretendard',
-        ),
-        onTap: (CalendarTapDetails details) async {
-          dynamic appointments = details.appointments;
-          DateTime selectedDay = details.date!;
-          final List<Meeting> meetings = <Meeting>[];
-          setState(
-            () {
-              prevSelectedDay = this.selectedDay;
-              this.selectedDay = selectedDay;
-            },
+              ),
+              onTap: (CalendarTapDetails details) async {
+                dynamic appointments = details.appointments;
+                DateTime selectedDay = details.date!;
+                final List<Meeting> meetings = <Meeting>[];
+                setState(
+                  () {
+                    prevSelectedDay = this.selectedDay;
+                    this.selectedDay = selectedDay;
+                  },
+                );
+
+                for (Meeting item in appointments) {
+                  meetings.add(Meeting(item.eventName, item.from, item.to,
+                      AppColors().mainColor, item.isAllDay));
+                }
+
+                if (prevSelectedDay == selectedDay) {
+                  await _showCurrentDaySchedule(meetings);
+                }
+              },
+            ),
           );
-
-          for (Meeting item in appointments) {
-            meetings.add(Meeting(item.eventName, item.from, item.to,
-                AppColors().mainColor, item.isAllDay));
-          }
-
-          if (prevSelectedDay == selectedDay) {
-            await _showCurrentDaySchedule(meetings);
-          }
-        },
-      ),
-    );
+        });
   }
-}
-
-List<Meeting> _getDataSource() {
-  final List<Meeting> meetings = <Meeting>[];
-  final DateTime today = DateTime.now();
-  final DateTime startTime =
-      DateTime(today.year, today.month, today.day, 9, 0, 0);
-  final DateTime endTime = startTime.add(const Duration(hours: 2));
-  meetings.add(Meeting('데이투', startTime, endTime, AppColors().mainColor, true));
-  meetings.add(Meeting('뭐할까', startTime, endTime, AppColors().subColor, false));
-  meetings.add(Meeting('밥약속', startTime, endTime, AppColors().mainColor, true));
-
-  meetings.add(Meeting('수련회', DateTime(2023, 12, 12, 13, 12, 11),
-      DateTime(2023, 12, 12, 15, 12, 11), AppColors().mainColor, false));
-  return meetings;
 }
 
 class MeetingDataSource extends CalendarDataSource {

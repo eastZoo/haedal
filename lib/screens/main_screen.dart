@@ -13,6 +13,7 @@ import 'package:haedal/screens/tab_menu_screen/memo_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/more_screen.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
+import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -74,83 +75,91 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GET.GetBuilder<AuthController>(
-        init: AuthController(),
-        builder: (AuthCon) {
-          return GET.GetBuilder<MapController>(
-              init: MapController(),
-              builder: (mapCon) {
-                return Scaffold(
-                  body: Column(
-                    children: [
-                      Expanded(
-                        child: IndexedStack(
-                          index: _selectedIndex,
+    return GET.GetBuilder<ScheduleController>(
+        init: ScheduleController(),
+        builder: (ScheduleCon) {
+          return GET.GetBuilder<AuthController>(
+              init: AuthController(),
+              builder: (AuthCon) {
+                return GET.GetBuilder<MapController>(
+                    init: MapController(),
+                    builder: (mapCon) {
+                      return Scaffold(
+                        body: Column(
                           children: [
-                            const MapScreen(),
-                            const MemoScreen(),
-                            const AlbumScreen(),
-                            CalenderScreen(controller: controller),
-                            const MoreScreen(),
+                            Expanded(
+                              child: IndexedStack(
+                                index: _selectedIndex,
+                                children: [
+                                  const MapScreen(),
+                                  const MemoScreen(),
+                                  const AlbumScreen(),
+                                  CalenderScreen(controller: controller),
+                                  const MoreScreen(),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  bottomNavigationBar: SnakeNavigationBar.color(
-                    ///configuration for SnakeNavigationBar.color
-                    snakeViewColor: AppColors().mainColor,
+                        bottomNavigationBar: SnakeNavigationBar.color(
+                          ///configuration for SnakeNavigationBar.color
+                          snakeViewColor: AppColors().mainColor,
 
-                    unselectedItemColor: Colors.grey,
+                          unselectedItemColor: Colors.grey,
 
-                    ///configuration for SnakeNavigationBar.gradient
-                    //snakeViewGradient: selectedGradient,
-                    //selectedItemGradient: snakeShape == SnakeShape.indicator ? selectedGradient : null,
-                    //unselectedItemGradient: unselectedGradient,
+                          ///configuration for SnakeNavigationBar.gradient
+                          //snakeViewGradient: selectedGradient,
+                          //selectedItemGradient: snakeShape == SnakeShape.indicator ? selectedGradient : null,
+                          //unselectedItemGradient: unselectedGradient,
 
-                    showUnselectedLabels: true,
-                    showSelectedLabels: true,
+                          showUnselectedLabels: true,
+                          showSelectedLabels: true,
 
-                    currentIndex: _selectedIndex,
-                    onTap: (index) {
-                      setState(() {
-                        _prevSelectedIndex = _selectedIndex;
-                        _selectedIndex = index;
-                      });
-                      if (_prevSelectedIndex == 3 && _selectedIndex == 3) {
-                        controller.displayDate = DateTime.now();
-                      }
-                      // 2번 앨범 부분 두번 째 클릭 일때 동작
-                      if (_prevSelectedIndex == 2 && _selectedIndex == 2) {
-                        HapticFeedback.lightImpact();
-                        mapCon.setPrevMapController(mapCon.mapController);
-                        _showSelectPhotoOptions();
-                      }
-                    },
+                          currentIndex: _selectedIndex,
+                          onTap: (index) {
+                            setState(() {
+                              _prevSelectedIndex = _selectedIndex;
+                              _selectedIndex = index;
+                            });
+                            if (_prevSelectedIndex == 3 &&
+                                _selectedIndex == 3) {
+                              controller.displayDate = DateTime.now();
+                            }
+                            // 2번 앨범 부분 두번 째 클릭 일때 동작
+                            if (_prevSelectedIndex == 2 &&
+                                _selectedIndex == 2) {
+                              HapticFeedback.lightImpact();
+                              mapCon.setPrevMapController(mapCon.mapController);
+                              _showSelectPhotoOptions();
+                            }
+                          },
 
-                    items: [
-                      const BottomNavigationBarItem(
-                          icon: Icon(Icons.map_outlined, size: 22),
-                          label: '지도'),
-                      const BottomNavigationBarItem(
-                          icon: Icon(Icons.check_box_outlined, size: 22),
-                          label: "메모"),
-                      BottomNavigationBarItem(
-                          icon: Icon(
-                              _selectedIndex == 2
-                                  ? Icons.add
-                                  : Icons.photo_camera_back_outlined,
-                              size: 22),
-                          label: '앨범'),
-                      const BottomNavigationBarItem(
-                          icon: Icon(Icons.calendar_month_outlined, size: 22),
-                          label: '일정'),
-                      const BottomNavigationBarItem(
-                          icon: Icon(Icons.more_horiz, size: 22), label: '더보기')
-                    ],
-                    unselectedLabelStyle: const TextStyle(fontSize: 10),
-                  ),
-                );
+                          items: [
+                            const BottomNavigationBarItem(
+                                icon: Icon(Icons.map_outlined, size: 22),
+                                label: '지도'),
+                            const BottomNavigationBarItem(
+                                icon: Icon(Icons.check_box_outlined, size: 22),
+                                label: "메모"),
+                            BottomNavigationBarItem(
+                                icon: Icon(
+                                    _selectedIndex == 2
+                                        ? Icons.add
+                                        : Icons.photo_camera_back_outlined,
+                                    size: 22),
+                                label: '앨범'),
+                            const BottomNavigationBarItem(
+                                icon: Icon(Icons.calendar_month_outlined,
+                                    size: 22),
+                                label: '일정'),
+                            const BottomNavigationBarItem(
+                                icon: Icon(Icons.more_horiz, size: 22),
+                                label: '더보기')
+                          ],
+                          unselectedLabelStyle: const TextStyle(fontSize: 10),
+                        ),
+                      );
+                    });
               });
         });
   }

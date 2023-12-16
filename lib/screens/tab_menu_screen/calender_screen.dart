@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:haedal/styles/colors.dart';
+import 'package:get/get.dart';
+import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/widgets/calendar_widget.dart';
 import 'package:haedal/widgets/main_appbar.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -19,19 +19,23 @@ class _CalenderScreenState extends State<CalenderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            const MainAppbar(title: '스토리 / 위치리스트'),
-            // 달력 위젯
-            CalendarWidget(
-              controller: controller,
+    return GetBuilder<ScheduleController>(
+        init: ScheduleController(),
+        builder: (ScheduleCon) {
+          return SafeArea(
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              body: Column(
+                children: [
+                  const MainAppbar(title: '스토리 / 위치리스트'),
+                  // 달력 위젯
+                  CalendarWidget(
+                    controller: controller,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }
