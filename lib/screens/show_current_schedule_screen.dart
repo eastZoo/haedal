@@ -89,10 +89,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
               InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () {
-                  var result = _showAddCurrentDaySchedule();
-                  if (result) {
-                    print("SHOW!!!!!!!!! $result");
-                  }
+                  _showAddCurrentDaySchedule();
                 },
                 child: const SizedBox(
                   width: 50,

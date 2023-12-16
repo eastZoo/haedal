@@ -216,7 +216,6 @@ class MapController extends GetxController {
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
 
-          print("lisr!!!!!! $list");
           locations.assignAll(list
               .map<AlbumBoard>((item) => AlbumBoard.fromJson(item))
               .toList());

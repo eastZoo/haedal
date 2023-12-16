@@ -54,10 +54,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     // TODO: implement initState
     super.initState();
     setState(() {
-      startTodoDayController.text = "${DateTime.now().toLocal()}".split(".")[0];
+      startTodoDayController.text = "$selectedDay".split(".")[0];
       startTodoTimeController.text = TimeOfDay.now().toString();
 
-      endTodoDayController.text = "${DateTime.now().toLocal()}".split(".")[0];
+      endTodoDayController.text = "$selectedDay".split(".")[0];
       endTodoTimeController.text = TimeOfDay.now().toString();
     });
   }
@@ -106,6 +106,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         });
 
                         // 등록 데이터 모델
+                        // 종일 체크 시 시작 && 끝 날자 선택 오늘 날짜로 디폴트 들어감
                         Map<String, dynamic> dataSource = {
                           "title": titleTextController.text,
                           "content": contentTextController.text.isEmpty
@@ -113,18 +114,20 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                               : contentTextController.text,
                           "allDay": _isDateChecked,
                           "startDate": _isDateChecked
-                              ? null
+                              ? "${startTodoDayController.text.split(' ')[0]} "
                               : "${startTodoDayController.text.split(' ')[0]} ${startTodoTimeController.text.substring(10, 15)}:00",
                           "endDate": _isDateChecked
-                              ? null
+                              ? endTodoDayController.text.split(' ')[0]
                               : "${endTodoDayController.text.split(' ')[0]} ${endTodoTimeController.text.substring(10, 15)}:00",
                         };
 
+                        print(dataSource);
                         var res = await scheduleCon.scheduleSubmit(dataSource);
                         setState(() {
                           isLoading = false;
                         });
                         if (res) {
+                          scheduleCon.refetchDataSource();
                           Navigator.pop(context);
                         }
                       },
@@ -340,8 +343,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                   heightFactor: 2,
                   child: Image.asset(
                     "assets/icons/clipboard.png",
-                    height: 100,
-                    width: 100,
+                    height: 80,
+                    width: 80,
                     color: Colors.grey.shade300,
                   ),
                 ),

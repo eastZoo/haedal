@@ -35,6 +35,12 @@ class ScheduleController extends GetxController {
     }
   }
 
+  refetchDataSource() async {
+    print(
+        "refetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSo");
+    await _getDataSource();
+  }
+
   _getDataSource() async {
     try {
       print("RSs11");
@@ -45,25 +51,30 @@ class ScheduleController extends GetxController {
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
 
-          print("_getDataSource!!!!!! $list");
-          print(" list[0][!!!: ${list[0]["title"]}");
-          print(" list[0][!!!: ${list[0]["startDate"]}");
-          print(" list[0][!!!: ${list[0]["endDate"]}");
-          print(" list[0][!!!: ${list[0]["allDay"]}");
-          print(" list[0][!!!:${list[0]["startDate"].runtimeType}");
-          print(" list[0][!!!:${list[0]["allDay"].runtimeType}");
-          print("DateTime(list[0])${DateTime(list[0]["startDate"])}");
+          print(" list[title][!!!: ${list[0]["title"]}");
+          print(" list[startDate][!!!: ${list[0]["startDate"]}");
+          print(" list[endDate][!!!: ${list[0]["endDate"]}");
+          print(" list[allDay][!!!: ${list[0]["allDay"]}");
 
-          meetings.assignAll(list
-              .map((item) => Meeting(
-                  item["title"],
-                  DateTime(item["startDate"]),
-                  DateTime(item["endDate"]),
-                  AppColors().mainColor,
-                  item["allDay"]))
-              .toList());
+          print(
+              " ===============================================================  ");
+
+          print(" list[title][!!!: ${list[0]["title"].runtimeType}");
+          print(" list[startDate][!!!: ${list[0]["startDate"].runtimeType}");
+          print(" list[endDate][!!!: ${list[0]["endDate"].runtimeType}");
+          print(" list[allDay][!!!: ${list[0]["allDay"].runtimeType}");
+
+          meetings.assignAll(list.map((item) {
+            return Meeting(
+                item["title"],
+                DateTime.parse(item["startDate"]).toLocal(),
+                DateTime.parse(item["endDate"]).toLocal(),
+                AppColors().mainColor,
+                item["allDay"]);
+          }).toList());
 
           print("meetings@@ : $meetings");
+          update();
         }
       } else {
         return res["msg"];
