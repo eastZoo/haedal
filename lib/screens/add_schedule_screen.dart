@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:haedal/screens/select_color_screen.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/styles/app_style.dart';
@@ -60,6 +61,35 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
       endTodoDayController.text = "$selectedDay".split(".")[0];
       endTodoTimeController.text = TimeOfDay.now().toString();
     });
+  }
+
+  // 색깔 고르는 바텀시트
+  _showColorPicker() {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10.0),
+        ),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          maxChildSize: 0.65,
+          minChildSize: 0.6,
+          expand: false,
+          snap: true,
+          builder: (context, scrollController) {
+            return GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: const Scaffold(
+                body: SelectColorScreen(),
+              ),
+            );
+          }),
+    );
   }
 
   @override
@@ -193,6 +223,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         hintText: '메모를 적어주세요.')
                     : const SizedBox(),
                 const Gap(12),
+                // 날짜 범위 선택
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -338,6 +369,33 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         ],
                       )
                     : const SizedBox(),
+                const Gap(10),
+                InkWell(
+                  onTap: () async {
+                    var result = await _showColorPicker();
+                    print(result);
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: const SizedBox(
+                    height: 45,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.color_lens_outlined),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text('라벨컬러', style: AppStyle.headingOne),
+                          ],
+                        ),
+                        Icon(Icons.arrow_forward_ios_sharp),
+                      ],
+                    ),
+                  ),
+                ),
+
                 const Gap(10),
                 Center(
                   heightFactor: 2,

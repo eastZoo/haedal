@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:haedal/models/label-color.dart';
 import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/service/provider/schedule_provider.dart';
 import 'package:haedal/styles/colors.dart';
@@ -6,11 +7,13 @@ import 'package:haedal/widgets/calendar_widget.dart';
 
 class ScheduleController extends GetxController {
   List<Meeting> meetings = <Meeting>[];
+  var colors = <dynamic>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     _getDataSource();
+    getCalendarLabelColor();
   }
 
   scheduleSubmit(Map<String, dynamic> requestData) async {
@@ -35,34 +38,42 @@ class ScheduleController extends GetxController {
     }
   }
 
-  refetchDataSource() async {
-    print(
-        "refetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSourcerefetchDataSo");
-    await _getDataSource();
-  }
-
-  _getDataSource() async {
+  getCalendarLabelColor() async {
     try {
-      print("RSs11");
-      var res = await ScheduleProvider().getSchedule();
+      var res = await ScheduleProvider().getLabelColor();
       var isSuccess = res["success"];
       if (isSuccess == true) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
 
-          print(" list[title][!!!: ${list[0]["title"]}");
-          print(" list[startDate][!!!: ${list[0]["startDate"]}");
-          print(" list[endDate][!!!: ${list[0]["endDate"]}");
-          print(" list[allDay][!!!: ${list[0]["allDay"]}");
+          colors.assignAll(list
+              .map<LabelColor>((item) => LabelColor.fromJson(item))
+              .toList());
 
-          print(
-              " ===============================================================  ");
+          print("colors   : $colors");
+        }
+      } else {
+        return res["msg"];
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
-          print(" list[title][!!!: ${list[0]["title"].runtimeType}");
-          print(" list[startDate][!!!: ${list[0]["startDate"].runtimeType}");
-          print(" list[endDate][!!!: ${list[0]["endDate"].runtimeType}");
-          print(" list[allDay][!!!: ${list[0]["allDay"].runtimeType}");
+// 일정 등록 후 리패칭
+  refetchDataSource() async {
+    await _getDataSource();
+  }
+
+  _getDataSource() async {
+    try {
+      var res = await ScheduleProvider().getSchedule();
+      var isSuccess = res["success"];
+      if (isSuccess == true) {
+        var responseData = res["data"];
+        if (responseData != null && responseData != "") {
+          List<dynamic> list = responseData;
 
           meetings.assignAll(list.map((item) {
             return Meeting(
@@ -73,7 +84,6 @@ class ScheduleController extends GetxController {
                 item["allDay"]);
           }).toList());
 
-          print("meetings@@ : $meetings");
           update();
         }
       } else {

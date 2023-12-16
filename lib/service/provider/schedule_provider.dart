@@ -12,4 +12,8 @@ class ScheduleProvider {
       url: Endpoints.caledarUrl,
     ).asyncGet();
   }
+
+  getLabelColor() async {
+    return await ApiRequest(url: '${Endpoints.caledarUrl}/color').asyncGet();
+  }
 }

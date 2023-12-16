@@ -35,9 +35,9 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
         ),
       ),
       builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          maxChildSize: 0.8,
-          minChildSize: 0.75,
+          initialChildSize: 0.85,
+          maxChildSize: 0.85,
+          minChildSize: 0.8,
           expand: false,
           snap: true,
           builder: (context, scrollController) {
