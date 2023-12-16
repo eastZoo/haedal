@@ -28,6 +28,7 @@ class _CategoryStoryScreenState extends State<CategoryStoryScreen> {
     // Format the date
     String formattedDate = DateFormat.yMMMMd("ko_KR").add_E().format(dateTime);
     return InkWell(
+      borderRadius: BorderRadius.circular(10),
       onTap: () {
         Navigator.push(
           context,

@@ -2,16 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:haedal/service/controller/category_board_controller.dart';
-import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/styles/app_style.dart';
-import 'package:haedal/widgets/custom_switch.dart';
+import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/date_time_widget.dart';
-import 'package:haedal/widgets/my_textfield.dart';
-import 'package:haedal/widgets/radio_widget.dart';
 import 'package:haedal/widgets/textfield_widget.dart';
-import 'package:intl/intl.dart';
 
 class AddScheduleScreen extends StatefulWidget {
   DateTime? selectedDay;
@@ -25,34 +20,30 @@ class AddScheduleScreen extends StatefulWidget {
 class _AddScheduleScreenState extends State<AddScheduleScreen> {
   _AddScheduleScreenState(this.selectedDay);
   DateTime? selectedDay;
-  bool isSwitched = false;
+  bool _isMemoChecked = false;
+  bool _isDateChecked = true;
+
   TextEditingController titleTextController = TextEditingController();
 
-  void toggleSwitch(bool value) {
-    if (isSwitched == false) {
-      setState(() {
-        isSwitched = true;
-      });
-    } else {
-      setState(() {
-        isSwitched = false;
-      });
-    }
-  }
+// 일정 시작 날짜
+  final startTodoDayController = TextEditingController();
+  // 일정 시작 시간
+  final startTodoTimeController = TextEditingController();
+  // 일정 종료 날짜
+  final endTodoDayController = TextEditingController();
+  // 일정 종료 시간
+  final endTodoTimeController = TextEditingController();
+
+  DateTime initalStartDay = DateTime.now();
+  DateTime initalEndDay = DateTime.now();
+
+  TimeOfDay initalStartTime = TimeOfDay.now();
+  TimeOfDay initalEndTime = TimeOfDay.now();
 
   @override
   Widget build(BuildContext context) {
-    InfiniteScrollController infiniteCon = Get.put(InfiniteScrollController());
-    CategoryBoardController categoryBoardCon =
-        Get.put(CategoryBoardController());
-
-    double width = MediaQuery.of(context).size.width;
-
-    const textStyle = TextStyle(
-        fontWeight: FontWeight.w600, color: Colors.black, fontSize: 20);
-
-    return GetBuilder<MapController>(builder: (mapCon) {
-      return Container(
+    return SingleChildScrollView(
+      child: Container(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
@@ -63,8 +54,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    radius: 10,
-                    onTap: () {},
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                     child: const SizedBox(
                       width: 40,
                       child: Icon(
@@ -74,12 +67,19 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                     ),
                   ),
                   InkWell(
+                    borderRadius: BorderRadius.circular(10),
                     onTap: () {},
                     child: const SizedBox(
-                        width: 40,
-                        child: Text(
-                          "저장",
-                          style: TextStyle(fontSize: 17),
+                        width: 60,
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            "저장",
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         )),
                   )
                 ],
@@ -97,34 +97,183 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 maxLine: 1,
                 hintText: "Title",
               ),
-              const Gap(6),
-              const Text('메모', style: AppStyle.headingOne),
-              const Gap(6),
-              const TextFieldWidget(maxLine: 4, hintText: '메모를 적어주세요.'),
-              const Gap(12),
+              const Gap(15),
 
-              // 날짜 섹션
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  DateTimeWidget(
-                    titleText: 'Date',
-                    valueText: 'dd/mm/yy',
-                    iconSection: CupertinoIcons.calendar,
+                  const Row(
+                    children: [
+                      Icon(Icons.note_alt_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('메모', style: AppStyle.headingOne),
+                    ],
                   ),
-                  Gap(20),
-                  DateTimeWidget(
-                    titleText: 'Time',
-                    valueText: 'hh : mm',
-                    iconSection: CupertinoIcons.clock,
+                  CupertinoSwitch(
+                    value: _isMemoChecked,
+                    activeColor: AppColors().mainColor,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isMemoChecked = value ?? false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const Gap(6),
+              _isMemoChecked
+                  ? const TextFieldWidget(maxLine: 3, hintText: '메모를 적어주세요.')
+                  : const SizedBox(),
+              const Gap(12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.history_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('종일', style: AppStyle.headingOne),
+                    ],
+                  ),
+                  CupertinoSwitch(
+                    value: _isDateChecked,
+                    activeColor: AppColors().mainColor,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isDateChecked = value ?? false;
+                      });
+                    },
                   ),
                 ],
               ),
               const Gap(10),
+              // 날짜 섹션
+              !_isDateChecked
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Divider(),
+                        const Gap(15),
+                        const Text(
+                          '시작',
+                          style: AppStyle.headingOne,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            DateTimeWidget(
+                              valueText:
+                                  initalStartDay.toString().split(" ")[0] ??
+                                      'dd/mm/yy',
+                              iconSection: CupertinoIcons.calendar,
+                              onTap: () async {
+                                final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2021),
+                                  lastDate: DateTime(2100),
+                                );
+
+                                if (picked != initalStartDay &&
+                                    picked != null) {
+                                  setState(() {
+                                    initalStartDay = picked;
+                                    startTodoDayController.text =
+                                        "${picked.toLocal()}";
+                                  });
+                                }
+                              },
+                            ),
+                            const Gap(20),
+                            DateTimeWidget(
+                              valueText:
+                                  "${initalStartTime.hour}:${initalStartTime.minute}" ??
+                                      'hh : mm',
+                              iconSection: CupertinoIcons.clock,
+                              onTap: () async {
+                                final picked = await showTimePicker(
+                                  context: context,
+                                  initialTime:
+                                      initalStartTime ?? TimeOfDay.now(),
+                                );
+                                if (picked != initalStartTime &&
+                                    picked != null) {
+                                  setState(() {
+                                    initalStartTime = picked;
+                                    startTodoTimeController.text = "$picked";
+                                  });
+
+                                  print("TIME ::: $picked");
+                                }
+                              },
+                            )
+                          ],
+                        ),
+                        // end time
+                        const Text(
+                          '종료',
+                          style: AppStyle.headingOne,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            DateTimeWidget(
+                              valueText:
+                                  initalEndDay.toString().split(" ")[0] ??
+                                      'dd/mm/yy',
+                              iconSection: CupertinoIcons.calendar,
+                              onTap: () async {
+                                final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2021),
+                                  lastDate: DateTime(2100),
+                                );
+
+                                if (picked != initalEndDay && picked != null) {
+                                  setState(() {
+                                    initalEndDay = picked;
+                                    startTodoDayController.text =
+                                        "${picked.toLocal()}";
+                                  });
+                                }
+                              },
+                            ),
+                            const Gap(20),
+                            DateTimeWidget(
+                              valueText:
+                                  "${initalEndTime.hour}:${initalEndTime.minute}" ??
+                                      'hh : mm',
+                              iconSection: CupertinoIcons.clock,
+                              onTap: () async {
+                                final picked = await showTimePicker(
+                                  context: context,
+                                  initialTime: initalEndTime ?? TimeOfDay.now(),
+                                );
+                                if (picked != initalEndTime && picked != null) {
+                                  setState(() {
+                                    initalEndTime = picked;
+                                    startTodoTimeController.text = "$picked";
+                                  });
+
+                                  print("TIME ::: $picked");
+                                }
+                              },
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
+              const Gap(10),
             ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 }

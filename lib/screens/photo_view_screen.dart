@@ -118,8 +118,9 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const InkWell(
-                      child: Icon(
+                    InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      child: const Icon(
                         Icons.near_me,
                         color: Colors.grey,
                         size: 25,
@@ -128,8 +129,9 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                     const SizedBox(
                       width: 5,
                     ),
-                    const InkWell(
-                      child: Icon(
+                    InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      child: const Icon(
                         Icons.favorite_outline_rounded,
                         color: Colors.grey,
                         size: 25,
@@ -138,8 +140,9 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                     const SizedBox(
                       width: 5,
                     ),
-                    const InkWell(
-                      child: Icon(
+                    InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      child: const Icon(
                         Icons.ios_share_sharp,
                         color: Colors.grey,
                         size: 25,
@@ -149,6 +152,7 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
                       width: 5,
                     ),
                     InkWell(
+                      borderRadius: BorderRadius.circular(10),
                       onTap: () {
                         downloadImage(
                             "${Endpoints.hostUrl}/${albumBoard?.files?[currentIndex].filename}");
@@ -174,6 +178,7 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
             top: 30,
             left: 10,
             child: InkWell(
+              borderRadius: BorderRadius.circular(10),
               onTap: () {
                 Navigator.pop(context);
               },

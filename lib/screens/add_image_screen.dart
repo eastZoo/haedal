@@ -263,6 +263,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
               height: width / 1.5,
               width: double.infinity,
               child: InkWell(
+                borderRadius: BorderRadius.circular(10),
                 child: ClipRRect(
                   // make sure we apply clip it properly
                   child: BackdropFilter(
@@ -393,6 +394,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
             child: InkWell(
+              borderRadius: BorderRadius.circular(10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

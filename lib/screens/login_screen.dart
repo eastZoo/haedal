@@ -180,6 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(width: 4),
                           InkWell(
+                            borderRadius: BorderRadius.circular(10),
                             child: const Text(
                               '연결하러 가기',
                               style: TextStyle(

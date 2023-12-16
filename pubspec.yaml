@@ -49,6 +49,7 @@ dependencies:
   gap: ^3.0.1
   syncfusion_flutter_calendar: ^23.2.7
   flutter_snake_navigationbar: ^0.6.1
+  flutter_riverpod: ^2.4.9
 
 dev_dependencies:
   flutter_test:

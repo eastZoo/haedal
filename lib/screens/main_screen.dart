@@ -15,6 +15,7 @@ import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -27,6 +28,14 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 2; // 앨범 초기 메인
   int _prevSelectedIndex = 2; // 앨범 초기 메인
   final autoSizeGroup = AutoSizeGroup();
+  late CalendarController controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    controller = CalendarController();
+    super.initState();
+  }
 
   final iconList = [
     Icons.map,
@@ -77,12 +86,12 @@ class _MainScreenState extends State<MainScreen> {
                       Expanded(
                         child: IndexedStack(
                           index: _selectedIndex,
-                          children: const [
-                            MapScreen(),
-                            MemoScreen(),
-                            AlbumScreen(),
-                            CalenderScreen(),
-                            MoreScreen(),
+                          children: [
+                            const MapScreen(),
+                            const MemoScreen(),
+                            const AlbumScreen(),
+                            CalenderScreen(controller: controller),
+                            const MoreScreen(),
                           ],
                         ),
                       ),
@@ -108,7 +117,10 @@ class _MainScreenState extends State<MainScreen> {
                         _prevSelectedIndex = _selectedIndex;
                         _selectedIndex = index;
                       });
-
+                      if (_prevSelectedIndex == 3 && _selectedIndex == 3) {
+                        controller.displayDate = DateTime.now();
+                      }
+                      // 2번 앨범 부분 두번 째 클릭 일때 동작
                       if (_prevSelectedIndex == 2 && _selectedIndex == 2) {
                         HapticFeedback.lightImpact();
                         mapCon.setPrevMapController(mapCon.mapController);

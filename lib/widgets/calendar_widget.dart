@@ -7,13 +7,16 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:haedal/styles/colors.dart';
 
 class CalendarWidget extends StatefulWidget {
-  const CalendarWidget({Key? key}) : super(key: key);
-
+  const CalendarWidget({super.key, required this.controller});
+  final CalendarController controller;
   @override
-  State<CalendarWidget> createState() => _CalendarWidgetState();
+  State<CalendarWidget> createState() => _CalendarWidgetState(controller);
 }
 
 class _CalendarWidgetState extends State<CalendarWidget> {
+  _CalendarWidgetState(this.controller);
+
+  CalendarController controller;
   final CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime? selectedDay;
   DateTime focusedDay = DateTime.now();
@@ -59,6 +62,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       child: SfCalendar(
         view: CalendarView.month,
         dataSource: MeetingDataSource(_getDataSource()),
+        controller: controller,
         // 달력 뷰 세팅
         headerStyle: const CalendarHeaderStyle(
           textStyle: TextStyle(
@@ -78,6 +82,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         monthViewSettings: MonthViewSettings(
           // 달력에 있는 일정 표시 방법 ( 점 , 타이틀 )
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+          appointmentDisplayCount: 4,
           // 밑에 클릭 시 설명
           // showAgenda: true,
           // 아래 설명 창 높이

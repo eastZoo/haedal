@@ -35,15 +35,19 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
         ),
       ),
       builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.7,
-          maxChildSize: 0.7,
-          minChildSize: 0.65,
+          initialChildSize: 0.8,
+          maxChildSize: 0.8,
+          minChildSize: 0.75,
           expand: false,
           snap: true,
           builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: AddScheduleScreen(selectedDay: selectedDay),
+            return GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Scaffold(
+                body: AddScheduleScreen(selectedDay: selectedDay),
+              ),
             );
           }),
     );
@@ -83,11 +87,13 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                 style: textStyle,
               ),
               InkWell(
+                borderRadius: BorderRadius.circular(10),
                 onTap: () {
                   _showAddCurrentDaySchedule();
                 },
                 child: const SizedBox(
-                  width: 40,
+                  width: 50,
+                  height: 30,
                   child: Icon(
                     Icons.add_circle,
                     size: 28,
@@ -96,7 +102,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
               )
             ],
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 20.0),
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 200, minHeight: 56.0),
             child: appointments!.isNotEmpty
@@ -173,7 +179,14 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                       );
                     },
                   )
-                : const Text("등록된 일정이 없습니다."),
+                : const Center(
+                    child: Center(
+                      child: Text(
+                        "등록된 일정이 없습니다.",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
           ),
         ],
       ),
