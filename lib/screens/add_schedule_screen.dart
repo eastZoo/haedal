@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/label-color.dart';
 import 'package:haedal/screens/select_color_screen.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
@@ -25,6 +28,7 @@ class AddScheduleScreen extends StatefulWidget {
 
 class _AddScheduleScreenState extends State<AddScheduleScreen> {
   _AddScheduleScreenState(this.selectedDay);
+
   ScheduleController scheduleCon = Get.put(ScheduleController());
 
   DateTime? selectedDay;
@@ -41,6 +45,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
   final endTodoDayController = TextEditingController();
   // 일정 종료 시간
   final endTodoTimeController = TextEditingController();
+
+  // label color
+  String chosenColorCode = "0xff8468A0";
 
   DateTime initalStartDay = DateTime.now();
   DateTime initalEndDay = DateTime.now();
@@ -64,6 +71,26 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
       endTodoDayController.text = "$selectedDay".split(".")[0];
       endTodoTimeController.text = TimeOfDay.now().toString();
     });
+    getColor();
+  }
+
+  // 초기 로딩시 로컬스토리지에 색데이터 있는지 확인후 있다면 디폴트 세팅
+  getColor() async {
+    final dataString = await storage.read(key: "color");
+    print("dataString: $dataString");
+    if (dataString != null) {
+      Map<String, dynamic> jsonData = json.decode(dataString);
+
+      LabelColor localColor = LabelColor.fromJson(jsonData);
+
+      setState(() {
+        chosenColorCode = localColor.code;
+      });
+
+      return;
+    }
+    print("NO COLOR DATA");
+    return;
   }
 
   // 색깔 고르는 바텀시트
@@ -181,9 +208,15 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
 
                 const Gap(12),
                 // 제목
-                const Text(
+                Text(
                   "할 일",
-                  style: AppStyle.headingOne,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Color(
+                      int.parse(chosenColorCode),
+                    ),
+                  ),
                   textAlign: TextAlign.end,
                 ),
                 const Gap(6),
@@ -197,13 +230,27 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.note_alt_outlined),
-                        SizedBox(
+                        Icon(
+                          Icons.note_alt_outlined,
+                          color: Color(
+                            int.parse(chosenColorCode),
+                          ),
+                        ),
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text('메모', style: AppStyle.headingOne),
+                        Text(
+                          '메모',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Color(
+                              int.parse(chosenColorCode),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     CupertinoSwitch(
@@ -229,13 +276,27 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.history_outlined),
-                        SizedBox(
+                        Icon(
+                          Icons.history_outlined,
+                          color: Color(
+                            int.parse(chosenColorCode),
+                          ),
+                        ),
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text('종일', style: AppStyle.headingOne),
+                        Text(
+                          '종일',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Color(
+                              int.parse(chosenColorCode),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     CupertinoSwitch(
@@ -257,9 +318,15 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         children: [
                           const Divider(),
                           const Gap(15),
-                          const Text(
+                          Text(
                             '시작',
-                            style: AppStyle.headingOne,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Color(
+                                int.parse(chosenColorCode),
+                              ),
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -313,9 +380,15 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                             ],
                           ),
                           // end time
-                          const Text(
+                          Text(
                             '종료',
-                            style: AppStyle.headingOne,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Color(
+                                int.parse(chosenColorCode),
+                              ),
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -375,64 +448,54 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 InkWell(
                   onTap: () async {
                     var result = await _showColorPicker();
-                    print(result.toString());
-                    await storage.write(key: "color", value: result.toString());
+                    var decode = json.decode(result);
+                    print("!!@@!@@@@ ${decode["code"]}");
+                    setState(() {
+                      chosenColorCode = decode["code"];
+                    });
+                    await storage.write(key: "color", value: result);
                   },
                   borderRadius: BorderRadius.circular(10),
-                  child: const SizedBox(
+                  child: SizedBox(
                     height: 45,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.color_lens_outlined),
-                            SizedBox(
+                            Icon(
+                              Icons.color_lens_outlined,
+                              color: Color(
+                                int.parse(chosenColorCode),
+                              ),
+                            ),
+                            const SizedBox(
                               width: 10,
                             ),
-                            Text('라벨컬러', style: AppStyle.headingOne),
+                            Text(
+                              '라벨컬러',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Color(
+                                  int.parse(chosenColorCode),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        Icon(Icons.arrow_forward_ios_sharp),
+                        Icon(
+                          Icons.arrow_forward_ios_sharp,
+                          color: Color(
+                            int.parse(chosenColorCode),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
 
-                InkWell(
-                  onTap: () async {
-                    await storage.delete(key: 'color');
-                  },
-                  borderRadius: BorderRadius.circular(10),
-                  child: const SizedBox(
-                    height: 45,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.color_lens_outlined),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text('color reset', style: AppStyle.headingOne),
-                          ],
-                        ),
-                        Icon(Icons.arrow_forward_ios_sharp),
-                      ],
-                    ),
-                  ),
-                ),
                 const Gap(10),
-                Center(
-                  heightFactor: 2,
-                  child: Image.asset(
-                    "assets/icons/clipboard.png",
-                    height: 80,
-                    width: 80,
-                    color: Colors.grey.shade300,
-                  ),
-                ),
               ],
             ),
           ),

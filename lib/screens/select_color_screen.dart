@@ -26,35 +26,27 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     getColor();
   }
 
+  // 초기 로딩시 로컬스토리지에 색데이터 있는지 확인후 있다면 디폴트 세팅
   getColor() async {
     final dataString = await storage.read(key: "color");
 
-    print(dataString);
-    print(dataString.runtimeType);
     if (dataString != null) {
-      // Convert the string data to a map
       Map<String, dynamic> jsonData = json.decode(dataString);
 
-      // Create an object from the map
-      LabelColor myObject = LabelColor.fromJson(jsonData);
+      LabelColor localColor = LabelColor.fromJson(jsonData);
 
-      // Access the properties of the object
-      print('Code: ${myObject.code}');
-      print('Name: ${myObject.name}');
-      print('ID: ${myObject.id}');
+      setState(() {
+        chosenId = localColor.id;
+        chosenColor = localColor.code;
+      });
+
+      return;
     }
-
-    // setState(() {
-    //   chosenColor = value.code.toString();
-    //                         chosenId = value.id;
-    // });
-    // print("########## $value");
-    // print("########## ${myObject.code}");
-    return null;
+    print("NO COLOR DATA");
+    return;
   }
 
   @override
@@ -99,6 +91,7 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
                             'id': scheduleCon.colors[index].id
                           };
 
+                          // json 형태로 인코딩해서 로컬스토리지에 저장
                           final jsonString = jsonEncode(dataSource);
 
                           setState(() {
