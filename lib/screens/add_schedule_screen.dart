@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/screens/select_color_screen.dart';
@@ -49,6 +50,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
 
   String errorMsg = "";
   bool isLoading = false;
+
+  final storage = const FlutterSecureStorage();
 
   @override
   void initState() {
@@ -151,7 +154,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                               : "${endTodoDayController.text.split(' ')[0]} ${endTodoTimeController.text.substring(10, 15)}:00",
                         };
 
-                        print(dataSource);
                         var res = await scheduleCon.scheduleSubmit(dataSource);
                         setState(() {
                           isLoading = false;
@@ -373,7 +375,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 InkWell(
                   onTap: () async {
                     var result = await _showColorPicker();
-                    print(result);
+                    print(result.toString());
+                    await storage.write(key: "color", value: result.toString());
                   },
                   borderRadius: BorderRadius.circular(10),
                   child: const SizedBox(
@@ -396,6 +399,30 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                   ),
                 ),
 
+                InkWell(
+                  onTap: () async {
+                    await storage.delete(key: 'color');
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: const SizedBox(
+                    height: 45,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.color_lens_outlined),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text('color reset', style: AppStyle.headingOne),
+                          ],
+                        ),
+                        Icon(Icons.arrow_forward_ios_sharp),
+                      ],
+                    ),
+                  ),
+                ),
                 const Gap(10),
                 Center(
                   heightFactor: 2,

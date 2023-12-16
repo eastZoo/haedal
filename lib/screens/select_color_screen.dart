@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/label-color.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
 
@@ -16,10 +20,41 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
   _SelectColorScreenState();
   String chosenColor = "";
   String chosenId = "";
+  final storage = const FlutterSecureStorage();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    getColor();
+  }
+
+  getColor() async {
+    final dataString = await storage.read(key: "color");
+
+    print(dataString);
+    print(dataString.runtimeType);
+    if (dataString != null) {
+      // Convert the string data to a map
+      Map<String, dynamic> jsonData = json.decode(dataString);
+
+      // Create an object from the map
+      LabelColor myObject = LabelColor.fromJson(jsonData);
+
+      // Access the properties of the object
+      print('Code: ${myObject.code}');
+      print('Name: ${myObject.name}');
+      print('ID: ${myObject.id}');
+    }
+
+    // setState(() {
+    //   chosenColor = value.code.toString();
+    //                         chosenId = value.id;
+    // });
+    // print("########## $value");
+    // print("########## ${myObject.code}");
+    return null;
   }
 
   @override
@@ -58,12 +93,20 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
+                          Map<String, dynamic> dataSource = {
+                            'code': scheduleCon.colors[index].code,
+                            'name': scheduleCon.colors[index].name,
+                            'id': scheduleCon.colors[index].id
+                          };
+
+                          final jsonString = jsonEncode(dataSource);
+
                           setState(() {
                             chosenColor = scheduleCon.colors[index].code;
                             chosenId = scheduleCon.colors[index].id;
                           });
 
-                          Navigator.pop(context, chosenColor);
+                          Navigator.pop(context, jsonString);
                         },
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
