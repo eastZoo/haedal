@@ -60,9 +60,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         init: ScheduleController(),
         builder: (ScheduleCon) {
           return Container(
-            margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            alignment: Alignment.center,
-            height: MediaQuery.of(context).size.height * 0.75,
+            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+            height: MediaQuery.of(context).size.height * 0.8,
             width: MediaQuery.of(context).size.width,
             child: SfCalendar(
               view: CalendarView.month,
@@ -132,7 +131,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
                 for (Meeting item in appointments) {
                   meetings.add(Meeting(item.eventName, item.from, item.to,
-                      AppColors().mainColor, item.isAllDay));
+                      item.background, item.isAllDay));
                 }
 
                 if (prevSelectedDay == selectedDay) {

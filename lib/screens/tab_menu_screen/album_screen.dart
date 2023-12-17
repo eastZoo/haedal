@@ -6,8 +6,7 @@ import 'package:get/get.dart';
 import 'package:haedal/models/album.dart';
 import 'package:haedal/screens/story_detail_screen.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
-import 'package:haedal/widgets/main_appbar.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:intl/intl.dart';
 
 import '../../service/endpoints.dart';
@@ -20,6 +19,57 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreenState extends State<AlbumScreen> {
+  // 메인 빌드!!
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<InfiniteScrollController>(
+        init: InfiniteScrollController(),
+        builder: (controller) {
+          return SafeArea(
+            child: Scaffold(
+              body: Column(children: [
+                Expanded(
+                    child: Obx(
+                  () => ListView.separated(
+                    controller: controller.scrollController.value,
+                    itemBuilder: (_, index) {
+                      print(controller.hasMore.value);
+                      if (index < controller.data.length) {
+                        AlbumBoard? data =
+                            AlbumBoard.fromJson(controller.data[index]);
+                        return postCard(data);
+                      }
+                      if (controller.hasMore.value ||
+                          controller.isLoading.value) {
+                        return const Center(child: RefreshProgressIndicator());
+                      }
+                      return Container(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              const Text('데이터의 마지막 입니다'),
+                              IconButton(
+                                onPressed: () {
+                                  controller.reload();
+                                },
+                                icon: const Icon(Icons.refresh_outlined),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (_, index) => const Divider(),
+                    itemCount: controller.data.length + 1,
+                  ),
+                )),
+              ]),
+            ),
+          );
+        });
+  }
+
 // 게시글 카드
   Widget postCard(AlbumBoard? data) {
     DateTime dateTime = DateTime.parse(data!.storyDate.toString());
@@ -100,57 +150,5 @@ class _AlbumScreenState extends State<AlbumScreen> {
         ),
       ),
     );
-  }
-
-  // 메인 빌드!!
-  @override
-  Widget build(BuildContext context) {
-    return GetBuilder<InfiniteScrollController>(
-        init: InfiniteScrollController(),
-        builder: (controller) {
-          return SafeArea(
-            child: Scaffold(
-              body: Column(children: [
-                const MainAppbar(title: '스토리 / 위치리스트'),
-                Expanded(
-                    child: Obx(
-                  () => ListView.separated(
-                    controller: controller.scrollController.value,
-                    itemBuilder: (_, index) {
-                      print(controller.hasMore.value);
-                      if (index < controller.data.length) {
-                        AlbumBoard? data =
-                            AlbumBoard.fromJson(controller.data[index]);
-                        return postCard(data);
-                      }
-                      if (controller.hasMore.value ||
-                          controller.isLoading.value) {
-                        return const Center(child: RefreshProgressIndicator());
-                      }
-                      return Container(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              const Text('데이터의 마지막 입니다'),
-                              IconButton(
-                                onPressed: () {
-                                  controller.reload();
-                                },
-                                icon: const Icon(Icons.refresh_outlined),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (_, index) => const Divider(),
-                    itemCount: controller.data.length + 1,
-                  ),
-                )),
-              ]),
-            ),
-          );
-        });
   }
 }

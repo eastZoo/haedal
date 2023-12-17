@@ -57,4 +57,8 @@ class AuthProvider extends GetxController {
             url: '${Endpoints.authUrl}/info/connect', data: data)
         .asyncPost();
   }
+
+  getUserInfoProvider() async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/profile').asyncGet();
+  }
 }

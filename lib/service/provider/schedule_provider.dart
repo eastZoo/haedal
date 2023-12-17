@@ -16,4 +16,15 @@ class ScheduleProvider {
   getLabelColor() async {
     return await ApiRequest(url: '${Endpoints.caledarUrl}/color').asyncGet();
   }
+
+  getCurrentWorkTableUrl(currentMonth) async {
+    return await ApiRequest(
+            url: '${Endpoints.caledarUrl}/work-table?_month=$currentMonth')
+        .asyncGet();
+  }
+
+  workTableSubmit(data) async {
+    return await ApiRequest(url: '${Endpoints.caledarUrl}/create', data: data)
+        .formPost();
+  }
 }

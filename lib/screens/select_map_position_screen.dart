@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
-import 'package:haedal/routes/app_pages.dart';
-import 'package:haedal/screens/add_image_screen.dart';
 import 'package:haedal/service/controller/location_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/add_location_bottom_sheet.dart';
-import 'package:haedal/widgets/custom_appbar.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import '/widgets/re_usable_select_photo_button.dart';
+
 
 class SelectMapPositionScreen extends StatefulWidget {
   const SelectMapPositionScreen({

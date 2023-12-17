@@ -55,31 +55,31 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
         init: ScheduleController(),
         builder: (scheduleCon) {
           return LoadingOverlay(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Gap(5),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 6, 0, 5),
-                    child: Center(
-                      heightFactor: 0.7,
-                      child: Container(
-                        width: 50,
-                        height: 3,
-                        margin: const EdgeInsets.only(bottom: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(2.5),
-                          color: Colors.grey.shade400,
-                        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Gap(5),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 6, 0, 5),
+                  child: Center(
+                    heightFactor: 0.7,
+                    child: Container(
+                      width: 50,
+                      height: 3,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(2.5),
+                        color: Colors.grey.shade400,
                       ),
                     ),
                   ),
-                  const Center(
-                    child: Text("캘린더 라벨 색상 리스트"),
-                  ),
-                  const Gap(12),
-                  ListView.builder(
+                ),
+                const Center(
+                  child: Text("캘린더 라벨 색상 리스트"),
+                ),
+                const Gap(12),
+                Expanded(
+                  child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: scheduleCon.colors.length,
                     itemBuilder: (context, index) {
@@ -176,8 +176,8 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
                       );
                     },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         });

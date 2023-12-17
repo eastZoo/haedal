@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/label-color.dart';
+import 'package:haedal/models/work_table.dart';
 import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/service/provider/schedule_provider.dart';
 import 'package:haedal/styles/colors.dart';
@@ -7,7 +9,9 @@ import 'package:haedal/widgets/calendar_widget.dart';
 
 class ScheduleController extends GetxController {
   List<Meeting> meetings = <Meeting>[];
+
   var colors = <dynamic>[].obs;
+  WorkTable? currentWorkTableUrl;
 
   @override
   void onInit() {
@@ -18,14 +22,9 @@ class ScheduleController extends GetxController {
 
   scheduleSubmit(Map<String, dynamic> requestData) async {
     try {
-      print(requestData);
-      print(requestData.runtimeType);
-
       var res = await ScheduleProvider().create(requestData);
       var isSuccess = res["success"];
-      print(res);
-      print(isSuccess);
-      print("isSuccess");
+
       if (isSuccess == true) {
         return isSuccess;
       } else {
@@ -61,11 +60,42 @@ class ScheduleController extends GetxController {
     }
   }
 
+// 현재 선택된 월의 근무표 받아오기
+  getCurrentWorkTableUrl(month) async {
+    try {
+      var res = await ScheduleProvider().getCurrentWorkTableUrl(month);
+      var isSuccess = res["success"];
+      print(currentWorkTableUrl);
+      print(res["data"]["currentWorkTableUrl"]);
+      if (isSuccess == true) {
+        var responseData = res["data"]["currentWorkTableUrl"];
+        if (responseData != null && responseData != "null") {
+          currentWorkTableUrl =
+              WorkTable.fromJson(res["data"]["currentWorkTableUrl"][0]);
+
+          print("&************************ $currentWorkTableUrl");
+          update();
+        } else {
+          currentWorkTableUrl = null;
+          update();
+        }
+      } else {
+        return res["msg"];
+      }
+    } catch (e) {
+      print(e);
+      // throw Error();
+    }
+  }
+
+  workTableSubmit(requestData) async {}
+
 // 일정 등록 후 리패칭
   refetchDataSource() async {
     await _getDataSource();
   }
 
+// 모든 일정 얻기
   _getDataSource() async {
     try {
       var res = await ScheduleProvider().getSchedule();
@@ -80,10 +110,9 @@ class ScheduleController extends GetxController {
                 item["title"],
                 DateTime.parse(item["startDate"]).toLocal(),
                 DateTime.parse(item["endDate"]).toLocal(),
-                AppColors().mainColor,
+                Color(int.parse(item["color"])),
                 item["allDay"]);
           }).toList());
-
           update();
         }
       } else {

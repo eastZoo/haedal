@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:haedal/widgets/main_appbar.dart';
 
 class MemoScreen extends StatefulWidget {
   const MemoScreen({super.key});
@@ -13,9 +12,7 @@ class _MemoScreenState extends State<MemoScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Column(
-        children: [
-          MainAppbar(title: '메모'),
-        ],
+        children: [],
       ),
     );
   }

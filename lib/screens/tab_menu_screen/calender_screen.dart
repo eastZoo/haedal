@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/widgets/calendar_widget.dart';
-import 'package:haedal/widgets/main_appbar.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalenderScreen extends StatefulWidget {
@@ -25,14 +24,8 @@ class _CalenderScreenState extends State<CalenderScreen> {
           return SafeArea(
             child: Scaffold(
               backgroundColor: Colors.white,
-              body: Column(
-                children: [
-                  const MainAppbar(title: '스토리 / 위치리스트'),
-                  // 달력 위젯
-                  CalendarWidget(
-                    controller: controller,
-                  ),
-                ],
+              body: CalendarWidget(
+                controller: controller,
               ),
             ),
           );

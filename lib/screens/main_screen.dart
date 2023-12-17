@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:get/get.dart' as GET;
-import 'package:haedal/routes/app_pages.dart';
-import 'package:haedal/screens/add_image_screen.dart';
+import 'package:haedal/screens/drawer_screen/custom_drawer.dart';
 import 'package:haedal/screens/select_photo_options_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
@@ -15,7 +14,7 @@ import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/styles/colors.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:haedal/widgets/custom_app_bar.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MainScreen extends StatefulWidget {
@@ -45,8 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     Icons.calendar_month_outlined,
     Icons.more_horiz,
   ];
-
-  final iconName = ['지도', '앨범', "", '캘린더', '더보기'];
+  final appBarName = ["지도", '메모', '스토리', '일정', '더보기'];
 
   // 이미지 등록시 ( 이미지 or 글만 등록 선택 모달 )
   _showSelectPhotoOptions() {
@@ -85,6 +83,10 @@ class _MainScreenState extends State<MainScreen> {
                     init: MapController(),
                     builder: (mapCon) {
                       return Scaffold(
+                        appBar: _selectedIndex != 0
+                            ? CustomAppbar(title: appBarName[_selectedIndex])
+                            : null,
+                        drawer: const CustomDrawer(),
                         body: Column(
                           children: [
                             Expanded(

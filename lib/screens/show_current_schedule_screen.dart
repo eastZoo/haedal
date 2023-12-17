@@ -26,7 +26,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
   }
 
   _showAddCurrentDaySchedule() {
-    showModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -88,8 +88,14 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
               ),
               InkWell(
                 borderRadius: BorderRadius.circular(10),
-                onTap: () {
-                  _showAddCurrentDaySchedule();
+                onTap: () async {
+                  var res = await _showAddCurrentDaySchedule();
+                  // 추가버튼 눌렀다가 아무것도 안하고 뒤로오면 팝 말고 그냥 리턴
+                  if (res == Null || res == null) {
+                    return;
+                  } else {
+                    Navigator.pop(context);
+                  }
                 },
                 child: const SizedBox(
                   width: 50,
@@ -110,6 +116,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                     shrinkWrap: true,
                     itemCount: appointments?.length,
                     itemBuilder: (context, index) {
+                      print("COLOR !!${appointments![index].background}");
                       String startTime = DateFormat.Hm('ko_KR')
                           .format(appointments![index].from);
 
@@ -127,9 +134,9 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                           children: [
                             // 왼쪽 라벨 색깔
                             Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.only(
+                              decoration: BoxDecoration(
+                                color: appointments![index].background,
+                                borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(12),
                                   bottomLeft: Radius.circular(12),
                                 ),
