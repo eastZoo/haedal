@@ -71,8 +71,11 @@ class _WorkTableScreenState extends State<WorkTableScreen> {
     });
 
     if (res) {
-      scheduleCon.getCurrentWorkTableUrl(
-          "${initalStartDay.year.toString()}-${getFormattedMonth(initalStartDay.month)}");
+      Future.delayed(
+        const Duration(seconds: 2),
+        () => scheduleCon.getCurrentWorkTableUrl(
+            "${initalStartDay.year.toString()}-${getFormattedMonth(initalStartDay.month)}"),
+      );
     }
 
     // print(_pickedImages);
@@ -174,7 +177,25 @@ class _WorkTableScreenState extends State<WorkTableScreen> {
                               Container(
                                 child: MyButton(
                                   title: "삭제하기",
-                                  onTap: () {},
+                                  onTap: () async {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    var res = await scheduleCon.deleteWorkTable(
+                                        ScheduleCon.currentWorkTableUrl!.id);
+
+                                    print("DELETE $res");
+                                    if (res) {
+                                      Future.delayed(
+                                        const Duration(seconds: 2),
+                                        () => scheduleCon.getCurrentWorkTableUrl(
+                                            "${initalStartDay.year.toString()}-${getFormattedMonth(initalStartDay.month)}"),
+                                      );
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    }
+                                  },
                                   available: true,
                                 ),
                               )

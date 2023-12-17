@@ -89,6 +89,27 @@ class ScheduleController extends GetxController {
     }
   }
 
+// 근무표 사진 삭제 하기
+  deleteWorkTable(id) async {
+    try {
+      var res = await ScheduleProvider().deleteWorkTable(id);
+      var isSuccess = res["success"];
+      print(res);
+      print(isSuccess);
+      print("isSuccess");
+      if (isSuccess == true) {
+        return isSuccess;
+      } else {
+        // res["msg"]
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
+  }
+
+// 근무표 사진 전송
   workTableSubmit(requestData) async {
     try {
       var res = await ScheduleProvider().workTableSubmit(requestData);

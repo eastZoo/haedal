@@ -28,4 +28,9 @@ class ScheduleProvider {
             url: '${Endpoints.caledarUrl}/work-table/create', data: data)
         .formPost();
   }
+
+  deleteWorkTable(id) async {
+    return await ApiRequest(url: '${Endpoints.caledarUrl}/work-table/$id')
+        .asyncDelete();
+  }
 }
