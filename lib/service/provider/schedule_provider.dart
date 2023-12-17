@@ -24,7 +24,8 @@ class ScheduleProvider {
   }
 
   workTableSubmit(data) async {
-    return await ApiRequest(url: '${Endpoints.caledarUrl}/create', data: data)
+    return await ApiRequest(
+            url: '${Endpoints.caledarUrl}/work-table/create', data: data)
         .formPost();
   }
 }

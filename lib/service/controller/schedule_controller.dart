@@ -63,10 +63,10 @@ class ScheduleController extends GetxController {
 // 현재 선택된 월의 근무표 받아오기
   getCurrentWorkTableUrl(month) async {
     try {
+      print("MONTH : : : $month");
       var res = await ScheduleProvider().getCurrentWorkTableUrl(month);
       var isSuccess = res["success"];
-      print(currentWorkTableUrl);
-      print(res["data"]["currentWorkTableUrl"]);
+
       if (isSuccess == true) {
         var responseData = res["data"]["currentWorkTableUrl"];
         if (responseData != null && responseData != "null") {
@@ -76,6 +76,7 @@ class ScheduleController extends GetxController {
           print("&************************ $currentWorkTableUrl");
           update();
         } else {
+          print("no data!!!");
           currentWorkTableUrl = null;
           update();
         }
@@ -88,7 +89,24 @@ class ScheduleController extends GetxController {
     }
   }
 
-  workTableSubmit(requestData) async {}
+  workTableSubmit(requestData) async {
+    try {
+      var res = await ScheduleProvider().workTableSubmit(requestData);
+      var isSuccess = res["success"];
+      print(res);
+      print(isSuccess);
+      print("isSuccess");
+      if (isSuccess == true) {
+        return isSuccess;
+      } else {
+        // res["msg"]
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
+  }
 
 // 일정 등록 후 리패칭
   refetchDataSource() async {
