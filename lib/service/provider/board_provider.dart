@@ -6,4 +6,9 @@ class BoardProvider {
     return await ApiRequest(url: '${Endpoints.boardUrl}/create', data: data)
         .formPost();
   }
+
+  delete(boardId) async {
+    return await ApiRequest(url: '${Endpoints.boardUrl}/delete/$boardId')
+        .asyncDelete();
+  }
 }

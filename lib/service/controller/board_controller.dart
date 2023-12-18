@@ -20,4 +20,23 @@ class BoardController extends GetxController {
       throw Error();
     }
   }
+
+  deleteBoard(boardId) async {
+    try {
+      var res = await BoardProvider().delete(boardId);
+      var isSuccess = res["success"];
+      print(res);
+      print(isSuccess);
+      print("isSuccess");
+      if (isSuccess == true) {
+        return isSuccess;
+      } else {
+        // res["msg"]
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
+  }
 }

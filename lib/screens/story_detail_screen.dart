@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:haedal/models/album.dart';
 import 'package:haedal/screens/photo_view_screen.dart';
+import 'package:haedal/service/controller/board_controller.dart';
+import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import '../../service/endpoints.dart';
 import 'package:haedal/styles/colors.dart';
@@ -25,6 +27,8 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
   AlbumBoard albumBoard;
 
   final ScrollController _scrollController = ScrollController();
+  BoardController boardCon = Get.put(BoardController());
+  InfiniteScrollController infiniteCon = Get.put(InfiniteScrollController());
   double position = 0;
 
   @override
@@ -62,7 +66,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                   flexibleSpace: FlexibleSpaceBar(
                     background: _thumbPhoto(),
                   ),
-                  actions: [_addBtn(position)],
+                  actions: [_deleteBtn(position), _addBtn(position)],
                   leading: BackButton(
                     color:
                         position < 150 ? Colors.white : AppColors().mainColor,
@@ -292,6 +296,29 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
           color: position < 150 ? Colors.white : AppColors().mainColor,
         ),
         onTap: () async {},
+      ),
+    );
+  }
+
+//삭제버튼
+  Widget _deleteBtn(double position) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+      child: GestureDetector(
+        child: Icon(
+          Icons.delete_outline_outlined,
+          size: 25,
+          color: position < 150 ? Colors.white : AppColors().mainColor,
+        ),
+        onTap: () async {
+          print("@!@!@");
+          var res = await boardCon.deleteBoard(albumBoard.id);
+          print("DELETE BOARD :!!!!! $res");
+          if (res) {
+            infiniteCon.reload();
+            Navigator.pop(context);
+          }
+        },
       ),
     );
   }

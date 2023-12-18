@@ -161,12 +161,12 @@ class _AddimageScreenState extends State<AddimageScreen> {
             });
             return CustomToast().signUpToast(errorMsg);
           }
-          if (currentLatLng == null) {
-            setState(() {
-              errorMsg = "사진과 함께 기억할 위치를 선택해주세요.";
-            });
-            return CustomToast().signUpToast(errorMsg);
-          }
+          // if (currentLatLng == null) {
+          //   setState(() {
+          //     errorMsg = "사진과 함께 기억할 위치를 선택해주세요.";
+          //   });
+          //   return CustomToast().signUpToast(errorMsg);
+          // }
           // 메모 유효성 추가 ?
           // 날짜 유효성 추가 ?
 
@@ -191,8 +191,8 @@ class _AddimageScreenState extends State<AddimageScreen> {
             "title": title,
             "category": category,
             "address": locationTextController.text,
-            "lat": currentLatLng?.latitude,
-            "lng": currentLatLng?.longitude,
+            "lat": currentLatLng == null ? 0 : currentLatLng?.latitude,
+            "lng": currentLatLng == null ? 0 : currentLatLng?.longitude,
             "content": contentTextController.text,
             "storyDate": storyDateController.text
           };
