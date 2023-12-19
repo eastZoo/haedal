@@ -6,6 +6,7 @@ import 'package:haedal/screens/main_screen.dart';
 import 'package:haedal/screens/register_screen/code_screen.dart';
 import 'package:haedal/screens/register_screen/info_screen.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/test.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -57,6 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
               }
 
               return const LoginScreen();
+              // return TestScheduleScreen();
             });
       },
     );

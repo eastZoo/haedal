@@ -25,6 +25,10 @@ class AuthController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    const storage = FlutterSecureStorage();
+    var token = await storage.read(key: 'accessToken');
+
+    print(token.runtimeType);
     print("ONINIT!!!");
     var result = await getConnectState();
     print("ONINIT result : $result");
@@ -32,7 +36,10 @@ class AuthController extends GetxController {
     if (result == 1) {
       await getInviteCodeInfo();
     }
-    getUserInfo();
+    // 토큰이 없다면 사용자 프로필 얻어오지 않는다
+    if (token != null) {
+      getUserInfo();
+    }
   }
 
   // 회원가입
@@ -184,6 +191,8 @@ class AuthController extends GetxController {
     try {
       var res = await AuthProvider().getUserInfoProvider();
       print("USERINFO   : : $res");
+
+      if (res["success"]) {}
       userInfo = UserInfo.fromJson(res["data"]);
 
       print("USERINFO   : : $userInfo");

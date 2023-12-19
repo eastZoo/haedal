@@ -76,7 +76,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
   // 초기 로딩시 로컬스토리지에 색데이터 있는지 확인후 있다면 디폴트 세팅
   getColor() async {
     final dataString = await storage.read(key: "color");
-    print("dataString: $dataString");
     if (dataString != null) {
       Map<String, dynamic> jsonData = json.decode(dataString);
 

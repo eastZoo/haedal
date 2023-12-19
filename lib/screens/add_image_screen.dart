@@ -205,7 +205,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
             isLoading = false;
           });
           if (res) {
-            Navigator.pop(context);
+            Navigator.pop(context, res);
           }
         },
       ),

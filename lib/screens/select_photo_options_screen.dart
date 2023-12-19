@@ -57,15 +57,18 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
                     ),
                   );
 
+                  print("ADD RESULT : : $result");
                   // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
                   mapCon.setMapController(mapCon.prevMapController);
                   // 위치 리패칭을 통한 마커 새로고침
-                  mapCon.refetchLocation();
 
-                  // 메인 앨범 메뉴 리프래쉬
+                  // 메인 앨범 메뉴 리프래쉬(refetch)
                   Future.delayed(
                     const Duration(milliseconds: 100),
-                    () => infiniteCon.reload(),
+                    () => {
+                      infiniteCon.reload(),
+                      mapCon.refetchLocation(),
+                    },
                   );
                   // 카테고리별 메뉴 리프래쉬
                   categoryBoardCon.reload();

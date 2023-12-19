@@ -44,7 +44,6 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
   }
 
   void downloadImage(imageUrl) async {
-    print("!!!!!!!!!!!!!!!!!!!!!!!!! $imageUrl");
     setState(() {
       _isDownloading = true;
     });
