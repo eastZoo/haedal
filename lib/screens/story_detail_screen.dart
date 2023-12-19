@@ -315,7 +315,11 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
           var res = await boardCon.deleteBoard(albumBoard.id);
           print("DELETE BOARD :!!!!! $res");
           if (res) {
-            infiniteCon.reload();
+            Future.delayed(
+              const Duration(milliseconds: 100),
+              () => infiniteCon.reload(),
+            );
+
             Navigator.pop(context);
           }
         },

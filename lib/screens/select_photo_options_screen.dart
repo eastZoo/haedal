@@ -63,7 +63,10 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
                   mapCon.refetchLocation();
 
                   // 메인 앨범 메뉴 리프래쉬
-                  infiniteCon.reload();
+                  Future.delayed(
+                    const Duration(milliseconds: 100),
+                    () => infiniteCon.reload(),
+                  );
                   // 카테고리별 메뉴 리프래쉬
                   categoryBoardCon.reload();
                 },

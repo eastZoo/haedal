@@ -27,6 +27,8 @@ class InfiniteScrollController extends GetxController {
     int offset = data.length;
 
     var albumData = await InfiniteScrollProvider().albumListGenerate(offset);
+
+    print("albumData!!!! : $albumData");
     data.addAll(albumData["data"]["appendData"]);
     isLoading.value = false;
     hasMore.value = data.length < albumData["data"]["total"];

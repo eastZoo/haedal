@@ -35,9 +35,9 @@ class _SplashScreenState extends State<SplashScreen> {
               print("SPLASH@!!!!!!!!!!!!!!");
               print(authCon.connectState);
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(
+                return Scaffold(
                   body: Center(
-                    child: CircularProgressIndicator(),
+                    child: Image.asset("assets/images/logo.png"),
                   ),
                 );
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {

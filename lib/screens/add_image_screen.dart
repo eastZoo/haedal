@@ -38,7 +38,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   bool isLoading = false;
 
-  List<String> dropdownList = ['음식점', '숙소', '카페'];
+  List<String> dropdownList = ['음식점', '장소', '플레이', '카페', '숙소'];
   String category = '음식점';
 
   String errorMsg = "";

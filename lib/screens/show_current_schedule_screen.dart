@@ -174,9 +174,18 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                                       ),
                                     ),
                                   ),
-                                  const Expanded(
+                                  Expanded(
                                     flex: 1,
-                                    child: Text("이름"),
+                                    child: InkWell(
+                                      onTap: () {
+                                        print("${appointments![index]}");
+                                      },
+                                      child: const Icon(
+                                        Icons.delete_outline,
+                                        size: 23,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),

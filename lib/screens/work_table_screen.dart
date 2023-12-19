@@ -72,7 +72,7 @@ class _WorkTableScreenState extends State<WorkTableScreen> {
 
     if (res) {
       Future.delayed(
-        const Duration(seconds: 2),
+        const Duration(milliseconds: 100),
         () => scheduleCon.getCurrentWorkTableUrl(
             "${initalStartDay.year.toString()}-${getFormattedMonth(initalStartDay.month)}"),
       );
@@ -187,7 +187,7 @@ class _WorkTableScreenState extends State<WorkTableScreen> {
                                     print("DELETE $res");
                                     if (res) {
                                       Future.delayed(
-                                        const Duration(seconds: 2),
+                                        const Duration(microseconds: 100),
                                         () => scheduleCon.getCurrentWorkTableUrl(
                                             "${initalStartDay.year.toString()}-${getFormattedMonth(initalStartDay.month)}"),
                                       );
