@@ -5,6 +5,8 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:haedal/screens/select_map_position_screen.dart';
 import 'package:haedal/service/controller/board_controller.dart';
@@ -73,12 +75,20 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   // 이미지 여러개 불러오기
   void getMultiImage() async {
+    setState(() {
+      isLoading = true;
+    });
     final List<XFile> images = await _picker.pickMultiImage();
     if (images.isEmpty && _pickedImages.isEmpty) {
       return Navigator.pop(context);
     }
+
     setState(() {
       _pickedImages.addAll(images);
+    });
+
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -103,35 +113,43 @@ class _AddimageScreenState extends State<AddimageScreen> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
-    return LoadingOverlay(
-      isLoading: isLoading,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const Text(
-            "스토리 작성",
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF676B85),
-            ),
-          ),
-          centerTitle: true,
-          actions: [_addBtn()],
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // 고른 사진 중 첫번째 사진 썸네일
-                _thumbPhoto(),
-                _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
-                _FormWidget()
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          "스토리 작성",
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF676B85),
           ),
         ),
+        centerTitle: true,
+        actions: [_addBtn()],
       ),
+      body: isLoading
+          ? Center(
+              //로딩바 구현 부분
+              child: SpinKitFadingCube(
+                // FadingCube 모양 사용
+                color: AppColors().mainColor, // 색상 설정
+                size: 50.0, // 크기 설정
+                duration: const Duration(seconds: 2), //속도 설정
+              ),
+            )
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // 고른 사진 중 첫번째 사진 썸네일
+                    _thumbPhoto(),
+                    _pickedImages.isNotEmpty ? _gridPhoto() : const SizedBox(),
+                    const Gap(20),
+                    _FormWidget()
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -495,7 +513,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
                 ? Text(
                     label,
                     style: const TextStyle(
-                      fontSize: 12.0,
+                      fontSize: 14.0,
                       fontWeight: FontWeight.w700,
                     ),
                   )
