@@ -33,4 +33,9 @@ class ScheduleProvider {
     return await ApiRequest(url: '${Endpoints.caledarUrl}/work-table/$id')
         .asyncDelete();
   }
+
+  deleteCalendarItem(id) async {
+    return await ApiRequest(url: '${Endpoints.caledarUrl}/delete/$id')
+        .asyncDelete();
+  }
 }

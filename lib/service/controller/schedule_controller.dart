@@ -37,6 +37,25 @@ class ScheduleController extends GetxController {
     }
   }
 
+  deleteCalendarItem(id) async {
+    try {
+      var res = await ScheduleProvider().deleteCalendarItem(id);
+      var isSuccess = res["success"];
+      print(res);
+      print(isSuccess);
+      print("isSuccess");
+      if (isSuccess == true) {
+        return isSuccess;
+      } else {
+        // res["msg"]
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
+  }
+
   getCalendarLabelColor() async {
     try {
       var res = await ScheduleProvider().getLabelColor();
@@ -150,7 +169,8 @@ class ScheduleController extends GetxController {
                 DateTime.parse(item["startDate"]).toLocal(),
                 DateTime.parse(item["endDate"]).toLocal(),
                 Color(int.parse(item["color"])),
-                item["allDay"]);
+                item["allDay"],
+                item["id"]);
           }).toList());
           update();
         }

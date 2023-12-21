@@ -131,7 +131,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
                 for (Meeting item in appointments) {
                   meetings.add(Meeting(item.eventName, item.from, item.to,
-                      item.background, item.isAllDay));
+                      item.background, item.isAllDay, item.id));
                 }
 
                 if (prevSelectedDay == selectedDay) {
@@ -176,11 +176,13 @@ class MeetingDataSource extends CalendarDataSource {
 }
 
 class Meeting {
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay,
+      this.id);
 
   String eventName;
   DateTime from;
   DateTime to;
   Color background;
   bool isAllDay;
+  String id;
 }

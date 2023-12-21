@@ -174,7 +174,7 @@ class MapController extends GetxController {
   }
 
 //지도 오픈 시 컨트롤러 저장
-  void setMapController(mapController) {
+  setMapController(mapController) {
     this.mapController = mapController;
     update();
   }

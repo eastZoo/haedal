@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:haedal/screens/add_schedule_screen.dart';
+import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/widgets/calendar_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +18,9 @@ class ShowCurrentScheduleScreen extends StatefulWidget {
 
 class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
   _ShowCurrentScheduleScreenState(this.selectedDay, this.appointments);
+
+  ScheduleController scheduleCon = Get.put(ScheduleController());
+
   DateTime? selectedDay;
   List<Meeting>? appointments;
 
@@ -56,7 +61,10 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     const textStyle = TextStyle(
-        fontWeight: FontWeight.w600, color: Colors.black, fontSize: 20);
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
+      fontSize: 20,
+    );
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -177,8 +185,16 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                                   Expanded(
                                     flex: 1,
                                     child: InkWell(
-                                      onTap: () {
-                                        print("${appointments![index]}");
+                                      onTap: () async {
+                                        print(appointments![index].id);
+                                        var res = await scheduleCon
+                                            .deleteCalendarItem(
+                                                appointments![index].id);
+
+                                        if (res) {
+                                          await scheduleCon.refetchDataSource();
+                                          Navigator.pop(context, true);
+                                        }
                                       },
                                       child: const Icon(
                                         Icons.delete_outline,

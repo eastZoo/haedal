@@ -14,7 +14,7 @@ void main() async {
   await NaverMapSdk.instance.initialize(
       clientId: '01uy52gfk2',
       onAuthFailed: (error) {
-        print(error);
+        print("NAVER AUTH ERROR :  $error");
       });
   await dotenv.load(fileName: 'assets/config/.env');
 

@@ -59,7 +59,7 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
 
                   print("ADD RESULT : : $result");
                   // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
-                  mapCon.setMapController(mapCon.prevMapController);
+                  await mapCon.setMapController(mapCon.prevMapController);
                   // 위치 리패칭을 통한 마커 새로고침
                   await infiniteCon.reload();
                   print(" await infiniteCon.reload();");
@@ -75,8 +75,15 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
                   // );
                   // 카테고리별 메뉴 리프래쉬
                   await categoryBoardCon.reload();
+
+                  print("result: $result");
+                  if (result == null) {
+                  } else if (result == false) {
+                  } else {
+                    Navigator.pop(context);
+                  }
                 },
-                icon: Icons.image,
+                icon: Icons.image_outlined,
                 textLabel: '앨범에서 추가',
               ),
               const SizedBox(
@@ -85,13 +92,17 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
               const Center(
                 child: Text(
                   'OR',
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
               const SizedBox(
                 height: 8,
               ),
               SelectPhoto(
+                disabled: true,
                 onTap: () {},
                 icon: Icons.camera_alt_outlined,
                 textLabel: '준비중...',

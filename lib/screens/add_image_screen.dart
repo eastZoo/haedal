@@ -30,6 +30,10 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   final ImagePicker _picker = ImagePicker();
 
+// title focus, scroll event
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
+
   final titleTextController = TextEditingController();
   final locationTextController = TextEditingController();
   final contentTextController = TextEditingController();
@@ -70,7 +74,27 @@ class _AddimageScreenState extends State<AddimageScreen> {
   @override
   void dispose() {
     titleTextController.dispose();
+    _scrollController.dispose();
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  // 제목 텍스트 누를때 스크롤 젤위로s
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        print("SCROLL!!");
+        // Scroll to the bottom when the text field is focused
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   // 이미지 여러개 불러오기
@@ -80,7 +104,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
     });
     final List<XFile> images = await _picker.pickMultiImage();
     if (images.isEmpty && _pickedImages.isEmpty) {
-      return Navigator.pop(context);
+      return Navigator.pop(context, false);
     }
 
     setState(() {
@@ -139,6 +163,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
             )
           : SafeArea(
               child: SingleChildScrollView(
+                controller: _scrollController,
                 child: Column(
                   children: [
                     // 고른 사진 중 첫번째 사진 썸네일
@@ -155,78 +180,72 @@ class _AddimageScreenState extends State<AddimageScreen> {
 
   // 앱바 게시 버튼
   Widget _addBtn() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-      child: GestureDetector(
+    return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(25, 0, 20, 0),
         child: Text(
           "게시",
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w400,
             color: AppColors().mainColor,
+            height: 4,
           ),
         ),
-        onTap: () async {
-          if (title.isEmpty) {
-            setState(() {
-              errorMsg = "제목(title)을 입력해주세요.";
-            });
-            return CustomToast().signUpToast(errorMsg);
-          }
-          if (_pickedImages.isEmpty) {
-            setState(() {
-              errorMsg = "추가된 이미지가 없습니다.";
-            });
-            return CustomToast().signUpToast(errorMsg);
-          }
-          // if (currentLatLng == null) {
-          //   setState(() {
-          //     errorMsg = "사진과 함께 기억할 위치를 선택해주세요.";
-          //   });
-          //   return CustomToast().signUpToast(errorMsg);
-          // }
-          // 메모 유효성 추가 ?
-          // 날짜 유효성 추가 ?
-
-          // 데이터 통신 전 로딩 상태 변경
-          setState(() {
-            isLoading = true;
-          });
-
-          var res;
-          var images = [];
-          Map<String, dynamic> requestData = {};
-          for (int i = 0; i < _pickedImages.length; i++) {
-            images.add(
-              await MultipartFile.fromFile(
-                _pickedImages[i].path,
-                filename: basename(_pickedImages[i].path),
-              ),
-            );
-          }
-
-          var dataSource = {
-            "title": title,
-            "category": category,
-            "address": locationTextController.text,
-            "lat": currentLatLng == null ? 0 : currentLatLng?.latitude,
-            "lng": currentLatLng == null ? 0 : currentLatLng?.longitude,
-            "content": contentTextController.text,
-            "storyDate": storyDateController.text
-          };
-
-          requestData["postData"] = json.encode(dataSource);
-          requestData["images"] = images;
-
-          res = await boardCon.postSubmit(requestData);
-          setState(() {
-            isLoading = false;
-          });
-          if (res) {
-            Navigator.pop(context, res);
-          }
-        },
       ),
+      onTap: () async {
+        if (title.isEmpty) {
+          setState(() {
+            errorMsg = "제목(title)을 입력해주세요.";
+          });
+          return CustomToast().signUpToast(errorMsg);
+        }
+        if (_pickedImages.isEmpty) {
+          setState(() {
+            errorMsg = "추가된 이미지가 없습니다.";
+          });
+          return CustomToast().signUpToast(errorMsg);
+        }
+
+        setState(() {
+          isLoading = true;
+        });
+
+        var res;
+        var images = [];
+        Map<String, dynamic> requestData = {};
+        for (int i = 0; i < _pickedImages.length; i++) {
+          images.add(
+            await MultipartFile.fromFile(
+              _pickedImages[i].path,
+              filename: basename(_pickedImages[i].path),
+            ),
+          );
+        }
+
+        var dataSource = {
+          "title": title,
+          "category": category,
+          "address": locationTextController.text,
+          "lat": currentLatLng == null ? 0 : currentLatLng?.latitude,
+          "lng": currentLatLng == null ? 0 : currentLatLng?.longitude,
+          "content": contentTextController.text,
+          "storyDate": storyDateController.text
+        };
+
+        requestData["postData"] = json.encode(dataSource);
+        requestData["images"] = images;
+
+        res = await boardCon.postSubmit(requestData);
+        setState(() {
+          isLoading = false;
+        });
+        if (res) {
+          Navigator.pop(context, res);
+        }
+      },
     );
   }
 
@@ -351,10 +370,10 @@ class _AddimageScreenState extends State<AddimageScreen> {
               SizedBox(
                 width: width * 0.65,
                 child: renderTextFormField(
-                  label: '제목',
-                  hintText: "음식점이름, 커스텀",
-                  controller: titleTextController,
-                ),
+                    label: '제목',
+                    hintText: "음식점이름, 커스텀",
+                    controller: titleTextController,
+                    focusNode: _focusNode),
               ),
               Container(
                 width: width * 0.3 - 10,

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/styles/colors.dart';
 
 class SelectPhoto extends StatelessWidget {
   final String textLabel;
   final IconData icon;
-
+  final bool? disabled;
   final void Function()? onTap;
 
-  const SelectPhoto({
-    Key? key,
-    required this.textLabel,
-    required this.icon,
-    required this.onTap,
-  }) : super(key: key);
+  const SelectPhoto(
+      {Key? key,
+      required this.textLabel,
+      required this.icon,
+      required this.onTap,
+      this.disabled = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +21,13 @@ class SelectPhoto extends StatelessWidget {
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
         elevation: 10,
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor:
+            disabled! ? AppColors().mainDisabledColor : AppColors().mainColor,
         shape: const StadiumBorder(),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: 8,
+          vertical: 10,
           horizontal: 6,
         ),
         child: Row(
@@ -33,7 +36,7 @@ class SelectPhoto extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Colors.black,
+              color: Colors.white,
             ),
             const SizedBox(
               width: 14,
@@ -41,9 +44,9 @@ class SelectPhoto extends StatelessWidget {
             Text(
               textLabel,
               style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-              ),
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             )
           ],
         ),
