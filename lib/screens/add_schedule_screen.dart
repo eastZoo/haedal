@@ -44,7 +44,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
   final endTodoTimeController = TextEditingController();
 
   // label color
-  String chosenColorCode = "0xff8468A0";
+  String chosenColorCode = "8468A0";
 
   DateTime initalStartDay = DateTime.now();
   DateTime initalEndDay = DateTime.now();
@@ -223,7 +223,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                         color: Color(
-                          int.parse(chosenColorCode),
+                          int.parse("0xFF$chosenColorCode"),
                         ),
                       ),
                       textAlign: TextAlign.end,
@@ -244,7 +244,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                             Icon(
                               Icons.note_alt_outlined,
                               color: Color(
-                                int.parse(chosenColorCode),
+                                int.parse("0xFF$chosenColorCode"),
                               ),
                             ),
                             const SizedBox(
@@ -256,7 +256,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
                                 color: Color(
-                                  int.parse(chosenColorCode),
+                                  int.parse("0xFF$chosenColorCode"),
                                 ),
                               ),
                             ),
@@ -290,7 +290,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                             Icon(
                               Icons.history_outlined,
                               color: Color(
-                                int.parse(chosenColorCode),
+                                int.parse("0xFF$chosenColorCode"),
                               ),
                             ),
                             const SizedBox(
@@ -302,7 +302,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
                                 color: Color(
-                                  int.parse(chosenColorCode),
+                                  int.parse("0xFF$chosenColorCode"),
                                 ),
                               ),
                             ),
@@ -333,7 +333,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                   color: Color(
-                                    int.parse(chosenColorCode),
+                                    int.parse("0xFF$chosenColorCode"),
                                   ),
                                 ),
                               ),
@@ -405,7 +405,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                   color: Color(
-                                    int.parse(chosenColorCode),
+                                    int.parse("0xFF$chosenColorCode"),
                                   ),
                                 ),
                               ),
@@ -498,7 +498,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                 Icon(
                                   Icons.color_lens_outlined,
                                   color: Color(
-                                    int.parse(chosenColorCode),
+                                    int.parse("0xFF$chosenColorCode"),
                                   ),
                                 ),
                                 const SizedBox(
@@ -510,7 +510,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                     fontSize: 16,
                                     fontWeight: FontWeight.w800,
                                     color: Color(
-                                      int.parse(chosenColorCode),
+                                      int.parse("0xFF$chosenColorCode"),
                                     ),
                                   ),
                                 ),
@@ -519,7 +519,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                             Icon(
                               Icons.arrow_forward_ios_sharp,
                               color: Color(
-                                int.parse(chosenColorCode),
+                                int.parse("0xFF$chosenColorCode"),
                               ),
                             ),
                           ],

@@ -113,7 +113,7 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
                                 Container(
                                   decoration: BoxDecoration(
                                     color: Color(int.parse(
-                                        scheduleCon.colors[index].code)),
+                                        "0xFF${scheduleCon.colors[index].code}")),
                                     borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(12),
                                       bottomLeft: Radius.circular(12),

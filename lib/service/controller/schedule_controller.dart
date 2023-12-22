@@ -168,7 +168,7 @@ class ScheduleController extends GetxController {
                 item["title"],
                 DateTime.parse(item["startDate"]).toLocal(),
                 DateTime.parse(item["endDate"]).toLocal(),
-                Color(int.parse(item["color"])),
+                Color(int.parse("0xFF${item["color"]}")),
                 item["allDay"],
                 item["id"]);
           }).toList());
