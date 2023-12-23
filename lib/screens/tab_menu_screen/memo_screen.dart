@@ -13,7 +13,9 @@ class _MemoScreenState extends State<MemoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView(
-      children: const [MemoGroupWidget()],
+      children: const [
+        MemoGroupWidget(),
+      ],
     ));
   }
 }

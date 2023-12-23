@@ -4,9 +4,11 @@ import 'package:haedal/styles/colors.dart';
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(56);
-  CustomAppbar({super.key, required this.title, this.action});
+  CustomAppbar(
+      {super.key, required this.title, this.action, this.selectedIndex});
 
   final String title;
+  final int? selectedIndex;
   Widget? action;
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,6 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       centerTitle: true,
       actions: const [
-        // IconButton(
-        //   onPressed: () {},
-        //   icon: const Icon(Icons.search),
-        // ),
         // IconButton(
         //   onPressed: () {},
         //   icon: const Icon(Icons.person),

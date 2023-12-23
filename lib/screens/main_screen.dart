@@ -84,7 +84,9 @@ class _MainScreenState extends State<MainScreen> {
                     builder: (mapCon) {
                       return Scaffold(
                         appBar: _selectedIndex != 0
-                            ? CustomAppbar(title: appBarName[_selectedIndex])
+                            ? CustomAppbar(
+                                title: appBarName[_selectedIndex],
+                                selectedIndex: _selectedIndex)
                             : null,
                         drawer: const CustomDrawer(),
                         body: Column(

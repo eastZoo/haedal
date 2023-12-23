@@ -14,4 +14,5 @@ class Endpoints {
   static const String boardUrl = "$hostUrl/album-board";
   static const String locationUrl = "$hostUrl/location";
   static const String caledarUrl = "$hostUrl/calendar";
+  static const String memoUrl = "$hostUrl/memo";
 }
