@@ -82,7 +82,9 @@ class _AddMemoCategoryScreenState extends State<AddMemoCategoryScreen> {
                 };
 
                 var result = await memoCon.createMemoCategory(dataSource);
-
+                if (result) {
+                  Navigator.pop(context);
+                }
                 print("result:  : $result");
               },
               title: "저장",
