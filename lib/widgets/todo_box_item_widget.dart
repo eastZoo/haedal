@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/models/memos.dart';
 import 'package:haedal/styles/colors.dart';
 
-class TodoBoxItemWidget extends StatefulWidget {
-  const TodoBoxItemWidget({
-    super.key,
-  });
-
-  @override
-  State<TodoBoxItemWidget> createState() => _TodoBoxItemWidgetState();
-}
-
-class _TodoBoxItemWidgetState extends State<TodoBoxItemWidget> {
+class TodoBoxItemWidget extends StatelessWidget {
+  TodoBoxItemWidget({super.key, required this.memos});
+  Memos memos;
   final bool _isChecked = false;
 
   @override
@@ -18,12 +12,12 @@ class _TodoBoxItemWidgetState extends State<TodoBoxItemWidget> {
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 2, 0, 2),
       width: double.infinity,
-      height: 40,
+      height: 38,
       decoration: BoxDecoration(
         color: AppColors().subContainer,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Row(
+      child: Row(
         children: [
           Expanded(
             child: Row(
@@ -32,15 +26,15 @@ class _TodoBoxItemWidgetState extends State<TodoBoxItemWidget> {
                 Expanded(
                   flex: 7,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
+                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "todo list",
-                          style: TextStyle(
-                            fontSize: 15,
+                          memos.memo,
+                          style: const TextStyle(
+                            fontSize: 13,
                             fontWeight: FontWeight.w500,
                             color: Colors.grey,
                           ),
@@ -49,7 +43,7 @@ class _TodoBoxItemWidgetState extends State<TodoBoxItemWidget> {
                     ),
                   ),
                 ),
-                Expanded(
+                const Expanded(
                     flex: 1,
                     child: Icon(
                       Icons.crop_square,

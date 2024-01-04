@@ -90,7 +90,7 @@ class MemoGroupWidget extends StatelessWidget {
                                   children: [
                                     Container(
                                       child: Text(
-                                        memoCon.memos[i]["category"],
+                                        "${memoCon.memos[i].category}",
                                         style: const TextStyle(
                                           fontSize: 15,
                                           color: Color(0xFF4C53A5),
@@ -121,9 +121,10 @@ class MemoGroupWidget extends StatelessWidget {
                                 const Gap(6),
                                 Column(
                                   children: [
-                                    for (int i = 1; i < 0; i++)
+                                    for (int i = 1; i < 6; i++)
                                       Container(
-                                        child: const TodoBoxItemWidget(),
+                                        child: TodoBoxItemWidget(
+                                            memos: memoCon.memos[i].memos![i]),
                                       ),
                                   ],
                                 ),

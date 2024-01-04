@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
+import 'package:haedal/models/memos.dart';
 import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/service/provider/memo_provider.dart';
 
 class MemoController extends GetxController {
-  var memos = <dynamic>[].obs;
+  var memos = <Memo>[].obs;
   var isLoading = false;
 
   @override
@@ -20,7 +21,9 @@ class MemoController extends GetxController {
 
     print(" ::::::!!!! $memoData");
     if (memoData["data"].length != 0) {
-      memos.addAll(memoData["data"]);
+      List<dynamic> list = memoData["data"];
+
+      memos.assignAll(list.map<Memo>((item) => Memo.fromJson(item)).toList());
     }
 
     print("@@@@@@@@@@@@@@@@@@@@@@ $memos");
