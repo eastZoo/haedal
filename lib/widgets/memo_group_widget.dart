@@ -4,11 +4,11 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/screens/add_memo_category_screen.dart';
 import 'package:haedal/screens/select_color_screen.dart';
-import 'package:haedal/screens/todo_detail_screen.dart';
+import 'package:haedal/screens/memo_detail_screen.dart';
 import 'package:haedal/service/controller/memo_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
-import 'package:haedal/widgets/todo_box_item_widget.dart';
+import 'package:haedal/widgets/memo_box_item_widget.dart';
 
 class MemoGroupWidget extends StatelessWidget {
   const MemoGroupWidget({super.key});
@@ -67,7 +67,8 @@ class MemoGroupWidget extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) {
-                                  return const TodoDetailScreen();
+                                  return MemoDetailScreen(
+                                      id: memoCon.memos[i].id!);
                                 },
                               ),
                             );
@@ -98,17 +99,17 @@ class MemoGroupWidget extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    const Row(
+                                    Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.checklist_rtl,
                                           color: Colors.grey,
                                           size: 18,
                                         ),
                                         Text(
-                                          "0/29 완료",
-                                          style: TextStyle(
+                                          "0/${memoCon.memos[i].memos!.length} 완료",
+                                          style: const TextStyle(
                                             fontSize: 11,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w400,
@@ -119,15 +120,24 @@ class MemoGroupWidget extends StatelessWidget {
                                   ],
                                 ),
                                 const Gap(6),
-                                Column(
-                                  children: [
-                                    for (int i = 1; i < 6; i++)
-                                      Container(
-                                        child: TodoBoxItemWidget(
-                                            memos: memoCon.memos[i].memos![i]),
-                                      ),
-                                  ],
-                                ),
+                                // 메모가 한개 이상일 때
+
+                                memoCon.memos[i].memos!.isNotEmpty
+                                    ? Column(
+                                        children: [
+                                          for (int j = 0;
+                                              j <
+                                                  memoCon
+                                                      .memos[i].memos!.length;
+                                              j++)
+                                            Container(
+                                              child: MemoBoxItemWidget(
+                                                  memos: memoCon
+                                                      .memos[i].memos?[j]),
+                                            ),
+                                        ],
+                                      )
+                                    : Container(),
                               ],
                             ),
                           ),

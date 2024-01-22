@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:haedal/models/memos.dart';
 import 'package:haedal/models/todo.dart';
 import 'package:haedal/styles/colors.dart';
 
 class MemoItem extends StatelessWidget {
-  final ToDo todo;
-  const MemoItem({super.key, required this.todo});
+  final Memos memo;
+  const MemoItem({super.key, required this.memo});
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +21,15 @@ class MemoItem extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         tileColor: Colors.white,
         leading: Icon(
-          todo.isDone ? Icons.check_box : Icons.check_box_outline_blank,
+          memo.isDone ? Icons.check_box : Icons.check_box_outline_blank,
           color: AppColors().mainColor,
         ),
         title: Text(
-          "Check Mail",
+          memo.memo,
           style: TextStyle(
             fontSize: 16,
             color: Colors.black,
-            decoration: todo.isDone ? TextDecoration.lineThrough : null,
+            decoration: memo.isDone ? TextDecoration.lineThrough : null,
           ),
         ),
         trailing: Container(

@@ -5,6 +5,7 @@ import 'package:haedal/service/provider/memo_provider.dart';
 
 class MemoController extends GetxController {
   var memos = <Memo>[].obs;
+  Memo? currentMemo;
   var isLoading = false;
 
   @override
@@ -19,10 +20,9 @@ class MemoController extends GetxController {
     print("_getMemoData");
     var memoData = await MemoProvider().getMemoList();
 
-    print(" ::::::!!!! $memoData");
+    print(" memos !!!!!!!!!!!!! :: $memoData");
     if (memoData["data"].length != 0) {
       List<dynamic> list = memoData["data"];
-
       memos.assignAll(list.map<Memo>((item) => Memo.fromJson(item)).toList());
     }
 
@@ -45,6 +45,21 @@ class MemoController extends GetxController {
         print(res["msg"]);
         return false;
       }
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
+  }
+
+  getDetailMemoData(String id) async {
+    try {
+      currentMemo = null;
+      var res = await MemoProvider().getDetailMemo(id);
+      if (res["data"].length != 0) {
+        currentMemo = Memo.fromJson(res["data"]["currentMemo"][0]);
+      }
+      update();
+      isLoading = false;
     } catch (e) {
       print(e);
       throw Error();

@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 class Memos {
   final String id;
   final String userId;
   final String coupleId;
   final String memoCategoryId;
   final String memo;
+  final bool isDone;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   Memos({
@@ -12,6 +15,7 @@ class Memos {
     required this.coupleId,
     required this.memoCategoryId,
     required this.memo,
+    this.isDone = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -24,6 +28,7 @@ class Memos {
       coupleId: json['coupleId'],
       memoCategoryId: json['memoCategoryId'],
       memo: json['memo'],
+      isDone: json['isDone'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:haedal/models/memos.dart';
 import 'package:haedal/styles/colors.dart';
 
-class TodoBoxItemWidget extends StatelessWidget {
-  TodoBoxItemWidget({super.key, required this.memos});
-  Memos memos;
+class MemoBoxItemWidget extends StatelessWidget {
+  MemoBoxItemWidget({super.key, this.memos});
+  Memos? memos;
   final bool _isChecked = false;
 
   @override
@@ -32,7 +33,7 @@ class TodoBoxItemWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          memos.memo,
+                          memos!.memo,
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
