@@ -15,6 +15,7 @@ class MemoProvider {
 
   // 메모리스트 상세보기
   getDetailMemo(id) async {
-    return await ApiRequest(url: '${Endpoints.memoUrl}/$id').asyncGet();
+    print("${Endpoints.memoUrl}/detail/$id");
+    return await ApiRequest(url: '${Endpoints.memoUrl}/detail/$id').asyncGet();
   }
 }

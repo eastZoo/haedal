@@ -157,9 +157,11 @@ class ScheduleController extends GetxController {
   _getDataSource() async {
     try {
       var res = await ScheduleProvider().getSchedule();
+
       var isSuccess = res["success"];
       if (isSuccess == true) {
         var responseData = res["data"];
+        print(responseData);
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
 

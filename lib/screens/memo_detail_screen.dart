@@ -21,11 +21,10 @@ class _MemoDetailScreenState extends State<MemoDetailScreen> {
   String id;
   final todoList = ToDo.todoList();
   final memoCon = Get.put(MemoController());
+
   @override
   void initState() {
-    // TODO: implement initState
-    print("INIT!!!!!!!!!!");
-    memoCon.getDetailMemoData(id);
+    print("inint");
   }
 
   @override
@@ -41,7 +40,8 @@ class _MemoDetailScreenState extends State<MemoDetailScreen> {
         init: MemoController(),
         builder: (memoCon) {
           return Scaffold(
-            appBar: CustomAppbar(title: "title"),
+            appBar:
+                CustomAppbar(title: memoCon.currentMemo!.category.toString()),
             body: Column(
               children: [
                 Container(
@@ -66,10 +66,10 @@ class _MemoDetailScreenState extends State<MemoDetailScreen> {
                                 ),
                               ),
                             ),
-                            if (memoCon.currentMemo != null &&
-                                memoCon.currentMemo!.memos!.isNotEmpty)
-                              for (Memos memo in memoCon.currentMemo!.memos!)
-                                MemoItem(memo: memo),
+                            // if (memoCon.currentMemo != null &&
+                            //     memoCon.currentMemo!.memos!.isNotEmpty)
+                            //   for (Memos memo in memoCon.currentMemo!.memos!)
+                            //     MemoItem(memo: memo),
                           ],
                         ),
                       )

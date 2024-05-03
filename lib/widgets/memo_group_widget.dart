@@ -15,7 +15,7 @@ class MemoGroupWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    showColorPicker() {
+    showAddGroupModal() {
       return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -47,101 +47,137 @@ class MemoGroupWidget extends StatelessWidget {
     return GetBuilder<MemoController>(
         init: MemoController(),
         builder: (memoCon) {
-          print("GetBuilder<MemoController> ${memoCon.memos}");
           return LoadingOverlay(
             isLoading: memoCon.isLoading,
             child: memoCon.memos.isNotEmpty
-                ? GridView.count(
-                    childAspectRatio: 0.68,
-                    crossAxisCount: 2,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                ? Column(
                     children: [
-                      for (int i = 0; i < memoCon.memos.length; i++)
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) {
-                                  return MemoDetailScreen(
-                                      id: memoCon.memos[i].id!);
-                                },
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 10),
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 10),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border:
-                                    Border.all(color: AppColors().subColor)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
+                      GridView.count(
+                        childAspectRatio: 0.68,
+                        crossAxisCount: 2,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        children: [
+                          for (int i = 0; i < memoCon.memos.length; i++)
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                var result = await memoCon
+                                    .getDetailMemoData(memoCon.memos[i].id!);
+                                print(result);
+                                if (result) {
+                                  print("ININ OGOGOG");
+                                  // ignore: use_build_context_synchronously
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) {
+                                        return MemoDetailScreen(
+                                            id: memoCon.memos[i].id!);
+                                      },
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.only(
+                                    left: 10, right: 10, top: 10),
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: AppColors().subColor)),
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      child: Text(
-                                        "${memoCon.memos[i].category}",
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xFF4C53A5),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        const Icon(
-                                          Icons.checklist_rtl,
-                                          color: Colors.grey,
-                                          size: 18,
-                                        ),
-                                        Text(
-                                          "0/${memoCon.memos[i].memos!.length} 완료",
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400,
+                                        Container(
+                                          child: Text(
+                                            "${memoCon.memos[i].category}",
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Color(0xFF4C53A5),
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            const Icon(
+                                              Icons.checklist_rtl,
+                                              color: Colors.grey,
+                                              size: 18,
+                                            ),
+                                            Text(
+                                              "0/${memoCon.memos[i].memos!.length} 완료",
+                                              style: const TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        )
                                       ],
-                                    )
+                                    ),
+                                    const Gap(6),
+                                    // 메모가 한개 이상일 때
+
+                                    memoCon.memos[i].memos!.isNotEmpty
+                                        ? Column(
+                                            children: [
+                                              for (int j = 0;
+                                                  j <
+                                                      memoCon.memos[i].memos!
+                                                          .length;
+                                                  j++)
+                                                Container(
+                                                  child: MemoBoxItemWidget(
+                                                      memos: memoCon
+                                                          .memos[i].memos?[j]),
+                                                ),
+                                            ],
+                                          )
+                                        : Container(),
                                   ],
                                 ),
-                                const Gap(6),
-                                // 메모가 한개 이상일 때
-
-                                memoCon.memos[i].memos!.isNotEmpty
-                                    ? Column(
-                                        children: [
-                                          for (int j = 0;
-                                              j <
-                                                  memoCon
-                                                      .memos[i].memos!.length;
-                                              j++)
-                                            Container(
-                                              child: MemoBoxItemWidget(
-                                                  memos: memoCon
-                                                      .memos[i].memos?[j]),
-                                            ),
-                                        ],
-                                      )
-                                    : Container(),
+                              ),
+                            ),
+                          Container(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Gap(25),
+                                const Text('그룹 추가'),
+                                IconButton(
+                                  onPressed: () {
+                                    showAddGroupModal();
+                                  },
+                                  icon: const Icon(
+                                    Icons.add,
+                                    size: 30,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ),
+                        ],
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.all(10.0),
@@ -149,10 +185,10 @@ class MemoGroupWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Gap(25),
-                              const Text('그룹 추가'),
+                              const Text('저장된 메모가 없습니다.'),
                               IconButton(
                                 onPressed: () {
-                                  showColorPicker();
+                                  showAddGroupModal();
                                 },
                                 icon: const Icon(
                                   Icons.add,
@@ -164,27 +200,6 @@ class MemoGroupWidget extends StatelessWidget {
                         ),
                       ),
                     ],
-                  )
-                : Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Gap(25),
-                          const Text('저장된 메모가 없습니다.'),
-                          IconButton(
-                            onPressed: () {
-                              showColorPicker();
-                            },
-                            icon: const Icon(
-                              Icons.add,
-                              size: 30,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
           );
         });

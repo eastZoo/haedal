@@ -53,13 +53,16 @@ class MemoController extends GetxController {
 
   getDetailMemoData(String id) async {
     try {
-      currentMemo = null;
       var res = await MemoProvider().getDetailMemo(id);
+      print(
+        "res  : $res",
+      );
       if (res["data"].length != 0) {
         currentMemo = Memo.fromJson(res["data"]["currentMemo"][0]);
       }
       update();
       isLoading = false;
+      return true;
     } catch (e) {
       print(e);
       throw Error();

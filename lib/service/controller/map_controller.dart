@@ -181,10 +181,12 @@ class MapController extends GetxController {
 
   // 내위치 버튼
   void zoomMyLocation() async {
-    await mapController?.updateCamera(NCameraUpdate.withParams(
-      target: NLatLng(currentLatLng!.latitude, currentLatLng!.longitude),
-      zoom: 15,
-    ));
+    if (currentLatLng != null) {
+      await mapController?.updateCamera(NCameraUpdate.withParams(
+        target: NLatLng(currentLatLng!.latitude, currentLatLng!.longitude),
+        zoom: 15,
+      ));
+    }
   }
 
   void setPrevMapController(mapController) {
