@@ -52,7 +52,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
               onTap: () {
                 checkAutoLogout(token, connectState);
               },
-              child: const AppButton(text: "logout"),
             )
           ],
         ),

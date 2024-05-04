@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:haedal/data/todo_data.dart';
+import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:haedal/models/todo_task.dart';
+import 'package:haedal/service/controller/memo_controller.dart';
+import 'package:haedal/widgets/loading_overlay.dart';
 import 'package:haedal/widgets/memo_group_widget.dart';
+import 'package:flutter/cupertino.dart';
 
 class MemoScreen extends StatefulWidget {
   const MemoScreen({super.key});
@@ -11,376 +17,186 @@ class MemoScreen extends StatefulWidget {
 }
 
 class _MemoScreenState extends State<MemoScreen> {
-  List<TaskGroup> taskGroupItemsState = taskGroupItems;
+  late final PageController pageController;
+  final ScrollController _scrollController = ScrollController();
+  int pageNo = 0;
+
+  @override
+  void initState() {
+    pageController = PageController(initialPage: 0, viewportFraction: 0.85);
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        showBtmAppBr = false;
+        setState(() {});
+      } else {
+        showBtmAppBr = true;
+        setState(() {});
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
+  bool showBtmAppBr = true;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 24, 16, 24),
-            child: Text(
-              "😎 Personal",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-              child: ListView.builder(
-            itemCount: taskGroupItemsState.length,
-            itemBuilder: (context, index) {
-              var taskGroupItem = taskGroupItemsState[index];
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Row(
-                      children: [
-                        Text(
-                          "${taskGroupItem.groupTitle}",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(" ${taskGroupItem.todoTask?.length ?? 0}"),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.more_horiz,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(
-                    indent: 16,
-                    color: Colors.grey,
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: taskGroupItem.todoTask?.length ?? 0,
-                    itemBuilder: (context, index2) {
-                      var e = taskGroupItem.todoTask![index2];
-                      return CheckboxListTile(
-                        tileColor: (e.isDone ?? false)
-                            ? Colors.grey[100]
-                            : Colors.white,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: (e.isDone ?? false),
-                        title: Row(
+    return GetBuilder<MemoController>(
+        init: MemoController(),
+        builder: (memoCon) {
+          print("GetBuilder<MemoController> ${memoCon.memos.length}");
+          return LoadingOverlay(
+            isLoading: memoCon.isLoading,
+            child: memoCon.memos.isNotEmpty
+                ? Scaffold(
+                    body: SafeArea(
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Column(
                           children: [
-                            Text(e.task ?? "-"),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            if (e.dateString?.isNotEmpty ?? false)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: e.dateString == "Today"
-                                      ? Colors.green[50]
-                                      : Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                  vertical: 4,
-                                ),
-                                child: Text(
-                                  "${e.dateString}",
-                                  style: TextStyle(
-                                    color: e.dateString == "Today"
-                                        ? Colors.green
-                                        : Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            const Spacer(),
-                            if (e.subTasks.isNotEmpty)
-                              const Icon(
-                                Icons.account_tree,
-                              ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            const Icon(Icons.refresh),
-                          ],
-                        ),
-
-                        onChanged: (b) {
-                          print("$index | $index2 : $b");
-                          if (e.subTasks.isNotEmpty) {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(16),
-                                  topLeft: Radius.circular(16),
-                                ),
-                              ),
-                              // backgroundColor: Colors.transparent,
-
-                              builder: (context) =>
-                                  StatefulBuilder(builder: (context, ss) {
-                                List<SubTask> subtaskItems = e.subTasks;
-                                return Container(
-                                  height: 600,
-                                  decoration: const BoxDecoration(),
-                                  padding: const EdgeInsets.only(
-                                      top: 12, right: 8, left: 8),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: 3,
-                                        width: 48,
-                                        color: Colors.grey,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            Icons.more_horiz,
-                                          ),
+                            // 슬라이드 스크린
+                            SizedBox(
+                              height: 170,
+                              child: PageView.builder(
+                                controller: pageController,
+                                onPageChanged: (index) {
+                                  pageNo = index;
+                                  setState(() {});
+                                },
+                                itemBuilder: (_, index) {
+                                  if (index == memoCon.memos.length - 1) {
+                                    // Add Card Button
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // Add card action
+                                        // For example:
+                                        // memoCon.addMemo(); // Add memo functionality from your controlle
+                                        print("ADD MEMO");
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(
+                                            right: 8,
+                                            left: 8,
+                                            top: 24,
+                                            bottom: 12),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(24.0),
+                                          color: Colors.grey,
+                                        ),
+                                        child: const Center(
+                                          child: Icon(Icons.add),
                                         ),
                                       ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Checkbox(
-                                              value: false, onChanged: (b) {}),
-                                          Expanded(
+                                    );
+                                  } else {
+                                    int memoIndex = index;
+                                    if (index > 0 &&
+                                        memoCon.memos.length == 1) {
+                                      memoIndex = index - 1;
+                                    }
+                                    return AnimatedBuilder(
+                                      animation: pageController,
+                                      builder: (ctx, child) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    "Hello you tapped at $index "),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 8,
+                                                left: 8,
+                                                top: 24,
+                                                bottom: 12),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(24.0),
+                                              color: Colors.grey,
+                                            ),
                                             child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 Text(
-                                                  e.task ?? "",
+                                                  '${memoCon.memos[memoIndex].category}',
                                                   style: const TextStyle(
-                                                    fontSize: 18,
+                                                    fontSize: 20.0,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                const Text(
-                                                  "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"
-                                                  "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
+                                                const SizedBox(height: 10.0),
+                                                Text(
+                                                  "${memoCon.memos.length} Tasks",
+                                                  style: const TextStyle(
+                                                    fontSize: 16.0,
                                                   ),
                                                 ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    if (e.dateString
-                                                            ?.isNotEmpty ??
-                                                        false)
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: e.dateString ==
-                                                                  "Today"
-                                                              ? Colors.green[50]
-                                                              : Colors
-                                                                  .grey[200],
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                        ),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal: 4,
-                                                          vertical: 4,
-                                                        ),
-                                                        child: Text(
-                                                          "${e.dateString}",
-                                                          style: TextStyle(
-                                                            color:
-                                                                e.dateString ==
-                                                                        "Today"
-                                                                    ? Colors
-                                                                        .green
-                                                                    : Colors
-                                                                        .grey,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    const Spacer(),
-                                                    const Icon(
-                                                      Icons.rebase_edit,
-                                                      size: 18,
-                                                    ),
-                                                    const Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 8),
-                                                      child: Text("2/4"),
-                                                    ),
-                                                    const Icon(
-                                                      Icons.refresh,
-                                                      size: 18,
-                                                    )
-                                                  ],
+                                                const SizedBox(height: 20.0),
+                                                const Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      15, 0, 15, 0),
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    value: 1 / 2,
+                                                    backgroundColor:
+                                                        Colors.grey,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                            Color>(Colors.blue),
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      Expanded(
-                                        child: ReorderableListView.builder(
-                                          itemCount: subtaskItems.length,
-                                          onReorder: (oldIndex, newIndex) {
-                                            print(
-                                                "oldindex: $oldIndex | newIndex : $newIndex");
-
-                                            ss(() {
-                                              if (oldIndex < newIndex) {
-                                                newIndex -= 1;
-                                              }
-                                              final SubTask removedItem =
-                                                  subtaskItems
-                                                      .removeAt(oldIndex);
-                                              subtaskItems.insert(
-                                                  newIndex, removedItem);
-                                            });
-                                          },
-                                          itemBuilder: (context, index3) {
-                                            var item = subtaskItems[index3];
-                                            return Row(
-                                              key: Key("subtask_$index3"),
-                                              children: [
-                                                Container(
-                                                  child: item.isDone != true
-                                                      ? const Icon(
-                                                          Icons.drag_indicator)
-                                                      : const SizedBox(
-                                                          width: 24,
-                                                        ),
-                                                ),
-                                                SizedBox(
-                                                  child: Transform.scale(
-                                                    scale: 1.4,
-                                                    child: Checkbox(
-                                                      value: item.isDone,
-                                                      onChanged: (b) {},
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(24),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                    child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        "${item.subTask}",
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      const Divider(
-                                                        color: Colors.grey,
-                                                      )
-                                                    ],
-                                                  ),
-                                                ))
-                                              ],
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      const Divider(),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons.add)),
-                                          const Text("Add Sub-task"),
-                                          const Spacer(),
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons
-                                                  .calendar_month_outlined)),
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(
-                                                  Icons.tag_outlined)),
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons.flag)),
-                                        ],
-                                      )
-                                    ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                                itemCount: memoCon.memos.length + 1,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 6.0,
+                            ),
+                            // 스크린 dot 페이지네이션
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                memoCon.memos.length + 1,
+                                (index) => GestureDetector(
+                                  child: Container(
+                                    margin: const EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.circle,
+                                      size: 12.0,
+                                      color: pageNo == index
+                                          ? Colors.indigoAccent
+                                          : Colors.grey.shade300,
+                                    ),
                                   ),
-                                );
-                              }),
-                            );
-                          } else {
-                            var oldTaskItems = taskGroupItem.todoTask;
-                            oldTaskItems![index2] = TodoTask(
-                              subTasks: e.subTasks,
-                              isDone: b,
-                              task: e.task,
-                              dateString: e.dateString,
-                            );
-                            setState(
-                              () {
-                                taskGroupItemsState[index].todoTask =
-                                    oldTaskItems;
-                              },
-                            );
-                          }
-
-                          //we  need to get index
-                        },
-
-                        // selectedTileColor: Colors.red,
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
-          )),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
-      ),
-    );
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
+          );
+        });
   }
 }
