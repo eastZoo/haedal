@@ -17,16 +17,12 @@ class MemoController extends GetxController {
   _getMemoData() async {
     memos.clear();
     isLoading = true;
-    print("_getMemoData");
     var memoData = await MemoProvider().getMemoList();
 
-    print(" memos !!!!!!!!!!!!! :: $memoData");
     if (memoData["data"].length != 0) {
       List<dynamic> list = memoData["data"];
       memos.assignAll(list.map<Memo>((item) => Memo.fromJson(item)).toList());
     }
-
-    print("@@@@@@@@@@@@@@@@@@@@@@ $memos");
     update();
     isLoading = false;
   }
@@ -35,9 +31,6 @@ class MemoController extends GetxController {
     try {
       var res = await MemoProvider().create(requestData);
       var isSuccess = res["success"];
-      print(res);
-      print(isSuccess);
-      print("isSuccess");
       if (isSuccess == true) {
         await _getMemoData();
         return isSuccess;
@@ -54,9 +47,6 @@ class MemoController extends GetxController {
   getDetailMemoData(String id) async {
     try {
       var res = await MemoProvider().getDetailMemo(id);
-      print(
-        "res  : $res",
-      );
       if (res["data"].length != 0) {
         currentMemo = Memo.fromJson(res["data"]["currentMemo"][0]);
       }
