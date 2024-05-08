@@ -118,7 +118,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
           ),
           const SizedBox(height: 20.0),
           ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200, minHeight: 56.0),
+            constraints: const BoxConstraints(minHeight: 400),
             child: appointments!.isNotEmpty
                 ? ListView.builder(
                     shrinkWrap: true,

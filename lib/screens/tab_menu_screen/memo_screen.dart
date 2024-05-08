@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/todo_task.dart';
 import 'package:haedal/screens/add_memo_category_screen.dart';
@@ -22,6 +23,7 @@ class _MemoScreenState extends State<MemoScreen> {
   late final PageController pageController;
   final ScrollController _scrollController = ScrollController();
   int pageNo = 0;
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -98,6 +100,10 @@ class _MemoScreenState extends State<MemoScreen> {
                           child: PageView.builder(
                             controller: pageController,
                             onPageChanged: (index) {
+                              if (index != memoCon.memos.length) {
+                                currentIndex = index;
+                                setState(() {});
+                              }
                               pageNo = index;
                               setState(() {});
                             },
@@ -107,8 +113,6 @@ class _MemoScreenState extends State<MemoScreen> {
                                 return GestureDetector(
                                   onTap: () async {
                                     await showAddGroupModal();
-
-                                    print("ADD MEMO");
                                   },
                                   child: Container(
                                     margin: const EdgeInsets.only(
@@ -131,10 +135,12 @@ class _MemoScreenState extends State<MemoScreen> {
                                   ),
                                 );
                               } else {
-                                int memoIndex = index;
                                 if (index > 0 && memoCon.memos.length == 1) {
-                                  memoIndex = index;
+                                  currentIndex = index;
                                 }
+
+                                currentIndex = index;
+
                                 return AnimatedBuilder(
                                   animation: pageController,
                                   builder: (ctx, child) {
@@ -173,7 +179,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '${memoCon.memos[memoIndex].category}',
+                                              '${memoCon.memos[index].category}',
                                               style: const TextStyle(
                                                 fontSize: 20.0,
                                                 fontWeight: FontWeight.bold,
@@ -181,7 +187,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                             ),
                                             const SizedBox(height: 10.0),
                                             Text(
-                                              "${memoCon.memos.length} Tasks",
+                                              "${memoCon.memos[currentIndex].memos!.length} Tasks",
                                               style: const TextStyle(
                                                 fontSize: 16.0,
                                               ),
@@ -191,8 +197,18 @@ class _MemoScreenState extends State<MemoScreen> {
                                               padding:
                                                   const EdgeInsets.fromLTRB(
                                                       15, 0, 15, 0),
+                                              // 프로그레스바 조건문
                                               child: LinearProgressIndicator(
-                                                value: 1 / 2,
+                                                value: memoCon
+                                                        .memos[currentIndex]
+                                                        .memos!
+                                                        .isEmpty
+                                                    ? 0
+                                                    : 1 /
+                                                        memoCon
+                                                            .memos[currentIndex]
+                                                            .memos!
+                                                            .length,
                                                 backgroundColor: Colors.grey,
                                                 valueColor:
                                                     AlwaysStoppedAnimation<
@@ -233,17 +249,55 @@ class _MemoScreenState extends State<MemoScreen> {
                             ),
                           ),
                         ),
+                        // 체크 리스트
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                            child: ListView.builder(
-                              itemCount: 50,
-                              itemBuilder: (BuildContext context, int index) {
-                                return ListTile(
-                                  title: Text('리스트 아이템 $index'),
-                                );
-                              },
-                            ),
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                            child: memoCon.memos[currentIndex].memos!.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: memoCon
+                                        .memos[currentIndex].memos?.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      if (memoCon.memos[currentIndex].memos!
+                                          .isNotEmpty) {
+                                        return ListTile(
+                                          leading: Checkbox(
+                                            value: true,
+                                            onChanged: (bool? value) {
+                                              // setState(() {
+                                              //   memo.isChecked = value!;
+                                              // });
+                                            },
+                                          ),
+                                          title: Text(
+                                              '${memoCon.memos[currentIndex].memos?[index]}'),
+                                          onTap: () {
+                                            print("select!! $index");
+                                          },
+                                        );
+                                      }
+                                      return null;
+                                    },
+                                  )
+                                : GestureDetector(
+                                    onTap: () {
+                                      print("dsd");
+                                    },
+                                    child: const Column(
+                                      children: [
+                                        Gap(20),
+                                        Text("메모를 추가해주세요"),
+                                        Gap(10),
+                                        Center(
+                                          child: Icon(
+                                            Icons.add,
+                                            size: 25,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
@@ -261,10 +315,6 @@ class _MemoScreenState extends State<MemoScreen> {
                             height: 170,
                             child: PageView.builder(
                               controller: pageController,
-                              onPageChanged: (index) {
-                                pageNo = index;
-                                setState(() {});
-                              },
                               itemBuilder: (_, index) {
                                 // 마지막 인덱스 카드 추가버튼
                                 return GestureDetector(
