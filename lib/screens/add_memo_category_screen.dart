@@ -85,7 +85,6 @@ class _AddMemoCategoryScreenState extends State<AddMemoCategoryScreen> {
                 if (result) {
                   Navigator.pop(context);
                 }
-                print("result:  : $result");
               },
               title: "저장",
               available: true,

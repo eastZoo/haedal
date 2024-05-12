@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/todo_task.dart';
 import 'package:haedal/screens/add_memo_category_screen.dart';
+import 'package:haedal/screens/show_add_memo_screen.dart';
 import 'package:haedal/service/controller/memo_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
@@ -51,6 +52,7 @@ class _MemoScreenState extends State<MemoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /** MEMO 추가 모달 */
     Future<void> showAddGroupModal() async {
       await showModalBottomSheet(
         context: context,
@@ -83,10 +85,33 @@ class _MemoScreenState extends State<MemoScreen> {
       pageController.jumpToPage(0);
     }
 
+    // 메모 추가 모달
+    Future<void> showAddMemoModal() async {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10.0),
+          ),
+        ),
+        builder: (context) => DraggableScrollableSheet(
+            initialChildSize: 0.6,
+            maxChildSize: 0.6,
+            minChildSize: 0.5,
+            expand: false,
+            snap: true,
+            builder: (context, scrollController) {
+              return ShowAddMemoScreen();
+            }),
+      );
+
+      pageController.jumpToPage(currentIndex);
+    }
+
     return GetBuilder<MemoController>(
       init: MemoController(),
       builder: (memoCon) {
-        print("GetBuilder<MemoController> ${memoCon.memos.length}");
         return LoadingOverlay(
           isLoading: memoCon.isLoading,
           child: memoCon.memos.isNotEmpty
@@ -100,10 +125,14 @@ class _MemoScreenState extends State<MemoScreen> {
                           child: PageView.builder(
                             controller: pageController,
                             onPageChanged: (index) {
+                              print("index :  $index");
                               if (index != memoCon.memos.length) {
+                                // currentIdex 는 현재 보고있는 메모카테고리 index담아두는곳
                                 currentIndex = index;
+                                memoCon.currentMemo = memoCon.memos[index];
                                 setState(() {});
                               }
+                              // pageNo는 마지막 카테고리 추가 박스를 위한 index
                               pageNo = index;
                               setState(() {});
                             },
@@ -135,12 +164,6 @@ class _MemoScreenState extends State<MemoScreen> {
                                   ),
                                 );
                               } else {
-                                if (index > 0 && memoCon.memos.length == 1) {
-                                  currentIndex = index;
-                                }
-
-                                currentIndex = index;
-
                                 return AnimatedBuilder(
                                   animation: pageController,
                                   builder: (ctx, child) {
@@ -187,7 +210,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                             ),
                                             const SizedBox(height: 10.0),
                                             Text(
-                                              "${memoCon.memos[currentIndex].memos!.length} Tasks",
+                                              "${memoCon.memos[currentIndex].memos?.length} Tasks",
                                               style: const TextStyle(
                                                 fontSize: 16.0,
                                               ),
@@ -204,7 +227,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                                         .memos!
                                                         .isEmpty
                                                     ? 0
-                                                    : 1 /
+                                                    : 0 /
                                                         memoCon
                                                             .memos[currentIndex]
                                                             .memos!
@@ -261,9 +284,11 @@ class _MemoScreenState extends State<MemoScreen> {
                                         (BuildContext context, int index) {
                                       if (memoCon.memos[currentIndex].memos!
                                           .isNotEmpty) {
+                                        print("HELOOOO");
                                         return ListTile(
                                           leading: Checkbox(
-                                            value: true,
+                                            value: memoCon.memos[currentIndex]
+                                                .memos?[index].isDone,
                                             onChanged: (bool? value) {
                                               // setState(() {
                                               //   memo.isChecked = value!;
@@ -271,7 +296,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                             },
                                           ),
                                           title: Text(
-                                              '${memoCon.memos[currentIndex].memos?[index]}'),
+                                              '${memoCon.memos[currentIndex].memos?[index].memo}'),
                                           onTap: () {
                                             print("select!! $index");
                                           },
@@ -281,8 +306,8 @@ class _MemoScreenState extends State<MemoScreen> {
                                     },
                                   )
                                 : GestureDetector(
-                                    onTap: () {
-                                      print("dsd");
+                                    onTap: () async {
+                                      showAddMemoModal();
                                     },
                                     child: const Column(
                                       children: [
@@ -304,7 +329,9 @@ class _MemoScreenState extends State<MemoScreen> {
                     ),
                   ),
                 )
-              : Scaffold(
+              :
+              /** 등록된 메모 카테고리가 하나도 없을때 [+] 카드 */
+              Scaffold(
                   body: SafeArea(
                     child: SingleChildScrollView(
                       controller: _scrollController,
@@ -320,8 +347,6 @@ class _MemoScreenState extends State<MemoScreen> {
                                 return GestureDetector(
                                   onTap: () async {
                                     await showAddGroupModal();
-
-                                    print("ADD MEMO");
                                   },
                                   child: Container(
                                     margin: const EdgeInsets.only(

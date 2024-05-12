@@ -29,7 +29,24 @@ class MemoController extends GetxController {
 
   createMemoCategory(requestData) async {
     try {
-      var res = await MemoProvider().create(requestData);
+      var res = await MemoProvider().createMemoCategory(requestData);
+      var isSuccess = res["success"];
+      if (isSuccess == true) {
+        await _getMemoData();
+        return isSuccess;
+      } else {
+        print(res["msg"]);
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
+  }
+
+  createMemo(data) async {
+    try {
+      var res = await MemoProvider().createMemo(data);
       var isSuccess = res["success"];
       if (isSuccess == true) {
         await _getMemoData();
