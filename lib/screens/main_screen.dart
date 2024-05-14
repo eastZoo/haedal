@@ -57,9 +57,9 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.28,
-          maxChildSize: 0.28,
-          minChildSize: 0.25,
+          initialChildSize: 0.3,
+          maxChildSize: 0.3,
+          minChildSize: 0.28,
           expand: false,
           snap: true,
           builder: (context, scrollController) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
-import 'package:haedal/screens/add_image_screen.dart';
+import 'package:haedal/screens/add_image_from_album_screen.dart';
 import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
@@ -51,13 +51,12 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
                     context,
                     PageTransition(
                       type: PageTransitionType.bottomToTop,
-                      child: const AddimageScreen(),
+                      child:
+                          AddimageFromAlbumScreen(type: 'album'), // 앨범에서 이미지 추가
                       isIos: true,
                       duration: routingDuration,
                     ),
                   );
-
-                  print("ADD RESULT : : $result");
                   // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
                   await mapCon.setMapController(mapCon.prevMapController);
                   // 위치 리패칭을 통한 마커 새로고침
@@ -103,9 +102,44 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
               ),
               SelectPhoto(
                 disabled: true,
-                onTap: () {},
+                onTap: () async {
+                  var result = await Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.bottomToTop,
+                      child: AddimageFromAlbumScreen(
+                          type: 'camera'), // 카메라에서 이미지 추가
+                      isIos: true,
+                      duration: routingDuration,
+                    ),
+                  );
+                  // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
+                  await mapCon.setMapController(mapCon.prevMapController);
+                  // 위치 리패칭을 통한 마커 새로고침
+                  await infiniteCon.reload();
+                  print(" await infiniteCon.reload();");
+                  await mapCon.refetchLocation();
+                  print("await mapCon.refetchLocation();");
+                  // 메인 앨범 메뉴 리프래쉬(refetch)
+                  // Future.delayed(
+                  //   const Duration(milliseconds: 100),
+                  //   () => {
+                  //     infiniteCon.reload(),
+                  //     mapCon.refetchLocation(),
+                  //   },
+                  // );
+                  // 카테고리별 메뉴 리프래쉬
+                  await categoryBoardCon.reload();
+
+                  print("result: $result");
+                  if (result == null) {
+                  } else if (result == false) {
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
                 icon: Icons.camera_alt_outlined,
-                textLabel: '준비중...',
+                textLabel: '카메라에서 촬영',
               ),
             ])
           ],

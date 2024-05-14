@@ -164,6 +164,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                   ),
                                 );
                               } else {
+                                //카테고리 카드 생성
                                 return AnimatedBuilder(
                                   animation: pageController,
                                   builder: (ctx, child) {
@@ -276,53 +277,61 @@ class _MemoScreenState extends State<MemoScreen> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                            child: memoCon.memos[currentIndex].memos!.isNotEmpty
-                                ? ListView.builder(
-                                    itemCount: memoCon
-                                        .memos[currentIndex].memos?.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      if (memoCon.memos[currentIndex].memos!
-                                          .isNotEmpty) {
-                                        print("HELOOOO");
-                                        return ListTile(
-                                          leading: Checkbox(
-                                            value: memoCon.memos[currentIndex]
-                                                .memos?[index].isDone,
-                                            onChanged: (bool? value) {
-                                              // setState(() {
-                                              //   memo.isChecked = value!;
-                                              // });
-                                            },
-                                          ),
-                                          title: Text(
-                                              '${memoCon.memos[currentIndex].memos?[index].memo}'),
-                                          onTap: () {
-                                            print("select!! $index");
-                                          },
-                                        );
-                                      }
-                                      return null;
-                                    },
-                                  )
-                                : GestureDetector(
-                                    onTap: () async {
-                                      showAddMemoModal();
-                                    },
-                                    child: const Column(
-                                      children: [
-                                        Gap(20),
-                                        Text("메모를 추가해주세요"),
-                                        Gap(10),
-                                        Center(
-                                          child: Icon(
-                                            Icons.add,
-                                            size: 25,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                            child:
+                                memoCon.memos[currentIndex].memos!.isNotEmpty &&
+                                        currentIndex == pageNo
+                                    ? ListView.builder(
+                                        itemCount: memoCon
+                                            .memos[currentIndex].memos?.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          if (memoCon.memos[currentIndex].memos!
+                                              .isNotEmpty) {
+                                            return ListTile(
+                                              leading: Checkbox(
+                                                value: memoCon
+                                                    .memos[currentIndex]
+                                                    .memos?[index]
+                                                    .isDone,
+                                                onChanged: (bool? value) {
+                                                  // setState(() {
+                                                  //   memo.isChecked = value!;
+                                                  // });
+                                                },
+                                              ),
+                                              title: Text(
+                                                  '${memoCon.memos[currentIndex].memos?[index].memo}'),
+                                              onTap: () {
+                                                print("select!! $index");
+                                              },
+                                            );
+                                          }
+                                          return null;
+                                        },
+                                      )
+                                    : // 마지막 인덱스 카드 추가버튼
+                                    GestureDetector(
+                                        onTap: () async {
+                                          showAddMemoModal();
+                                        },
+                                        child: currentIndex == pageNo
+                                            ? const Column(
+                                                children: [
+                                                  Gap(20),
+                                                  Text("메모를 추가해주세요"),
+                                                  Gap(10),
+                                                  Center(
+                                                    child: Icon(
+                                                      Icons.add,
+                                                      size: 25,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            :
+                                            // pageNo 와 currentIndex 가 다를때는 카테고리 추가 카드부분( 슬라이드 마지막)이라는 뜻이므로 리스트가 아닌 빈화면
+                                            Container(),
+                                      ),
                           ),
                         ),
                       ],

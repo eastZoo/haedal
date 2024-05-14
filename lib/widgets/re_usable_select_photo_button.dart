@@ -27,7 +27,7 @@ class SelectPhoto extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: 10,
+          vertical: 12,
           horizontal: 6,
         ),
         child: Row(
@@ -44,7 +44,7 @@ class SelectPhoto extends StatelessWidget {
             Text(
               textLabel,
               style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 15,
                   color: Colors.white,
                   fontWeight: FontWeight.bold),
             )

@@ -18,16 +18,21 @@ import 'package:kpostal/kpostal.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path/path.dart' hide context;
 
-class AddimageScreen extends StatefulWidget {
-  const AddimageScreen({super.key});
+class AddimageFromAlbumScreen extends StatefulWidget {
+  String? type;
+  AddimageFromAlbumScreen({super.key, this.type});
 
   @override
-  State<AddimageScreen> createState() => _AddimageScreenState();
+  State<AddimageFromAlbumScreen> createState() =>
+      _AddimageFromAlbumScreenState(type);
 }
 
-class _AddimageScreenState extends State<AddimageScreen> {
+class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
+  _AddimageFromAlbumScreenState(this.type);
+
   BoardController boardCon = Get.put(BoardController());
 
+  String? type;
   final ImagePicker _picker = ImagePicker();
 
 // title focus, scroll event
@@ -65,7 +70,13 @@ class _AddimageScreenState extends State<AddimageScreen> {
         title = titleTextController.text;
       });
     });
-    getMultiImage();
+    if (type == 'album') {
+      getMultiImage();
+    }
+    if (type == 'camera') {
+      getCameraRoll();
+    }
+
     setState(() {
       storyDateController.text = "${DateTime.now().toLocal()}".split(".")[0];
     });
@@ -97,7 +108,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
     });
   }
 
-  // 이미지 여러개 불러오기
+  // [앨범에서] 이미지 여러개 불러오기
   void getMultiImage() async {
     setState(() {
       isLoading = true;
@@ -110,6 +121,29 @@ class _AddimageScreenState extends State<AddimageScreen> {
     setState(() {
       _pickedImages.addAll(images);
     });
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  // [카메라에서] 이미지 불러오기
+  void getCameraRoll() async {
+    setState(() {
+      isLoading = true;
+    });
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    // if (images.length() && _pickedImages.isEmpty) {
+    //   return Navigator.pop(context, false);
+    // }
+
+    if (image == null) {
+      return Navigator.pop(context, false);
+    } else {
+      setState(() {
+        _pickedImages.add(image);
+      });
+    }
 
     setState(() {
       isLoading = false;
@@ -594,7 +628,7 @@ class _AddimageScreenState extends State<AddimageScreen> {
                 });
               },
               child: Icon(Icons.cancel_rounded,
-                  color: AppColors().semiGrey, size: 19),
+                  color: AppColors().semiGrey, size: 21),
             ),
           )
         ],
