@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/app_button.dart';
 import 'package:haedal/widgets/popover.dart';
@@ -7,6 +8,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 class AddLocationBottonSheet extends StatelessWidget {
   final PanelController panelController;
   final TextEditingController inputController;
+  final String? addressName;
   final String? address;
   final String? buttonTitle;
   final void Function() onSaveLocation;
@@ -20,8 +22,9 @@ class AddLocationBottonSheet extends StatelessWidget {
     required this.onSaveLocation,
     required this.onChangedText,
     required this.onClosedBottomSheet,
+    this.addressName,
     this.address,
-    this.buttonTitle = "지점등록",
+    this.buttonTitle = "이 위치로 등록",
   });
 
   @override
@@ -35,24 +38,25 @@ class AddLocationBottonSheet extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         child: Popover(
           child: Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(16),
             width: double.infinity,
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   "주소",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF797979),
-                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                    color: AppColors().mainColor,
+                    fontWeight: FontWeight.w900,
                     fontFamily: 'NotoSansKR',
                   ),
                 ),
+                const Gap(4),
                 Text(
-                  address ?? "",
+                  addressName ?? "",
                   style: const TextStyle(
                     fontSize: 16,
                     color: Color(0xFF000000),
@@ -61,17 +65,18 @@ class AddLocationBottonSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 6,
                 ),
-                // const Text(
-                //   "별명지정",
-                //   style: TextStyle(
-                //     fontSize: 14,
-                //     color: Color(0xFF797979),
-                //     fontWeight: FontWeight.w400,
-                //     fontFamily: 'NotoSansKR',
-                //   ),
-                // ),
+                Text(
+                  address ?? "",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF797979),
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR',
+                  ),
+                ),
+                const Gap(20),
                 // const SizedBox(
                 //   height: 3,
                 // ),
