@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:haedal/service/controller/location_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/add_location_bottom_sheet.dart';
+import 'package:haedal/widgets/animation_marker.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
 
 class SelectMapPositionScreen extends StatefulWidget {
   const SelectMapPositionScreen({
@@ -25,6 +25,7 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
   String inputText = '';
   String address = '';
   NLatLng? currentLatLng;
+  bool isMoving = false;
 
   @override
   void initState() {
@@ -53,11 +54,21 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
   @override
   Widget build(BuildContext context) {
     final mapCon = Get.put(MapController());
+
     void onMapReady(NaverMapController nController) async {
       nController.setLocationTrackingMode(NLocationTrackingMode.noFollow);
       mapCon.setMapController(nController);
+
       // mapCon.startAddpointReady();
       mapController = nController;
+
+      final marker = NMarker(
+        id: 'mapPoint',
+        position: NLatLng(
+            mapCon.currentLatLng!.latitude, mapCon.currentLatLng!.longitude),
+      );
+
+      mapController.addOverlay(marker);
     }
 
     void onSaveLocation() async {
@@ -105,9 +116,19 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
       // ignore: use_build_context_synchronously
     }
 
-    void onCameraChange(NCameraUpdateReason reason, bool isGesture) {}
+    void onCameraChange(NCameraUpdateReason reason, bool isGesture) {
+      setState(() {
+        isMoving = true;
+      });
+      print("onCameraChange");
+    }
 
-    void onCameraIdle() {}
+    void onCameraIdle() {
+      setState(() {
+        isMoving = false;
+      });
+      print("onCameraIdle");
+    }
 
     void onSelectedIndoorChanged(NSelectedIndoor? selectedIndoor) {}
 
@@ -130,6 +151,7 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
             onCameraIdle: onCameraIdle,
             onSelectedIndoorChanged: onSelectedIndoorChanged,
           ),
+          AnimationMarker(isMoving: isMoving),
           AddLocationBottonSheet(
             panelController: panelController,
             inputController: inputController,
