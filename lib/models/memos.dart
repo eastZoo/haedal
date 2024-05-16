@@ -40,6 +40,7 @@ class Memo {
   final String? userId;
   final String? coupleId;
   final String? category;
+  final int? clear;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final List<Memos>? memos;
@@ -49,6 +50,7 @@ class Memo {
     this.userId,
     this.coupleId,
     this.category,
+    this.clear,
     this.createdAt,
     this.updatedAt,
     this.memos,
@@ -61,6 +63,7 @@ class Memo {
       userId: json['userId'],
       coupleId: json['coupleId'],
       category: json['category'],
+      clear: json['clear'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       memos: (json['memos'] as List<dynamic>)

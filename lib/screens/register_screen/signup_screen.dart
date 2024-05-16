@@ -126,7 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
         isEmailValid = false;
         errorMsg = "이메일을 입력해 주세요";
       });
-      return CustomToast().signUpToast(errorMsg);
+      return CustomToast().alert(errorMsg);
     }
     // 이메일 필드가 <이메일 형식에 맞지 않으며> 커서 Out 됬을때
     if (!emailRegex.hasMatch(emailController.text)) {
@@ -134,7 +134,7 @@ class _SignupScreenState extends State<SignupScreen> {
         isEmailValid = false;
         errorMsg = "올바른 이메일 형식이 아닙니다";
       });
-      return CustomToast().signUpToast(errorMsg);
+      return CustomToast().alert(errorMsg);
     }
     // 이미 존재하는 이메일일때
     if (authCon.isDuplicateEmail) {
@@ -142,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
         isEmailValid = false;
         errorMsg = "이미 존재하는 메일 주소입니다. 다시 시도해주세요.";
       });
-      return CustomToast().signUpToast(errorMsg);
+      return CustomToast().alert(errorMsg);
     }
 
     // 모든조건을 만족했을때

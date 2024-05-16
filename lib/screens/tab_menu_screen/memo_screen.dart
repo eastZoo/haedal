@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -9,6 +10,7 @@ import 'package:haedal/screens/add_memo_category_screen.dart';
 import 'package:haedal/screens/show_add_memo_screen.dart';
 import 'package:haedal/service/controller/memo_controller.dart';
 import 'package:haedal/styles/colors.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
 import 'package:haedal/widgets/memo_group_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,9 +24,12 @@ class MemoScreen extends StatefulWidget {
 
 class _MemoScreenState extends State<MemoScreen> {
   late final PageController pageController;
+
   final ScrollController _scrollController = ScrollController();
   int pageNo = 0;
   int currentIndex = 0;
+
+  String errorMsg = "";
 
   @override
   void initState() {
@@ -87,7 +92,7 @@ class _MemoScreenState extends State<MemoScreen> {
 
     // 메모 추가 모달
     Future<void> showAddMemoModal() async {
-      showModalBottomSheet(
+      await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         shape: const RoundedRectangleBorder(
@@ -105,15 +110,16 @@ class _MemoScreenState extends State<MemoScreen> {
               return ShowAddMemoScreen();
             }),
       );
-
-      pageController.jumpToPage(currentIndex);
+      Timer(const Duration(milliseconds: 300), () {
+        pageController.jumpToPage(currentIndex);
+      });
     }
 
     return GetBuilder<MemoController>(
       init: MemoController(),
       builder: (memoCon) {
         return LoadingOverlay(
-          isLoading: memoCon.isLoading,
+          isLoading: memoCon.isLoading.value,
           child: memoCon.memos.isNotEmpty
               ? Scaffold(
                   body: SafeArea(
@@ -169,14 +175,9 @@ class _MemoScreenState extends State<MemoScreen> {
                                   animation: pageController,
                                   builder: (ctx, child) {
                                     return GestureDetector(
-                                      onTap: () {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                                "Hello you tapped at $index "),
-                                          ),
-                                        );
+                                      onTap: () async {
+                                        /** 메모 추가 모달 */
+                                        await showAddMemoModal();
                                       },
                                       child: Container(
                                         margin: const EdgeInsets.only(
@@ -228,7 +229,9 @@ class _MemoScreenState extends State<MemoScreen> {
                                                         .memos!
                                                         .isEmpty
                                                     ? 0
-                                                    : 0 /
+                                                    : memoCon
+                                                            .memos[currentIndex]
+                                                            .clear! /
                                                         memoCon
                                                             .memos[currentIndex]
                                                             .memos!
@@ -277,61 +280,84 @@ class _MemoScreenState extends State<MemoScreen> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                            child:
-                                memoCon.memos[currentIndex].memos!.isNotEmpty &&
-                                        currentIndex == pageNo
-                                    ? ListView.builder(
-                                        itemCount: memoCon
-                                            .memos[currentIndex].memos?.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          if (memoCon.memos[currentIndex].memos!
-                                              .isNotEmpty) {
-                                            return ListTile(
-                                              leading: Checkbox(
-                                                value: memoCon
+                            child: memoCon.memos[currentIndex].memos!
+                                        .isNotEmpty &&
+                                    currentIndex == pageNo
+                                ? ListView.builder(
+                                    itemCount: memoCon
+                                        .memos[currentIndex].memos?.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      if (memoCon.memos[currentIndex].memos!
+                                          .isNotEmpty) {
+                                        return GestureDetector(
+                                          onTap: () {},
+                                          child: ListTile(
+                                            leading: Checkbox(
+                                              value: memoCon.memos[currentIndex]
+                                                  .memos?[index].isDone,
+                                              onChanged: (bool? value) {
+                                                // setState(() {
+                                                //   memo.isChecked = value!;
+                                                // });
+                                              },
+                                            ),
+                                            title: Text(
+                                                '${memoCon.memos[currentIndex].memos?[index].memo}'),
+                                            onTap: () async {
+                                              // 체크박스 클릭시 post 데이터 생성
+                                              var dataSource = {
+                                                "id": memoCon
                                                     .memos[currentIndex]
                                                     .memos?[index]
-                                                    .isDone,
-                                                onChanged: (bool? value) {
-                                                  // setState(() {
-                                                  //   memo.isChecked = value!;
-                                                  // });
-                                                },
+                                                    .id,
+                                                "isDone": !memoCon
+                                                    .memos[currentIndex]
+                                                    .memos![index]
+                                                    .isDone
+                                              };
+                                              /** 메모 리스트 체크박스 업데이트 부분 */
+                                              var result = await memoCon
+                                                  .updateMemoItem(dataSource);
+                                              print(result);
+                                              // 업데이트 성공시
+                                              if (result) {
+                                                // 성공할 때 마다 메세지 띄울 필요는 없을듯?
+                                              } else {
+                                                return CustomToast().alert(
+                                                    "업데이트 실패했습니다.",
+                                                    type: "error");
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      }
+                                      return null;
+                                    },
+                                  )
+                                : // 메모 추가 리스트
+                                GestureDetector(
+                                    onTap: () async {
+                                      showAddMemoModal();
+                                    },
+                                    child: currentIndex == pageNo
+                                        ? const Column(
+                                            children: [
+                                              Gap(20),
+                                              Text("메모를 추가해주세요"),
+                                              Gap(10),
+                                              Center(
+                                                child: Icon(
+                                                  Icons.add,
+                                                  size: 25,
+                                                ),
                                               ),
-                                              title: Text(
-                                                  '${memoCon.memos[currentIndex].memos?[index].memo}'),
-                                              onTap: () {
-                                                print("select!! $index");
-                                              },
-                                            );
-                                          }
-                                          return null;
-                                        },
-                                      )
-                                    : // 마지막 인덱스 카드 추가버튼
-                                    GestureDetector(
-                                        onTap: () async {
-                                          showAddMemoModal();
-                                        },
-                                        child: currentIndex == pageNo
-                                            ? const Column(
-                                                children: [
-                                                  Gap(20),
-                                                  Text("메모를 추가해주세요"),
-                                                  Gap(10),
-                                                  Center(
-                                                    child: Icon(
-                                                      Icons.add,
-                                                      size: 25,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            :
-                                            // pageNo 와 currentIndex 가 다를때는 카테고리 추가 카드부분( 슬라이드 마지막)이라는 뜻이므로 리스트가 아닌 빈화면
-                                            Container(),
-                                      ),
+                                            ],
+                                          )
+                                        :
+                                        // pageNo 와 currentIndex 가 다를때는 카테고리 추가 카드부분( 슬라이드 마지막)이라는 뜻이므로 리스트가 아닌 빈화면
+                                        Container(),
+                                  ),
                           ),
                         ),
                       ],
