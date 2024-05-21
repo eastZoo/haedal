@@ -29,11 +29,19 @@ class BottonSheet extends StatelessWidget {
             marker = mapCon.getRestaurantLocationMarker(mapCon.selectedMarker!);
           }
           if (mapCon.selectedMarker?.category == "숙소") {
-            marker =
-                mapCon.getAccommodationLocationMarker(mapCon.selectedMarker!);
+            marker = mapCon.getLodgingLocationMarker(mapCon.selectedMarker!);
           }
           if (mapCon.selectedMarker?.category == "카페") {
             marker = mapCon.getCafeLocationMarker(mapCon.selectedMarker!);
+          }
+          if (mapCon.selectedMarker?.category == "플레이") {
+            marker = mapCon.getPlayLocationMarker(mapCon.selectedMarker!);
+          }
+          if (mapCon.selectedMarker?.category == "장소") {
+            marker = mapCon.getPlaceLocationMarker(mapCon.selectedMarker!);
+          }
+          if (mapCon.selectedMarker?.category == "스토어") {
+            marker = mapCon.getStoreLocationMarker(mapCon.selectedMarker!);
           }
 
           mapCon.mapController?.addOverlay(marker);
