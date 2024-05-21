@@ -97,7 +97,7 @@ class MapController extends GetxController {
   // 음식점 marker
   NMarker getRestaurantLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(45, 55),
+      size: const Size(43, 45),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage(
           'assets/icons/marker/restaurant.png'),
@@ -113,7 +113,7 @@ class MapController extends GetxController {
   //숙소 marker
   NMarker getLodgingLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(45, 55),
+      size: const Size(43, 45),
       id: "maker_${location.id}",
       icon:
           const NOverlayImage.fromAssetImage('assets/icons/marker/lodging.png'),
@@ -129,7 +129,7 @@ class MapController extends GetxController {
   //카페 marker
   NMarker getCafeLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(45, 55),
+      size: const Size(43, 45),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/cafe.png'),
       position: NLatLng(
@@ -144,7 +144,7 @@ class MapController extends GetxController {
 //플레이 marker
   NMarker getPlayLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(45, 55),
+      size: const Size(43, 45),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/play.png'),
       position: NLatLng(
@@ -159,7 +159,7 @@ class MapController extends GetxController {
   //장소 marker
   NMarker getPlaceLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(45, 55),
+      size: const Size(43, 45),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/place.png'),
       position: NLatLng(
@@ -174,7 +174,7 @@ class MapController extends GetxController {
   //스토어 marker
   NMarker getStoreLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(45, 55),
+      size: const Size(43, 45),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/store.png'),
       position: NLatLng(
@@ -191,7 +191,7 @@ class MapController extends GetxController {
     panelController.close().then((value) async {
       var marker = getRestaurantLocationMarker(location);
       marker.setIcon(const NOverlayImage.fromAssetImage(
-          'assets/icons/selected_marker.png'));
+          'assets/icons/marker/selected_marker.png'));
 
       if (location.category == "음식점") {
         marker = getRestaurantLocationMarker(location);
@@ -310,6 +310,7 @@ class MapController extends GetxController {
           print("${location.category} dsdasd");
           var marker = getCafeLocationMarker(location);
           if (location.category == "음식점") {
+            print("object");
             marker = getRestaurantLocationMarker(location);
           }
           if (location.category == "숙소") {
