@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -51,6 +52,21 @@ class _MemoScreenState extends State<MemoScreen> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+  }
+
+// 색상 리스트 정의
+  final List<Color> colorList = [
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.orange,
+    Colors.purple,
+    Colors.yellow,
+  ];
+
+  Color getRandomColor() {
+    final random = Random();
+    return colorList[random.nextInt(colorList.length)];
   }
 
   bool showBtmAppBr = true;
@@ -122,7 +138,7 @@ class _MemoScreenState extends State<MemoScreen> {
                         children: [
                           // 슬라이드 스크린
                           Container(
-                            padding: const EdgeInsets.only(bottom: 35),
+                            padding: const EdgeInsets.only(bottom: 25),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: const BorderRadius.only(
@@ -136,8 +152,8 @@ class _MemoScreenState extends State<MemoScreen> {
                             child: Column(
                               children: [
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                                  padding: const EdgeInsets.fromLTRB(
+                                      20, 20, 20, 0), // 위시리스트 사이드 패딩 설정
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -150,8 +166,8 @@ class _MemoScreenState extends State<MemoScreen> {
                                         ),
                                       ),
                                       GestureDetector(
-                                        onTap: () {
-                                          showAddGroupModal();
+                                        onTap: () async {
+                                          print("카테고리 추가");
                                         },
                                         child: Text(
                                           "카테고리 추가 >",
@@ -166,7 +182,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 170,
+                                  height: 200, // 카테고리 카드 크기
                                   child: PageView.builder(
                                     controller: pageController,
                                     onPageChanged: (index) {
@@ -183,8 +199,157 @@ class _MemoScreenState extends State<MemoScreen> {
                                       setState(() {});
                                     },
                                     itemBuilder: (_, index) {
-                                      if (index == memoCon.memos.length) {
-                                        // 마지막 인덱스 카드 추가버튼
+                                      if (index != memoCon.memos.length) {
+                                        /** 카테고리 카드 생성 **/
+                                        return AnimatedBuilder(
+                                          animation: pageController,
+                                          builder: (ctx, child) {
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                /** 메모 추가 모달 */
+                                                await showAddMemoModal();
+                                              },
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                    right: 8,
+                                                    left: 8,
+                                                    top: 16,
+                                                    bottom: 12),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0),
+                                                  color:
+                                                      AppColors().subContainer,
+                                                ),
+                                                child: Padding(
+                                                  // 카테고리 카드 안 텍스트 전체 패딩
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          24, 12, 24, 24),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Gap(8),
+                                                      Text("Category",
+                                                          style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            color: AppColors()
+                                                                .white,
+                                                          )),
+                                                      const Gap(8),
+                                                      Text(
+                                                        '${memoCon.memos[index].category}', // 카테고리 타이틀
+                                                        style: TextStyle(
+                                                            fontSize: 24.0,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: AppColors()
+                                                                .white),
+                                                      ),
+                                                      const Gap(10),
+                                                      // Text(
+                                                      //   "${memoCon.memos[currentIndex].memos?.length} Tasks",
+                                                      //   style: const TextStyle(
+                                                      //     fontSize: 16.0,
+                                                      //   ),
+                                                      // ),
+                                                      const Gap(5),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .fromLTRB(
+                                                                0, 0, 0, 0),
+                                                        // 프로그레스바 조건문
+                                                        child: SizedBox(
+                                                          height:
+                                                              10, // 원하는 높이로 설정
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .all(
+                                                                    Radius.circular(
+                                                                        5)), // 원하는 반경으로 설정
+                                                            child:
+                                                                LinearProgressIndicator(
+                                                              value: memoCon
+                                                                      .memos[
+                                                                          currentIndex]
+                                                                      .memos!
+                                                                      .isEmpty
+                                                                  ? 0
+                                                                  : memoCon
+                                                                          .memos[
+                                                                              currentIndex]
+                                                                          .clear! /
+                                                                      memoCon
+                                                                          .memos[
+                                                                              currentIndex]
+                                                                          .memos!
+                                                                          .length,
+                                                              backgroundColor:
+                                                                  AppColors()
+                                                                      .subContainerDisabled,
+                                                              valueColor:
+                                                                  AlwaysStoppedAnimation<
+                                                                          Color>(
+                                                                      AppColors()
+                                                                          .white),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .fromLTRB(
+                                                                0, 8, 0, 0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              "progress",
+                                                              style: TextStyle(
+                                                                fontSize: 14.0,
+                                                                color:
+                                                                    AppColors()
+                                                                        .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "${memoCon.memos[currentIndex].memos!.isNotEmpty ? ((memoCon.memos[currentIndex].clear! / memoCon.memos[currentIndex].memos!.length) * 100).toStringAsFixed(2) : 0} %",
+                                                              style: TextStyle(
+                                                                fontSize: 12.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color:
+                                                                    AppColors()
+                                                                        .white,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        /** 카테고리 추가 카드 컨테이너 **/
                                         return GestureDetector(
                                           onTap: () async {
                                             await showAddGroupModal();
@@ -214,105 +379,12 @@ class _MemoScreenState extends State<MemoScreen> {
                                             ),
                                           ),
                                         );
-                                      } else {
-                                        //카테고리 카드 생성
-                                        return AnimatedBuilder(
-                                          animation: pageController,
-                                          builder: (ctx, child) {
-                                            return GestureDetector(
-                                              onTap: () async {
-                                                /** 메모 추가 모달 */
-                                                await showAddMemoModal();
-                                              },
-                                              child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    right: 8,
-                                                    left: 8,
-                                                    top: 16,
-                                                    bottom: 12),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0),
-                                                  color: Colors.white70,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.7),
-                                                      blurRadius: 5.0,
-                                                      spreadRadius: 0.0,
-                                                      offset:
-                                                          const Offset(0, 7),
-                                                    )
-                                                  ],
-                                                ),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      '${memoCon.memos[index].category}',
-                                                      style: const TextStyle(
-                                                        fontSize: 20.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                        height: 10.0),
-                                                    Text(
-                                                      "${memoCon.memos[currentIndex].memos?.length} Tasks",
-                                                      style: const TextStyle(
-                                                        fontSize: 16.0,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                        height: 20.0),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .fromLTRB(
-                                                          15, 0, 15, 0),
-                                                      // 프로그레스바 조건문
-                                                      child:
-                                                          LinearProgressIndicator(
-                                                        value: memoCon
-                                                                .memos[
-                                                                    currentIndex]
-                                                                .memos!
-                                                                .isEmpty
-                                                            ? 0
-                                                            : memoCon
-                                                                    .memos[
-                                                                        currentIndex]
-                                                                    .clear! /
-                                                                memoCon
-                                                                    .memos[
-                                                                        currentIndex]
-                                                                    .memos!
-                                                                    .length,
-                                                        backgroundColor:
-                                                            Colors.grey,
-                                                        valueColor:
-                                                            AlwaysStoppedAnimation<
-                                                                    Color>(
-                                                                AppColors()
-                                                                    .mainColor),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
                                       }
                                     },
                                     itemCount: memoCon.memos.length + 1,
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 15.0,
-                                ),
+                                const Gap(15),
                                 // 스크린 dot 페이지네이션
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -325,13 +397,83 @@ class _MemoScreenState extends State<MemoScreen> {
                                           Icons.circle,
                                           size: 12.0,
                                           color: pageNo == index
-                                              ? AppColors().mainColor
+                                              ? AppColors().subContainer
                                               : Colors.grey.shade300,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                          // AddTask 타이틀
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                                20, 20, 20, 0), // 위시리스트 사이드 패딩 설정
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Add Task",
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        /** 메모 추가 모달 */
+                                        await showAddMemoModal();
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: AppColors().subContainer,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        padding: const EdgeInsets.all(
+                                            2.0), // 원의 크기를 조정하기 위한 여백
+                                        child: const Icon(
+                                          Icons.add_outlined,
+                                          color: Colors
+                                              .white, // 아이콘 색상을 흰색으로 변경하여 대비를 높임
+                                          size: 20.0, // 아이콘 크기
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    print("카테고리 추가");
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "All Task",
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors().textGrey,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 2,
+                                      ),
+                                      Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: AppColors()
+                                            .textGrey, // 아이콘 색상을 흰색으로 변경하여 대비를 높임
+                                        size: 24.0, // 아이콘 크기
+                                      )
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                           ),
@@ -349,47 +491,60 @@ class _MemoScreenState extends State<MemoScreen> {
                                           (BuildContext context, int index) {
                                         if (memoCon.memos[currentIndex].memos!
                                             .isNotEmpty) {
-                                          return GestureDetector(
-                                            onTap: () {},
-                                            child: ListTile(
-                                              leading: Checkbox(
-                                                value: memoCon
-                                                    .memos[currentIndex]
-                                                    .memos?[index]
-                                                    .isDone,
-                                                onChanged: (bool? value) {
-                                                  // setState(() {
-                                                  //   memo.isChecked = value!;
-                                                  // });
-                                                },
-                                              ),
-                                              title: Text(
-                                                  '${memoCon.memos[currentIndex].memos?[index].memo}'),
-                                              onTap: () async {
-                                                // 체크박스 클릭시 post 데이터 생성
-                                                var dataSource = {
-                                                  "id": memoCon
+                                          return Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 10,
+                                                left: 10,
+                                                top: 8,
+                                                bottom: 0),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              color: AppColors().white,
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () {},
+                                              child: ListTile(
+                                                leading: Checkbox(
+                                                  value: memoCon
                                                       .memos[currentIndex]
                                                       .memos?[index]
-                                                      .id,
-                                                  "isDone": !memoCon
-                                                      .memos[currentIndex]
-                                                      .memos![index]
-                                                      .isDone
-                                                };
-                                                /** 메모 리스트 체크박스 업데이트 부분 */
-                                                var result = await memoCon
-                                                    .updateMemoItem(dataSource);
-                                                print(result);
-                                                // 업데이트 성공시
-                                                if (result) {
-                                                  // 성공할 때 마다 메세지 띄울 필요는 없을듯?
-                                                } else {
-                                                  return CustomToast().alert(
-                                                      "업데이트 실패했습니다.",
-                                                      type: "error");
-                                                }
-                                              },
+                                                      .isDone,
+                                                  onChanged: (bool? value) {
+                                                    // setState(() {
+                                                    //   memo.isChecked = value!;
+                                                    // });
+                                                  },
+                                                ),
+                                                title: Text(
+                                                    '${memoCon.memos[currentIndex].memos?[index].memo}'),
+                                                onTap: () async {
+                                                  // 체크박스 클릭시 post 데이터 생성
+                                                  var dataSource = {
+                                                    "id": memoCon
+                                                        .memos[currentIndex]
+                                                        .memos?[index]
+                                                        .id,
+                                                    "isDone": !memoCon
+                                                        .memos[currentIndex]
+                                                        .memos![index]
+                                                        .isDone
+                                                  };
+                                                  /** 메모 리스트 체크박스 업데이트 부분 */
+                                                  var result = await memoCon
+                                                      .updateMemoItem(
+                                                          dataSource);
+                                                  print(result);
+                                                  // 업데이트 성공시
+                                                  if (result) {
+                                                    // 성공할 때 마다 메세지 띄울 필요는 없을듯?
+                                                  } else {
+                                                    return CustomToast().alert(
+                                                        "업데이트 실패했습니다.",
+                                                        type: "error");
+                                                  }
+                                                },
+                                              ),
                                             ),
                                           );
                                         }
