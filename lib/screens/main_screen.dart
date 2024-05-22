@@ -7,6 +7,7 @@ import 'package:haedal/screens/drawer_screen/custom_drawer.dart';
 import 'package:haedal/screens/select_photo_options_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
+import 'package:haedal/screens/tab_menu_screen/home_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/map_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/memo_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/more_screen.dart';
@@ -25,16 +26,27 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 1; // 앨범 초기 메인
+  int _selectedIndex = 2; // 앨범 초기 메인
   int _prevSelectedIndex = 1; // 앨범 초기 메인
   final autoSizeGroup = AutoSizeGroup();
   late CalendarController controller;
+
+  // 앨범 토글 인덱스 값
+  int currentToggleIdx = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     controller = CalendarController();
     super.initState();
+  }
+
+// board 표현 토글 값
+  void updateToggleIdx(int newValue) {
+    print("$newValue  23123 ");
+    setState(() {
+      currentToggleIdx = newValue;
+    });
   }
 
   final iconList = [
@@ -86,7 +98,9 @@ class _MainScreenState extends State<MainScreen> {
                         appBar: _selectedIndex != 0
                             ? CustomAppbar(
                                 title: appBarName[_selectedIndex],
-                                selectedIndex: _selectedIndex)
+                                selectedIndex: _selectedIndex,
+                                updateToggleIdx: updateToggleIdx,
+                                currentToggleIdx: currentToggleIdx)
                             : null,
                         drawer: const CustomDrawer(),
                         body: Column(
@@ -95,9 +109,11 @@ class _MainScreenState extends State<MainScreen> {
                               child: IndexedStack(
                                 index: _selectedIndex,
                                 children: [
-                                  const MapScreen(),
+                                  const HomeScreen(),
                                   const MemoScreen(),
-                                  const AlbumScreen(),
+                                  currentToggleIdx == 0
+                                      ? const AlbumScreen()
+                                      : const MapScreen(),
                                   CalenderScreen(controller: controller),
                                   const MoreScreen(),
                                 ],
