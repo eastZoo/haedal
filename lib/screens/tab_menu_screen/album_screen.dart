@@ -48,7 +48,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
                         child: Center(
                           child: Column(
                             children: [
-                              const Text('데이터의 마지막 입니다'),
+                              const Text(
+                                '데이터의 마지막 입니다',
+                              ),
                               IconButton(
                                 onPressed: () {
                                   controller.reload();

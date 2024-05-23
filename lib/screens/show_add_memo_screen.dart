@@ -80,7 +80,7 @@ class _ShowAddMemoScreenState extends State<ShowAddMemoScreen> {
                     setState(() {
                       errorMsg = "제목을 입력해주세요.";
                     });
-                    return CustomToast().signUpToast(errorMsg);
+                    return CustomToast().alert(errorMsg);
                   }
 
                   var dataSource = {

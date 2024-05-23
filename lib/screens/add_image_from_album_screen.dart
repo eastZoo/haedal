@@ -234,13 +234,13 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
           setState(() {
             errorMsg = "제목(title)을 입력해주세요.";
           });
-          return CustomToast().signUpToast(errorMsg);
+          return CustomToast().alert(errorMsg);
         }
         if (_pickedImages.isEmpty) {
           setState(() {
             errorMsg = "추가된 이미지가 없습니다.";
           });
-          return CustomToast().signUpToast(errorMsg);
+          return CustomToast().alert(errorMsg);
         }
 
         setState(() {

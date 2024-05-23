@@ -153,14 +153,14 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                       setState(() {
                         errorMsg = "제목을 입력해주세요.";
                       });
-                      return CustomToast().signUpToast(errorMsg);
+                      return CustomToast().alert(errorMsg);
                     }
                     if (DateTime.parse(endTodoDayController.text).isBefore(
                         DateTime.parse(startTodoDayController.text))) {
                       setState(() {
                         errorMsg = "시작 날짜가 종료날짜보다 이전 날짜일 수 없습니다.";
                       });
-                      return CustomToast().signUpToast(errorMsg);
+                      return CustomToast().alert(errorMsg);
                     }
 
                     // 데이터 통신 전 로딩 상태 변경

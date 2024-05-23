@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:haedal/service/controller/location_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/add_location_bottom_sheet.dart';
+import 'package:haedal/widgets/animation_marker.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
 
 class SelectMapPositionScreen extends StatefulWidget {
   const SelectMapPositionScreen({
@@ -23,8 +23,13 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
   TextEditingController inputController = TextEditingController();
   NaverMapViewOptions options = const NaverMapViewOptions();
   String inputText = '';
+
+  // 도로명 주소
+  String addressName = '';
+  // 지번 주소
   String address = '';
   NLatLng? currentLatLng;
+  bool isMoving = false;
 
   @override
   void initState() {
@@ -53,16 +58,18 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
   @override
   Widget build(BuildContext context) {
     final mapCon = Get.put(MapController());
+
     void onMapReady(NaverMapController nController) async {
       nController.setLocationTrackingMode(NLocationTrackingMode.noFollow);
       mapCon.setMapController(nController);
+
       // mapCon.startAddpointReady();
       mapController = nController;
     }
 
     void onSaveLocation() async {
       Map<String, dynamic> dataSource = {
-        "address": address,
+        "address": addressName,
         "lat": currentLatLng?.latitude,
         "lng": currentLatLng?.longitude,
       };
@@ -76,38 +83,61 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
           id: 'mapPoint', position: NLatLng(latLng.latitude, latLng.longitude));
       mapController.addOverlay(marker);
 
-      String data = await LocationController()
-          .getGeoLocation(latLng.latitude, latLng.longitude);
+      Map<String, dynamic> data = await LocationController()
+          .getAddressFromCoordinates(latLng.latitude, latLng.longitude);
+
       setState(() {
-        address = data;
+        addressName = data["addressName"];
+        address = data["address"];
       });
 
       panelController.open();
     }
 
     void onSymbolTapped(NSymbolInfo symbol) async {
-      NLatLng latLng = symbol.position;
+      // NLatLng latLng = symbol.position;
 
-      currentLatLng = latLng;
-      final marker = NMarker(
-        id: 'mapPoint',
-        position: NLatLng(latLng.latitude, latLng.longitude),
-      );
-      mapController.addOverlay(marker);
+      // currentLatLng = latLng;
+      // final marker = NMarker(
+      //   id: 'mapPoint',
+      //   position: NLatLng(latLng.latitude, latLng.longitude),
+      // );
+      // mapController.addOverlay(marker);
 
-      String data = await LocationController()
-          .getGeoLocation(latLng.latitude, latLng.longitude);
-      setState(() {
-        address = data;
-      });
+      // Map<String, dynamic> data = await LocationController()
+      //     .getAddressFromCoordinates(latLng.latitude, latLng.longitude);
+      // setState(() {
+      //   addressName = data["addressName"];
+      //   address = data["address"];
+      // });
 
-      panelController.open();
+      // panelController.open();
       // ignore: use_build_context_synchronously
     }
 
-    void onCameraChange(NCameraUpdateReason reason, bool isGesture) {}
+    void onCameraChange(NCameraUpdateReason location, bool isGesture) {
+      setState(() {
+        isMoving = true;
+      });
+    }
 
-    void onCameraIdle() {}
+    void onCameraIdle() async {
+      setState(() {
+        isMoving = false;
+      });
+      // 카메라 위치를 가져옵니다.
+      final cameraPosition = await mapController.getCameraPosition();
+      currentLatLng = cameraPosition.target;
+      Map<String, dynamic> data = await LocationController()
+          .getAddressFromCoordinates(
+              cameraPosition.target.latitude, cameraPosition.target.longitude);
+      setState(() {
+        addressName = data["addressName"];
+        address = data["address"];
+      });
+
+      panelController.open();
+    }
 
     void onSelectedIndoorChanged(NSelectedIndoor? selectedIndoor) {}
 
@@ -130,9 +160,11 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
             onCameraIdle: onCameraIdle,
             onSelectedIndoorChanged: onSelectedIndoorChanged,
           ),
+          AnimationMarker(isMoving: isMoving),
           AddLocationBottonSheet(
             panelController: panelController,
             inputController: inputController,
+            addressName: addressName,
             address: address,
             onSaveLocation: onSaveLocation,
             onChangedText: (text) {

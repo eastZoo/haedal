@@ -91,7 +91,7 @@ class _CodeScreenState extends State<CodeScreen> {
               setState(() {
                 isLoading = false;
               });
-              CustomToast().signUpToast(result["msg"]);
+              CustomToast().alert(result["msg"]);
             }
           }
 

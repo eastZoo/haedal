@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CustomToast {
-  void signUpToast(String errorMsg, {String? type = "error"}) {
+  void alert(String errorMsg, {String? type = "error"}) {
     Fluttertoast.showToast(
         msg: errorMsg,
         gravity: ToastGravity.TOP,

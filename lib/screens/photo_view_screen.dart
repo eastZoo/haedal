@@ -58,12 +58,12 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
       setState(() {
         msg = "다운로드가 완료되었습니다.";
       });
-      CustomToast().signUpToast(msg, type: "success");
+      CustomToast().alert(msg, type: "success");
     } else {
       setState(() {
         msg = "다운로드에 오류가 발생했습니다.";
       });
-      CustomToast().signUpToast(msg);
+      CustomToast().alert(msg);
     }
 
     setState(() {

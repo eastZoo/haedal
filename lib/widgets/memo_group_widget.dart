@@ -48,7 +48,7 @@ class MemoGroupWidget extends StatelessWidget {
         init: MemoController(),
         builder: (memoCon) {
           return LoadingOverlay(
-            isLoading: memoCon.isLoading,
+            isLoading: memoCon.isLoading.value,
             child: memoCon.memos.isNotEmpty
                 ? Column(
                     children: [

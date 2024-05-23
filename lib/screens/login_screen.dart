@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {
                               errorMsg = result["msg"];
                             });
-                            return CustomToast().signUpToast(errorMsg);
+                            return CustomToast().alert(errorMsg);
                           }
                         },
                         available: true,

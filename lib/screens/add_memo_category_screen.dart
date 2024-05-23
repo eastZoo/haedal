@@ -75,7 +75,7 @@ class _AddMemoCategoryScreenState extends State<AddMemoCategoryScreen> {
                   setState(() {
                     errorMsg = "카테고리를 입력해주세요.";
                   });
-                  return CustomToast().signUpToast(errorMsg);
+                  return CustomToast().alert(errorMsg);
                 }
                 var dataSource = {
                   "category": categoryTextController.text,

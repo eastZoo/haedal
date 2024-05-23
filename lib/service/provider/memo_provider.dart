@@ -16,6 +16,13 @@ class MemoProvider {
         .asyncPost();
   }
 
+// 메모 체크박스 업데이트
+  updateMemoItem(data) async {
+    return await ApiRequest(
+            url: '${Endpoints.memoUrl}/update/check', data: data)
+        .asyncPost();
+  }
+
   // 모든 메모 리스트 정보 얻기
   getMemoList() async {
     return await ApiRequest(url: Endpoints.memoUrl).asyncGet();
