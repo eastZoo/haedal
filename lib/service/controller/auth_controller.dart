@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/couple_connect_info.dart';
+import 'package:haedal/models/user_info.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
 
 class AuthController extends GetxController {
@@ -17,15 +18,27 @@ class AuthController extends GetxController {
   // 24시간 초단위 환산
   int accessCodeTimer = 86400;
 
+// user profile info
+  UserInfo? userInfo;
+  bool isLoading = true;
+
   @override
   void onInit() async {
     super.onInit();
+    const storage = FlutterSecureStorage();
+    var token = await storage.read(key: 'accessToken');
+
+    print(token.runtimeType);
     print("ONINIT!!!");
     var result = await getConnectState();
     print("ONINIT result : $result");
     // 상태코드 1번 회원가입 절차중 초대코드( 타이머 작동 ) 입력 단계
     if (result == 1) {
       await getInviteCodeInfo();
+    }
+    // 토큰이 없다면 사용자 프로필 얻어오지 않는다
+    if (token != null) {
+      getUserInfo();
     }
   }
 
@@ -57,11 +70,11 @@ class AuthController extends GetxController {
     };
     // 회원가입(로그인) API
     var res = await AuthProvider().onSignIn(dataSource);
-    print(res["data"]);
-    print(res["data"]["connectState"].runtimeType);
+
     if (res["data"]["success"]) {
       // 로그인 후 응답으로 부터 토큰 저장
       storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+      storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
       connectState = RxInt(res["data"]["connectState"]);
       update();
       return res["data"];
@@ -170,6 +183,25 @@ class AuthController extends GetxController {
 
       update();
       return res["data"]["success"];
+    }
+  }
+
+  // 유저 프로필 가져오기
+  getUserInfo() async {
+    try {
+      var res = await AuthProvider().getUserInfoProvider();
+      print("USERINFO   : : $res");
+
+      if (res["success"]) {}
+      userInfo = UserInfo.fromJson(res["data"]);
+
+      print("USERINFO   : : $userInfo");
+      isLoading = false;
+    } catch (error) {
+      // error 캐치해도 일단 아바타 로딩 잡기 위해서 강제 false 처리
+      isLoading = false;
+    } finally {
+      update();
     }
   }
 

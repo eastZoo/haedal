@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
+import 'package:haedal/screens/add_album.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/home_screen.dart';
@@ -66,6 +67,15 @@ class _MainScreenState extends State<MainScreen> {
                       backgroundColor: const Color(0xFFD4A7FB),
                       onPressed: () {
                         HapticFeedback.lightImpact();
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.bottomToTop,
+                            child: const AddAlbum(),
+                            isIos: true,
+                            duration: routingDuration,
+                          ),
+                        );
                       },
                       child: const Icon(
                         Icons.add,

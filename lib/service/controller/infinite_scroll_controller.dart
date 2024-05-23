@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/service/provider/infinite_scroll_provider.dart';
 
 class InfiniteScrollController extends GetxController {
   var scrollController = ScrollController().obs;
-  var data = <int>[].obs;
+  var data = <dynamic>[].obs;
   var isLoading = false.obs;
   var hasMore = false.obs;
 
@@ -22,18 +23,18 @@ class InfiniteScrollController extends GetxController {
 
   _getData() async {
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2));
+
     int offset = data.length;
-    var appendData = List<int>.generate(10, (i) => i + 1 + offset);
-    data.addAll(appendData);
+
+    var albumData = await InfiniteScrollProvider().albumListGenerate(offset);
+    data.addAll(albumData["data"]["appendData"]);
     isLoading.value = false;
-    hasMore.value = data.length < 30;
+    hasMore.value = data.length < albumData["data"]["total"];
   }
 
   reload() async {
     isLoading.value = true;
     data.clear();
-    await Future.delayed(const Duration(seconds: 2));
     _getData();
   }
 }

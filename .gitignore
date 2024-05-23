@@ -43,4 +43,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+<<<<<<< HEAD
 # /assets/
+=======
+# /assets/
+
+/lib/service/endpoints.dart
+>>>>>>> develop

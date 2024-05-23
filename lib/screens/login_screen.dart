@@ -124,7 +124,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           if (result["success"]) {
                             Navigator.pushNamedAndRemoveUntil(
-                                context, '/splash', (route) => false);
+                              context,
+                              '/splash',
+                              (route) => false,
+                            );
                           } else {
                             setState(() {
                               errorMsg = result["msg"];
@@ -177,6 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(width: 4),
                           InkWell(
+                            borderRadius: BorderRadius.circular(10),
                             child: const Text(
                               '연결하러 가기',
                               style: TextStyle(

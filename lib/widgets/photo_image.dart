@@ -38,6 +38,7 @@ class PhotoImage extends StatelessWidget {
             children: [
               Container(),
               InkWell(
+                borderRadius: BorderRadius.circular(10),
                 onTap: removeImage,
                 child: Container(
                   width: 25,

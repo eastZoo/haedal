@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:haedal/screens/loading_screen.dart';
 import 'package:haedal/screens/login_screen.dart';
 import 'package:haedal/screens/main_screen.dart';
 import 'package:haedal/screens/register_screen/code_screen.dart';
 import 'package:haedal/screens/register_screen/info_screen.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/test.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -35,18 +37,15 @@ class _SplashScreenState extends State<SplashScreen> {
               print("SPLASH@!!!!!!!!!!!!!!");
               print(authCon.connectState);
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(
+                return Scaffold(
                   body: Center(
-                    child: CircularProgressIndicator(),
+                    child: Image.asset("assets/images/logo.png"),
                   ),
                 );
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 if (authCon.connectState == RxInt(0)) {
-                  return const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+                  return LoadingScreen(
+                      token: snapshot.data, connectState: authCon.connectState);
                 } else if (authCon.connectState == RxInt(1)) {
                   return const CodeScreen();
                 } else if (authCon.connectState == RxInt(2)) {
@@ -57,6 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
               }
 
               return const LoginScreen();
+              // return TestScheduleScreen();
             });
       },
     );

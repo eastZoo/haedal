@@ -25,6 +25,7 @@ class MainAppbar extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
+                textAlign: TextAlign.start,
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w400,

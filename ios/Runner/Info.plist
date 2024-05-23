@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -24,6 +26,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -43,11 +47,46 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 	<key>com.apple.security.files.user-selected.read-only</key>
-  	<true/>
+	<true/>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Need to upload image</string>
+
+	<key>NSCameraUsageDescription</key>
+	<string>Need to upload image</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Need to upload image</string>
+
+	<!-- Permission options for the `location` group -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Need location when in use</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Always and when in use!</string>
+    <key>NSLocationUsageDescription</key>
+    <string>Older devices need location.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Can I have location always?</string>
+    <!-- Permission options for the `contacts` group -->
+    <key>NSContactsUsageDescription</key>
+    <string>contacts</string>
+    <!-- Permission options for the `sensors` group -->
+    <key>NSMotionUsageDescription</key>
+    <string>motion</string>
+
+    <!-- Permission options for the `appTrackingTransparency` -->
+    <key>NSUserTrackingUsageDescription</key>
+    <string>appTrackingTransparency</string>
+
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Our application needs Permission to save photos</string>
+
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
 </dict>
 </plist>

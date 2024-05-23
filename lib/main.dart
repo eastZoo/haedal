@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
@@ -13,7 +14,7 @@ void main() async {
   await NaverMapSdk.instance.initialize(
       clientId: '01uy52gfk2',
       onAuthFailed: (error) {
-        print(error);
+        print("NAVER AUTH ERROR :  $error");
       });
   await dotenv.load(fileName: 'assets/config/.env');
 
@@ -31,8 +32,8 @@ class MyApp extends StatelessWidget {
       ..displayDuration = const Duration(milliseconds: 1500)
       ..loadingStyle = EasyLoadingStyle.custom
       ..indicatorType = EasyLoadingIndicatorType.ring
-      ..indicatorColor = Colors.blueAccent
-      ..backgroundColor = Colors.blue.shade100
+      ..indicatorColor = Colors.white
+      ..backgroundColor = Colors.white
       ..textColor = Colors.blueAccent
       ..maskType = EasyLoadingMaskType.custom
       ..maskColor = Colors.black.withOpacity(0.2)
@@ -41,16 +42,19 @@ class MyApp extends StatelessWidget {
 
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(
-          navigationBarTheme: const NavigationBarThemeData(
-            labelTextStyle: MaterialStatePropertyAll(
-              TextStyle(fontSize: 14),
-            ),
-            iconTheme: MaterialStatePropertyAll(
-              IconThemeData(size: 30, opticalSize: 50),
-            ),
-          ),
+        theme: ThemeData(
+          fontFamily: 'Pretendard',
         ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''), // English, no country code
+          Locale('ko', ''), // Korean, no country code
+        ],
+        locale: const Locale('ko'),
         enableLog: true,
         logWriterCallback: (String text, {bool isError = false}) {
           Future.microtask(() => print('** $text. isError: [$isError]'));
@@ -60,7 +64,8 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           child = EasyLoading.init()(context, child);
           return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1.0)),
             child: child,
           );
         });

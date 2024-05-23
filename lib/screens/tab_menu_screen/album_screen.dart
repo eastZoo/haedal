@@ -1,9 +1,15 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/album.dart';
+import 'package:haedal/screens/story_detail_screen.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
-import 'package:haedal/widgets/main_appbar.dart';
+
+import 'package:intl/intl.dart';
+
+import '../../service/endpoints.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({super.key});
@@ -13,60 +19,7 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreenState extends State<AlbumScreen> {
-  Text _buildRatingStars(int rating) {
-    String stars = '';
-    for (int i = 0; i < rating; i++) {
-      stars += '⭐ ';
-    }
-    stars.trim();
-    return Text(stars);
-  }
-
-// 게시글 카드
-  Widget postCard(title) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
-      height: 170,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(
-            "assets/images/haeon.jpg",
-          ),
-          fit: BoxFit.cover,
-        ),
-        color: Colors.grey,
-      ),
-      child: ClipRRect(
-        // make sure we apply clip it properly
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-          child: Container(
-            alignment: Alignment.center,
-            color: Colors.grey.withOpacity(0.2),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    color: Colors.black, // Choose the color of the shadow
-                    blurRadius:
-                        5.0, // Adjust the blur radius for the shadow effect
-                    offset: Offset(1.0,
-                        1.0), // Set the horizontal and vertical offset for the shadow
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
+  // 메인 빌드!!
   @override
   Widget build(BuildContext context) {
     return GetBuilder<InfiniteScrollController>(
@@ -75,7 +28,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return SafeArea(
             child: Scaffold(
               body: Column(children: [
-                const MainAppbar(title: '스토리 / 위치리스트'),
                 Expanded(
                     child: Obx(
                   () => ListView.separated(
@@ -83,8 +35,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     itemBuilder: (_, index) {
                       print(controller.hasMore.value);
                       if (index < controller.data.length) {
-                        var datum = controller.data[index];
-                        return postCard("title");
+                        AlbumBoard? data =
+                            AlbumBoard.fromJson(controller.data[index]);
+                        return postCard(data);
                       }
                       if (controller.hasMore.value ||
                           controller.isLoading.value) {
@@ -115,5 +68,87 @@ class _AlbumScreenState extends State<AlbumScreen> {
             ),
           );
         });
+  }
+
+// 게시글 카드
+  Widget postCard(AlbumBoard? data) {
+    DateTime dateTime = DateTime.parse(data!.storyDate.toString());
+
+    // Format the date
+    String formattedDate = DateFormat.yMMMMd("ko_KR").add_E().format(dateTime);
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) {
+              return StoryDetailScreen(albumBoard: data);
+            },
+          ),
+        );
+      },
+      child: Container(
+        height: 180,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: CachedNetworkImageProvider(
+              "${Endpoints.hostUrl}/${data.files?.first.filename}",
+            ),
+            fit: BoxFit.cover,
+          ),
+          color: Colors.grey,
+        ),
+        child: ClipRRect(
+          // make sure we apply clip it properly
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.2),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    formattedDate,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: Color.fromARGB(214, 255, 255, 255),
+                      shadows: [
+                        Shadow(
+                          color: Colors.black, // Choose the color of the shadow
+                          blurRadius:
+                              5.0, // Adjust the blur radius for the shadow effect
+                          offset: Offset(1.0,
+                              1.0), // Set the horizontal and vertical offset for the shadow
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    data.title.toString(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black, // Choose the color of the shadow
+                          blurRadius:
+                              6.0, // Adjust the blur radius for the shadow effect
+                          offset: Offset(1.0,
+                              1.0), // Set the horizontal and vertical offset for the shadow
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

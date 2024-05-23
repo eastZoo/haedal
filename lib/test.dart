@@ -1,251 +1,93 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-
-import 'package:haedal/styles/colors.dart';
-import 'package:haedal/widgets/app_button.dart';
-import 'package:haedal/widgets/photo_image.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:get/get.dart' as GET;
-import 'package:path/path.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
+import 'package:haedal/screens/add_schedule_screen.dart';
+import 'package:haedal/screens/drawer_screen/custom_drawer.dart';
+import 'package:haedal/service/controller/category_board_controller.dart';
+import 'package:haedal/service/controller/infinite_scroll_controller.dart';
+import 'package:haedal/service/controller/map_controller.dart';
+import 'package:haedal/widgets/calendar_widget.dart';
+import 'package:haedal/widgets/my_button.dart';
+import 'package:intl/intl.dart';
 
-class AddAlbum extends StatefulWidget {
-  const AddAlbum({super.key});
+class TestScheduleScreen extends StatefulWidget {
+  const TestScheduleScreen({super.key});
 
   @override
-  State<AddAlbum> createState() => _AddAlbumState();
+  State<TestScheduleScreen> createState() => _TestScheduleScreen();
 }
 
-class _AddAlbumState extends State<AddAlbum> {
-  final List<File> _beforeImages = [];
-  final List<File> _afterImages = [];
+class _TestScheduleScreen extends State<TestScheduleScreen> {
+  @override
+  void initState() {
+    super.initState();
 
-  bool isLoading = false;
-
-  // 카메라에서 추가
-  Future getImageAdd(int type) async {
-    final picker = ImagePicker();
-    final XFile? photo = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 90,
-    );
-    if (photo != null) {
-      int size = await photo.length();
-      if (size < 99999) {
-        GET.Get.snackbar(
-          '등록 오류',
-          '사진 이미지가 불량입니다.',
-          snackPosition: GET.SnackPosition.TOP,
-          backgroundColor: Colors.deepOrangeAccent,
-        );
-      } else {
-        setState(() {
-          File image = File(photo.path);
-          if (type == 1) _beforeImages.add(image);
-          if (type == 2) _afterImages.add(image);
-        });
-      }
-    }
-  }
-
-  Future getImageAlbumAdd() async {
-    await Permission.storage.request();
-    final picker = ImagePicker();
-    final photo = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 90,
-    );
-
-    if (photo != null) {
-      setState(() {
-        File image = File(photo.path);
-        _beforeImages.add(image);
-      });
-    }
+    print("INIT!!!!!!");
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-
-    // 이미지 추가 후 미리보기
-    Widget beforePhoto(int index) {
-      return (_beforeImages.length > index)
-          ? PhotoImage(
-              size: width,
-              file: _beforeImages[index],
-              removeImage: () {
-                setState(() {
-                  _beforeImages.removeAt(index);
-                });
-              },
-            )
-          : Container();
-    }
-
-    submit() async {
-      setState(() {
-        isLoading = true;
-      });
-
-      if (_beforeImages.isEmpty) {
-        GET.Get.snackbar(
-          '저장 오류!!',
-          '적어도 하나의 사진을 등록하세요.',
-          snackPosition: GET.SnackPosition.TOP,
-          backgroundColor: Colors.deepOrangeAccent,
-        );
-        return false;
-      }
-      var res;
-      var images = [];
-      Map<String, dynamic> requestData = {};
-      for (int i = 0; i < _beforeImages.length; i++) {
-        images.add(
-          await MultipartFile.fromFile(
-            _beforeImages[i].path,
-            filename: basename(_beforeImages[i].path),
-          ),
-        );
-        requestData["img${i + 1}"] = basename(_beforeImages[i].path);
-      }
-      requestData["images"] = images;
-
-      if (res["success"]) {
-        setState(() {
-          isLoading = false;
-          _beforeImages.clear();
-          _afterImages.clear();
-        });
-
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        print(isLoading);
-
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          showCloseIcon: true,
-          content: Text('사진이 등록되었습니다.'),
-        ));
-      } else {
-        setState(() {
-          isLoading = false;
-          _beforeImages.clear();
-          _afterImages.clear();
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.red,
-          showCloseIcon: true,
-          content: Text(res["msg"] ?? '저장 오류!'),
-        ));
-      }
-    }
+    const textStyle = TextStyle(
+        fontWeight: FontWeight.w600, color: Colors.black, fontSize: 20);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors().mainColor,
-        title: const Text("영양소분석"),
-      ),
-      body: isLoading
-          ? const Scaffold(
-              body: Center(
-                child: SizedBox(
-                  height: 120,
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: SizedBox(
-                          height: 120,
-                          width: 120,
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                      Center(
-                        child: Text('분석중입니다...'),
-                      ),
-                    ],
-                  ),
+      drawer: const CustomDrawer(),
+      body: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              heightFactor: 0.7,
+              child: Container(
+                width: 50,
+                height: 3,
+                margin: const EdgeInsets.only(bottom: 35),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2.5),
+                  color: Colors.grey.shade400,
                 ),
               ),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(15),
-              children: [
-                const Row(
-                  children: [
-                    Text(
-                      '음식 사진 등록',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF2B2F45),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 5.0,
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: 15,
-                    runSpacing: 15,
-                    children: [
-                      SizedBox(
-                        width: width / 3 - 20,
-                        height: width / 3 - 20,
-                        child: TextButton(
-                          onPressed: () {
-                            getImageAlbumAdd();
-                          },
-                          style: TextButton.styleFrom(
-                            backgroundColor: AppColors().mainColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(7.0),
-                            ),
-                          ),
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.add_circle,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                '사진 등록',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      beforePhoto(0),
-                      beforePhoto(1),
-                      beforePhoto(2),
-                      beforePhoto(3),
-                      beforePhoto(4),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                AppButton(
-                  width: width,
-                  minimumSize: Size(width, 50),
-                  text: "분석",
-                  color: AppColors().mainColor,
-                  onPressed: submit,
-                ),
-                Container(
-                  height: 20.0,
-                ),
-              ],
             ),
+
+            // 메인 타이틀 ( 요일 , 추가 아이콘 )
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       '${selectedDay?.month}월 '
+            //       '${selectedDay?.day}일 '
+            //       '${DateFormat('E', 'ko_KR').format(selectedDay!)}요일',
+            //       style: textStyle,
+            //     ),
+            //     InkWell(
+            //       onTap: () {
+            //         _showAddCurrentDaySchedule();
+            //       },
+            //       child: const SizedBox(
+            //         width: 40,
+            //         child: Icon(
+            //           Icons.add_circle,
+            //           size: 28,
+            //         ),
+            //       ),
+            //     )
+            //   ],
+            // ),
+            const SizedBox(height: 8.0),
+            MyButton(
+                onTap: () {
+                  const storage = FlutterSecureStorage();
+                  storage.delete(key: "accessToken");
+
+                  print("GOOD");
+                },
+                title: "로그아웃",
+                available: true),
+          ],
+        ),
+      ),
     );
   }
 }
+// 

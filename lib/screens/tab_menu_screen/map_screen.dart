@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
+import 'package:haedal/widgets/bottom_sheet.dart';
 import 'package:haedal/widgets/naver_map.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -44,17 +45,17 @@ class _MapScreenState extends State<MapScreen> {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
       Permission.storage,
+      Permission.activityRecognition,
       Permission.notification,
     ].request();
 
     var isit = statuses[Permission.location];
-
     if (isit == PermissionStatus.granted) {
       setState(() {
         success = true;
       });
     } else {
-      Navigator.pop(context);
+      permissionHandler();
     }
   }
 
@@ -89,11 +90,10 @@ class _MapScreenState extends State<MapScreen> {
         ? GetBuilder<MapController>(
             init: MapController(),
             builder: (mapCon) {
-              print("mapCon.isinitialized  :${mapCon.isinitialized}");
-              return LoadingOverlay(
+              return const LoadingOverlay(
                 child: SafeArea(
                   child: Stack(
-                    children: [const CustomNaverMap(), Container()],
+                    children: [CustomNaverMap(), BottonSheet()],
                   ),
                 ),
               );
