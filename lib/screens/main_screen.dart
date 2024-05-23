@@ -26,6 +26,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final mapCon = (MapController());
+
   int _selectedIndex = 2; // 앨범 초기 메인
   int _prevSelectedIndex = 1; // 앨범 초기 메인
   final autoSizeGroup = AutoSizeGroup();
@@ -39,14 +41,6 @@ class _MainScreenState extends State<MainScreen> {
     // TODO: implement initState
     controller = CalendarController();
     super.initState();
-  }
-
-// board 표현 토글 값
-  void updateToggleIdx(int newValue) {
-    print("$newValue  23123 ");
-    setState(() {
-      currentToggleIdx = newValue;
-    });
   }
 
   final iconList = [
@@ -94,6 +88,20 @@ class _MainScreenState extends State<MainScreen> {
                 return GET.GetBuilder<MapController>(
                     init: MapController(),
                     builder: (mapCon) {
+                      // board 표현 토글 값
+                      void updateToggleIdx(int newValue) {
+                        if (newValue == 1) {
+                          mapCon.onInit();
+                          setState(() {
+                            currentToggleIdx = newValue;
+                          });
+                          return;
+                        }
+                        setState(() {
+                          currentToggleIdx = newValue;
+                        });
+                      }
+
                       return Scaffold(
                         appBar: _selectedIndex != 0
                             ? CustomAppbar(
