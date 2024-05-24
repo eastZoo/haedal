@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Scaffold(
                   body: Center(
-                    child: Image.asset("assets/images/logo.png"),
+                    child: Image.asset("assets/icons/logo.png"),
                   ),
                 );
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {

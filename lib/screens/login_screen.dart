@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
@@ -47,38 +50,43 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.text = emailController.text.replaceAll(" ", "");
   }
 
+  Widget _buildSocialButton(String iconPath, VoidCallback onPressed) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.grey[200], // 배경색 설정
+      ),
+      child: IconButton(
+        icon: SvgPicture.asset(iconPath, height: 30),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
         init: AuthController(),
         builder: (authCon) {
           return Scaffold(
-            backgroundColor: Colors.grey[300],
+            backgroundColor: AppColors().white,
             body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(70, 0, 70, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 20),
+                      const Gap(140),
                       // logo
-                      const Icon(
-                        Icons.brightness_high_sharp,
-                        size: 70,
+                      Image.asset(
+                        'assets/icons/logo.png',
+                        width: 170,
                       ),
 
                       const SizedBox(height: 50),
-
-                      // welcome back, you've been missed!
-                      Text(
-                        'Haeon & Dongju',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 16,
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
 
                       // username textfield
                       MyTextField(
@@ -99,29 +107,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 10),
 
-                      // forgot password?
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              '비밀번호를 잊으셨나요?',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 25),
-
                       // sign in button
                       MyButton(
                         title: "로그인",
                         onTap: () async {
                           var result = await authCon.onSignIn(
                               emailController.text, passwordController.text);
-
                           if (result["success"]) {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
@@ -138,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         available: true,
                       ),
 
-                      const SizedBox(height: 50),
+                      const SizedBox(height: 25),
 
                       // or continue with
                       Padding(
@@ -155,8 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10.0),
                               child: Text(
-                                '저희와 함께 하실래요?',
-                                style: TextStyle(color: Colors.grey[700]),
+                                'SNS 계정으로 로그인',
+                                style: TextStyle(
+                                    color: Colors.grey[700], fontSize: 14),
                               ),
                             ),
                             Expanded(
@@ -170,23 +162,42 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
 
                       const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          _buildSocialButton('assets/icons/svg/icon-kakao.svg',
+                              () {
+                            // Handle Kakao login
+                          }),
+                          const SizedBox(width: 20),
+                          _buildSocialButton('assets/icons/svg/icon-naver.svg',
+                              () {
+                            // Handle Naver login
+                          }),
+                          const SizedBox(width: 20),
+                          _buildSocialButton('assets/icons/svg/apple.svg', () {
+                            // Handle Apple login
+                          }),
+                        ],
+                      ),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             '아직 멤버가 아니신가요?',
-                            style: TextStyle(color: Colors.grey[700]),
+                            style: TextStyle(
+                                color: Colors.grey[700], fontSize: 14),
                           ),
                           const SizedBox(width: 4),
                           InkWell(
                             borderRadius: BorderRadius.circular(10),
-                            child: const Text(
+                            child: Text(
                               '연결하러 가기',
                               style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                  color: AppColors().mainColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14),
                             ),
                             onTap: () {
                               Navigator.pushNamed(context, '/signup');
@@ -197,6 +208,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
+              ),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              height: 60,
+              color: AppColors().mainColor,
+              child: const Text(
+                '© 2024 MyCompany. All rights reserved.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
               ),
             ),
           );

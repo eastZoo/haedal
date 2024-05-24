@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/styles/colors.dart';
 
 class MyTextField extends StatelessWidget {
   final controller;
@@ -8,6 +9,7 @@ class MyTextField extends StatelessWidget {
   final focusNode;
   final bool readOnly;
   final onTap;
+  final double height;
 
   const MyTextField(
       {super.key,
@@ -17,12 +19,13 @@ class MyTextField extends StatelessWidget {
       this.isValid = true,
       this.focusNode,
       this.readOnly = false,
-      this.onTap});
+      this.onTap,
+      this.height = 40});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+    return SizedBox(
+      height: height,
       child: TextField(
         readOnly: readOnly,
         controller: controller,
@@ -30,19 +33,23 @@ class MyTextField extends StatelessWidget {
         obscureText: obscureText,
         onTap: onTap,
         decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 15.0,
+            ),
+
             // isValid가 false면 에러메세지 아이콘
             prefixIcon:
                 isValid ? null : const Icon(Icons.error, color: Colors.red),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors().mainColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderSide: BorderSide(color: AppColors().mainYellowColor),
             ),
-            fillColor: Colors.grey.shade200,
+            fillColor: AppColors().white,
             filled: true,
             hintText: hintText,
-            hintStyle: TextStyle(color: Colors.grey[500])),
+            hintStyle: TextStyle(color: AppColors().mainColor, fontSize: 14)),
       ),
     );
   }

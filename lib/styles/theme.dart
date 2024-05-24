@@ -71,9 +71,10 @@ TextTheme _buildTextTheme(TextTheme base) {
       fontWeight: FontWeight.w500,
       color: Colors.black,
     ),
+    // 로그인 글자
     displaySmall: const TextStyle(
       fontFamily: 'NotoSansKR',
-      fontSize: 22.0,
+      fontSize: 12.0,
       fontWeight: FontWeight.w500,
       color: Colors.black,
     ),

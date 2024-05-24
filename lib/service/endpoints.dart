@@ -3,13 +3,8 @@ class Endpoints {
 
   //production
   // static const String hostUrl = "http://192.168.0.75:3001";
-<<<<<<< HEAD
-  // static const String hostUrl = "http://172.30.1.44:3001";
+  // static const String hostUrl = "http://192.168.45.11:3001";
   static const String hostUrl = "http://eastzoo.synology.me:3001";
-=======
-  static const String hostUrl = "http://192.168.45.11:3001";
-  // static const String hostUrl = "http://eastzoo.synology.me:3001";
->>>>>>> develop
 
   static const int receiveTimeout = 5000;
   static const int connectionTimeout = 3000;

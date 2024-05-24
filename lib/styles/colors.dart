@@ -9,14 +9,18 @@ class AppColors {
   }
 
   AppColors._internal();
-  Color mainColor = const Color(0xFF674FA3);
-  Color mainDisabledColor = const Color.fromARGB(255, 216, 206, 240);
+  //custom color
+  Color mainColor = const Color(0xFF6AADE1);
+  Color mainYellowColor = const Color(0xFFFFF384);
 
+  // original color
   Color white = const Color(0xFFFFFFFF);
+
+  Color subContainer = const Color(0xFF8085FF);
+  Color mainDisabledColor = const Color.fromARGB(255, 216, 206, 240);
 
   Color subColor = const Color.fromARGB(255, 191, 171, 242);
 
-  Color subContainer = const Color(0xFF8085FF);
   Color subContainer2 = const Color(0xff8fdb778);
   Color subContainer3 = const Color(0xFFDBB9FB);
 

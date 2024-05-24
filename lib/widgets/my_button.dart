@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/styles/colors.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onTap;
@@ -16,11 +17,10 @@ class MyButton extends StatelessWidget {
     return GestureDetector(
       onTap: available ? onTap : null,
       child: Container(
-        padding: const EdgeInsets.all(15),
-        margin: const EdgeInsets.symmetric(horizontal: 25),
+        height: 40,
         decoration: BoxDecoration(
-          color: available ? Colors.black : Colors.grey.shade400,
-          borderRadius: BorderRadius.circular(8),
+          color: available ? AppColors().mainColor : Colors.grey.shade400,
+          borderRadius: BorderRadius.circular(5),
         ),
         child: Center(
           child: Text(
@@ -28,7 +28,7 @@ class MyButton extends StatelessWidget {
             style: TextStyle(
               color: available ? Colors.white : Colors.grey.shade300,
               fontWeight: FontWeight.bold,
-              fontSize: 16,
+              fontSize: 14,
             ),
           ),
         ),
