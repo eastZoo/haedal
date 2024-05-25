@@ -51,17 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildSocialButton(String iconPath, VoidCallback onPressed) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.grey[200], // 배경색 설정
-      ),
-      child: IconButton(
-        icon: SvgPicture.asset(iconPath, height: 30),
-        onPressed: onPressed,
-      ),
+    return IconButton(
+      icon: SvgPicture.asset(iconPath,
+          width: 35, // SVG 크기 설정
+          height: 35,
+          fit: BoxFit.contain),
+      onPressed: onPressed,
     );
   }
 
@@ -161,26 +156,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          _buildSocialButton('assets/icons/svg/icon-kakao.svg',
-                              () {
+                          _buildSocialButton('assets/icons/svg/kakao.svg', () {
                             // Handle Kakao login
                           }),
-                          const SizedBox(width: 20),
-                          _buildSocialButton('assets/icons/svg/icon-naver.svg',
-                              () {
+                          _buildSocialButton('assets/icons/svg/naver.svg', () {
                             // Handle Naver login
                           }),
-                          const SizedBox(width: 20),
                           _buildSocialButton('assets/icons/svg/apple.svg', () {
                             // Handle Apple login
                           }),
                         ],
                       ),
-
+                      const Gap(10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -210,13 +201,46 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            bottomNavigationBar: BottomAppBar(
-              height: 60,
-              color: AppColors().mainColor,
-              child: const Text(
-                '© 2024 MyCompany. All rights reserved.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: AppColors().lightGrey, width: 0.5),
+                ),
+              ),
+              child: BottomAppBar(
+                height: 60,
+                color: AppColors().grey,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(70, 0, 70, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '아이디 찾기',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: AppColors().darkGreyText,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      VerticalDivider(
+                        color: AppColors().lightGrey,
+                        width: 20,
+                        thickness: 1,
+                        indent: 5,
+                        endIndent: 5,
+                      ),
+                      Text(
+                        '비밀번호 찾기',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: AppColors().darkGreyText,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           );

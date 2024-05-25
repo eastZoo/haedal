@@ -15,6 +15,11 @@ class AppColors {
 
   // original color
   Color white = const Color(0xFFFFFFFF);
+  Color grey = const Color.fromARGB(255, 251, 252, 255);
+  Color lightGrey = const Color(0xFFDCDCDC);
+
+// original color text
+  Color darkGreyText = const Color(0xFF858585);
 
   Color subContainer = const Color(0xFF8085FF);
   Color mainDisabledColor = const Color.fromARGB(255, 216, 206, 240);
