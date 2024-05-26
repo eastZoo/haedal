@@ -34,7 +34,7 @@ class ApiRequest {
     return Dio(
       BaseOptions(
         headers: {
-          'Authorization': 'KakaoAK ${dotenv.env['KAKAO_REST_API_KEY']}',
+          'Authorization': 'KakaoAK ${dotenv.env['KAKAO_NATIVE_API_KEY']}',
         },
       ),
     );

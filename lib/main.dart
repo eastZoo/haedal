@@ -7,10 +7,12 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  KakaoSdk.init(nativeAppKey: '67241b40f1430b89dee5326a15b225ec');
   await NaverMapSdk.instance.initialize(
       clientId: '01uy52gfk2',
       onAuthFailed: (error) {

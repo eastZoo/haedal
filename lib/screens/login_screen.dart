@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -160,8 +162,37 @@ class _LoginScreenState extends State<LoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          _buildSocialButton('assets/icons/svg/kakao.svg', () {
-                            // Handle Kakao login
+                          _buildSocialButton('assets/icons/svg/kakao.svg',
+                              () async {
+                            try {
+                              // 카카오톡 앱을 통한 로그인 시도
+                              bool installed = await isKakaoTalkInstalled();
+                              OAuthToken token = installed
+                                  ? await UserApi.instance.loginWithKakaoTalk()
+                                  : await UserApi.instance
+                                      .loginWithKakaoAccount();
+
+                              // 로그인 성공 후 유저 정보 가져오기
+                              User user = await UserApi.instance.me();
+
+                              // 서버로 유저 정보 전송하여 데이터베이스에 저장하기
+                              var result =
+                                  await authCon.onSocialSignUp(user, "kakao");
+                              print(result);
+                              if (result) {
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/code',
+                                  (route) => false,
+                                );
+                              }
+                            } catch (e) {
+                              print('카카오톡 회원가입 실패: $e');
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('카카오톡 회원가입 실패'),
+                              ));
+                            }
                           }),
                           _buildSocialButton('assets/icons/svg/naver.svg', () {
                             // Handle Naver login

@@ -130,10 +130,15 @@ class _MainScreenState extends State<MainScreen> {
                           ],
                         ),
                         bottomNavigationBar: SnakeNavigationBar.color(
-                          ///configuration for SnakeNavigationBar.color
-                          snakeViewColor: AppColors().mainColor,
+                          backgroundColor: AppColors().mainColor,
 
-                          unselectedItemColor: Colors.grey,
+                          ///configuration for SnakeNavigationBar.color
+                          //선택된 아이콘 커버 색깔
+                          snakeViewColor: AppColors().mainYellowColor,
+                          //선택된 아이콘 색깔
+                          selectedItemColor: AppColors().mainColor,
+                          //선택되지 않은 아이콘 색깔
+                          unselectedItemColor: AppColors().mainYellowColor,
 
                           ///configuration for SnakeNavigationBar.gradient
                           //snakeViewGradient: selectedGradient,
@@ -185,6 +190,12 @@ class _MainScreenState extends State<MainScreen> {
                                 label: '더보기')
                           ],
                           unselectedLabelStyle: const TextStyle(fontSize: 10),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
+                            ),
+                          ),
                         ),
                       );
                     });

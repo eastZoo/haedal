@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/couple_connect_info.dart';
+import 'package:haedal/models/social_user_info.dart';
 import 'package:haedal/models/user_info.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
+import 'package:haedal/utils/toast.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 class AuthController extends GetxController {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
@@ -28,10 +31,7 @@ class AuthController extends GetxController {
     const storage = FlutterSecureStorage();
     var token = await storage.read(key: 'accessToken');
 
-    print(token.runtimeType);
-    print("ONINIT!!!");
     var result = await getConnectState();
-    print("ONINIT result : $result");
     // 상태코드 1번 회원가입 절차중 초대코드( 타이머 작동 ) 입력 단계
     if (result == 1) {
       await getInviteCodeInfo();
@@ -42,23 +42,56 @@ class AuthController extends GetxController {
     }
   }
 
-  // 회원가입
-  onSignUp(userEmail, password) async {
+  // 회원가입 함수
+  onSignUp(userEmail, password, provider) async {
     Map<String, dynamic> dataSource = {
       "userEmail": userEmail,
       "password": password,
+      "provider": provider
     };
     try {
       // 회원가입(로그인) API
       var res = await AuthProvider().onSignUp(dataSource);
-      // 로그인 후 응답으로 부터 토큰 저장
-      storage.write(key: "accessToken", value: res["data"]["accessToken"]);
-      connectState = res["data"]["connectState"];
+      if (res["data"]["success"]) {
+        // 로그인 후 응답으로 부터 토큰 저장
+        storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+        connectState = RxInt(res["data"]["connectState"]);
 
-      update();
-      return res["success"];
+        update();
+        return res["success"];
+      } else {
+        CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
     } catch (e) {
       print(e);
+    }
+  }
+
+  /// 소셜 회원가입 , 로그인 함수
+  onSocialSignUp(User user, String provider) async {
+    Map<String, dynamic> dataSource = {
+      "userEmail": user.kakaoAccount?.email ?? "",
+      "provider": provider,
+      "providerUserId": user.id
+    };
+    try {
+      // 회원가입(로그인) API
+      var res = await AuthProvider().socialLoginRegister(dataSource);
+      if (res["data"]["success"]) {
+        // 로그인 후 응답으로 부터 토큰 저장
+        storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+
+        connectState = RxInt(res["data"]["connectState"]);
+
+        update();
+
+        return res["data"]["success"];
+      } else {
+        CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (e) {
+      CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      print("error $e");
     }
   }
 
@@ -113,10 +146,8 @@ class AuthController extends GetxController {
     // 토큰이 있을때만 연결상태 GET API 실행
     if (token != null) {
       var res = await AuthProvider().getConnectState();
-
-      print("getConnectState");
-      print(res["data"]);
-      print(res["data"].runtimeType);
+      print(res);
+      print("getConnectState : ${res["data"]}");
       if (res["data"] == "false") {
         return await logOut();
       }

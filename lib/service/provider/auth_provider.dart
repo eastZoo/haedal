@@ -3,6 +3,12 @@ import 'package:haedal/service/api_request.dart';
 import 'package:haedal/service/endpoints.dart';
 
 class AuthProvider extends GetxController {
+// 소셜 로그인 회원가입
+  socialLoginRegister(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/social', data: data)
+        .asyncPost();
+  }
+
   // 회원가입
   onSignUp(data) async {
     return await ApiRequest(url: '${Endpoints.authUrl}/sign-up', data: data)

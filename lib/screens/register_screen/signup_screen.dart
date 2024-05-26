@@ -87,13 +87,18 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-// 모달창에서 로그인 승인 ( 예 클릭 시 )
+// 모달창에서 로그인 승인 ( 예 클릭 시 ) 이미 회원가입된 상태 ( 아니오 누르면 회원가입 취소 로직 탐 )
   void onSignup() async {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/code',
-      (route) => false,
-    );
+    var result = await authCon.onSignUp(
+        emailController.text, passwordController.text, "email");
+
+    if (result) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/code',
+        (route) => false,
+      );
+    }
   }
 
   // 회원가입 모달창에서 아니오 클릭 시 회원가입 취소
@@ -158,7 +163,7 @@ class _SignupScreenState extends State<SignupScreen> {
       builder: (BuildContext context) => WillPopScope(
         onWillPop: () async {
           // WillPopScope return false면 뒤로가기(pop) 금지
-          onCancelSignup();
+
           return false;
         },
         child: AlertDialog(
@@ -193,13 +198,11 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  // 회원가입 버튼 클릭시 모달창 pop
+  // email(local) 회원가입 버튼 클릭시 모달창 pop
   onSignUpModal() async {
     setState(() {
       isLoading = true;
     });
-
-    await authCon.onSignUp(emailController.text, passwordController.text);
     showdialog(context);
   }
 
