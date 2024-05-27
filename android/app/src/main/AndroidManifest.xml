@@ -32,23 +32,21 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-     
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN"/>
                     <category android:name="android.intent.category.LAUNCHER"/>
-
-                  
                 </intent-filter>
-  
-            
         </activity>
         <activity android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity">
             <intent-filter android:label="flutter_web_auth">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                  <!-- Redirect URI, "kakao${YOUR_NATIVE_APP_KEY}://oauth" 형식 -->
-                <data android:scheme="kakao67241b40f1430b89dee5326a15b225ec" android:host="oauth"/>
+                <!-- Redirect URI, "kakao${YOUR_NATIVE_APP_KEY}://oauth" 형식 -->
+                <!-- 개발 네이티브 앱 키 -->
+                <!-- <data android:scheme="kakao67241b40f1430b89dee5326a15b225ec" android:host="oauth"/> -->
+                <!-- 테스트 네이티브 앱 키 -->
+                 <data android:scheme="kakaoe328e398b5297ab57d81161144651db9" android:host="oauth"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
