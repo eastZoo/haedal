@@ -9,7 +9,7 @@ import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -182,6 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             try {
                               // 카카오톡 앱을 통한 로그인 시도
                               bool installed = await isKakaoTalkInstalled();
+                              print('installed: $installed');
                               OAuthToken token = installed
                                   ? await UserApi.instance.loginWithKakaoTalk()
                                   : await UserApi.instance
@@ -213,6 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           }),
                           _buildSocialButton('assets/icons/svg/apple.svg', () {
                             // Handle Apple login
+                            CustomToast().alert('애플 로그인 준비중입니다.');
                           }),
                         ],
                       ),

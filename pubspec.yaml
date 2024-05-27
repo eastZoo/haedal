@@ -72,7 +72,6 @@ flutter:
   assets:
     - assets/icons/marker/
     - assets/icons/
-    - assets/images/
     - assets/html/
     - assets/icons/svg/
     - assets/config/.env

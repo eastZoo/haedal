@@ -69,13 +69,35 @@ class AuthController extends GetxController {
 
   /// 소셜 회원가입 , 로그인 함수
   onSocialSignUp(User user, String provider) async {
-    print(user.id);
-    print(user.kakaoAccount?.email ?? "");
-    print(provider);
+    String birthDate;
+    String? birthMonth;
+    String? birthDay;
+
+    // birthyear와 birthday를 조합하여 YYYY-MM-DD 형식의 날짜 문자열 생성
+    var birthyear = user.kakaoAccount?.birthyear.toString();
+    var birthday = user.kakaoAccount?.birthday.toString();
+    if (birthyear != null && birthday != null) {
+      // birthday를 MM-DD 형식으로 분리
+      birthMonth = birthday.substring(0, 2);
+      birthDay = birthday.substring(2, 4);
+    }
+
+    // 최종 날짜 문자열 생성
+    birthDate = '$birthyear-$birthMonth-$birthDay';
+    print(user.kakaoAccount?.gender);
+    print(user.kakaoAccount?.gender.toString());
+    // 데이터 없을 때 빈 값 처리
     Map<String, dynamic> dataSource = {
       "userEmail": user.kakaoAccount?.email ?? "",
       "provider": provider,
-      "providerUserId": user.id
+      "providerUserId": user.id,
+      "name": user.kakaoAccount?.name ?? "",
+      "sex": user.kakaoAccount?.gender != null
+          ? user.kakaoAccount?.gender.toString() == "Gender.male"
+              ? "1"
+              : "0"
+          : "",
+      "birth": birthDate ?? "",
     };
     try {
       // 회원가입(로그인) API
