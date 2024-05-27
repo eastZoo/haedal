@@ -69,6 +69,9 @@ class AuthController extends GetxController {
 
   /// 소셜 회원가입 , 로그인 함수
   onSocialSignUp(User user, String provider) async {
+    print(user.id);
+    print(user.kakaoAccount?.email ?? "");
+    print(provider);
     Map<String, dynamic> dataSource = {
       "userEmail": user.kakaoAccount?.email ?? "",
       "provider": provider,

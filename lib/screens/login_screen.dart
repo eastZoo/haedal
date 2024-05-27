@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               // 로그인 성공 후 유저 정보 가져오기
                               User user = await UserApi.instance.me();
-
+                              print("user: $user");
                               // 서버로 유저 정보 전송하여 데이터베이스에 저장하기
                               var result =
                                   await authCon.onSocialSignUp(user, "kakao");
@@ -203,10 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             } catch (e) {
                               print('카카오톡 회원가입 실패: $e');
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text('카카오톡 회원가입 실패'),
-                              ));
+                              CustomToast().alert('카카오톡 회원가입 실패');
                             }
                           }),
                           _buildSocialButton('assets/icons/svg/naver.svg',
