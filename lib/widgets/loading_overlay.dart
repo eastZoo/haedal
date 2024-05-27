@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/styles/colors.dart';
 
 class LoadingOverlay extends StatelessWidget {
   final Widget child;
@@ -15,8 +16,10 @@ class LoadingOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isLoading) {
       return loadingAnimation
-          ? const Center(
-              child: CircularProgressIndicator(),
+          ? Center(
+              child: CircularProgressIndicator(
+                color: AppColors().mainColor,
+              ),
             )
           : Container();
     }

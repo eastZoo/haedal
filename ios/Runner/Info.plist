@@ -25,13 +25,25 @@
 	<!-- 카카오톡 설정 추가 -->
 	<key>CFBundleURLTypes</key>
 	<array>
+		<!-- 네이버 소셜 로그인 설정 추가 -->
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+				<key>CFBundleURLName</key>
+			<string>haedalScheme</string>
+			
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<!-- 카카오톡 설정 추가 -->
 				<string>kakaoe328e398b5297ab57d81161144651db9</string> <!-- YOUR_APP_KEY 부분을 카카오 앱 키로 교체 -->
+				<string>haedalScheme</string>
+				<string>naverAQgp6F2PyQ7pZHvWbuI2</string> <!-- YOUR_CLIENT_ID 부분을 네이버 앱 클라이언트 아이디로 교체 -->
 			</array>
 		</dict>
+		
+		
 	</array>
+
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>
@@ -39,7 +51,20 @@
 		<string>kakaotalk</string>
 		<string>kakaostory</string>
 		<string>storykompassauth</string>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+		<string>nlogin</string>
 	</array>
+	<!-- 네이버 소셜 설정 추가 -->
+	<key>naverServiceAppUrlScheme</key>
+	<string>haedalScheme</string>
+	<key>naverConsumerKey</key>
+	<string>AQgp6F2PyQ7pZHvWbuI2</string>
+	<key>naverConsumerSecret</key>
+	<string>srDMneLjbUsecret</string>
+	<key>naverServiceAppName</key>
+	<string>haedal</string>
+	<!-- 네이버 소셜 설정 끝 -->
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>KAKAO_APP_KEY</key>
@@ -96,11 +121,32 @@
 	<false/>
 	<key>com.apple.security.files.user-selected.read-only</key>
 	<true/>
-	<key>naverConsumerKey</key>
-	<string>AQgp6F2PyQ7pZHvWbuI2</string>
-	<key>naverConsumerSecret</key>
-	<string>srDMneLjbUsecret</string>
-	<key>naverServiceAppName</key>
-	<string>haedal</string>
+	
+	<!-- http allows configurations 네이버 소셜 세팅 추가 start -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>naver.com</key>
+			<dict>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>naver.net</key>
+			<dict>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<!-- http allows configurations 네이버 소셜 세팅 추가 end -->
 </dict>
 </plist>
