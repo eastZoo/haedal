@@ -88,5 +88,14 @@
 		<true/>
 	</dict>
 
+  	<---추가--->
+	<key>naverConsumerKey</key>
+	<string>AQgp6F2PyQ7pZHvWbuI2</string>
+	<key>naverConsumerSecret</key>
+	<string>srDMneLjbU</string>
+	<key>naverServiceAppName</key>
+	<string>haedal</string>
+	<key>naverServiceAppUrlScheme</key>
+	<string>UrlScheme</string>
 </dict>
 </plist>
