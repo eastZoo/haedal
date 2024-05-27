@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -60,6 +61,20 @@ class _LoginScreenState extends State<LoginScreen> {
           fit: BoxFit.contain),
       onPressed: onPressed,
     );
+  }
+
+  // 네이버 로그인 정보 가져오기
+  void _naverLogin() async {
+    try {
+      final NaverLoginResult res = await FlutterNaverLogin.logIn();
+      print(res);
+      print('accessToken = ${res.accessToken}');
+      print('id = ${res.account.id}');
+      print('email = ${res.account.email}');
+      print('name = ${res.account.name}');
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -194,8 +209,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               ));
                             }
                           }),
-                          _buildSocialButton('assets/icons/svg/naver.svg', () {
+                          _buildSocialButton('assets/icons/svg/naver.svg',
+                              () async {
                             // Handle Naver login
+                            _naverLogin();
                           }),
                           _buildSocialButton('assets/icons/svg/apple.svg', () {
                             // Handle Apple login
