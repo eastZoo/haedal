@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/couple_connect_info.dart';
@@ -67,9 +68,9 @@ class AuthController extends GetxController {
     }
   }
 
-  /// 소셜 회원가입 , 로그인 함수
-  onSocialSignUp(User user, String provider) async {
-    String birthDate;
+  /// 카카오톡 회원가입 , 로그인 함수
+  onSocialKaKaoSignUp(User user, String provider) async {
+    String birthDate = "";
     String? birthMonth;
     String? birthDay;
 
@@ -80,12 +81,11 @@ class AuthController extends GetxController {
       // birthday를 MM-DD 형식으로 분리
       birthMonth = birthday.substring(0, 2);
       birthDay = birthday.substring(2, 4);
+
+      // 최종 날짜 문자열 생성
+      birthDate = '$birthyear-$birthMonth-$birthDay';
     }
 
-    // 최종 날짜 문자열 생성
-    birthDate = '$birthyear-$birthMonth-$birthDay';
-    print(user.kakaoAccount?.gender);
-    print(user.kakaoAccount?.gender.toString());
     // 데이터 없을 때 빈 값 처리
     Map<String, dynamic> dataSource = {
       "userEmail": user.kakaoAccount?.email ?? "",
@@ -94,6 +94,50 @@ class AuthController extends GetxController {
       "name": user.kakaoAccount?.name ?? "",
       "sex": user.kakaoAccount?.gender != null
           ? user.kakaoAccount?.gender.toString() == "Gender.male"
+              ? "1"
+              : "0"
+          : "",
+      "birth": birthDate ?? "",
+    };
+    try {
+      // 회원가입(로그인) API
+      var res = await AuthProvider().socialLoginRegister(dataSource);
+      if (res["data"]["success"]) {
+        // 로그인 후 응답으로 부터 토큰 저장
+        storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+
+        connectState = RxInt(res["data"]["connectState"]);
+
+        update();
+
+        return res["data"]["success"];
+      } else {
+        CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (e) {
+      CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      print("error $e");
+    }
+  }
+
+  /// 네이버 회원가입 , 로그인 함수
+  onSocialNaverSignUp(NaverAccountResult user, String provider) async {
+    String birthDate;
+
+    var birthyear = user.birthyear.toString();
+    var birthday = user.birthday.toString();
+
+    // 최종 날짜 문자열 생성
+    birthDate = '$birthyear-$birthday';
+
+    // 데이터 없을 때 빈 값 처리
+    Map<String, dynamic> dataSource = {
+      "userEmail": user.email ?? "",
+      "provider": provider,
+      "providerUserId": user.id,
+      "name": user.name ?? "",
+      "sex": user.gender != null
+          ? user.gender.toString() == "M"
               ? "1"
               : "0"
           : "",

@@ -32,6 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorMsg = "";
 
   bool isLoading = false;
+
+  final authCon = Get.put(AuthController());
   @override
   void initState() {
     super.initState();
@@ -69,14 +71,67 @@ class _LoginScreenState extends State<LoginScreen> {
   // 네이버 로그인 정보 가져오기
   void _naverLogin() async {
     try {
-      final NaverLoginResult res = await FlutterNaverLogin.logIn();
-      print(res);
-      print('accessToken = ${res.accessToken}');
-      print('id = ${res.account.id}');
-      print('email = ${res.account.email}');
-      print('name = ${res.account.name}');
-    } catch (error) {
-      print(error);
+      final NaverLoginResult user = await FlutterNaverLogin.logIn();
+      switch (user.status) {
+        case NaverLoginStatus.loggedIn:
+
+          // 사용자 정보를 서버에 저장하는 함수 호출
+          var result = await authCon.onSocialNaverSignUp(user.account, "naver");
+          if (result) {
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/code',
+              (route) => false,
+            );
+          }
+          break;
+        case NaverLoginStatus.cancelledByUser:
+          CustomToast().alert('사용자가 로그인을 취소했습니다.');
+          break;
+        case NaverLoginStatus.error:
+          CustomToast().alert('로그인 오류: ${user.errorMessage}');
+          break;
+      }
+    } catch (e) {
+      CustomToast().alert('네이버 로그인 실패: $e');
+    }
+  }
+
+  void _kakaoLogin() async {
+    try {
+      // 카카오톡 앱을 통한 로그인 시도
+      bool installed = await isKakaoTalkInstalled();
+      print('installed: $installed');
+      // loading overlay start
+      setState(() {
+        isLoading = true;
+      });
+      OAuthToken token = installed
+          ? await UserApi.instance.loginWithKakaoTalk()
+          : await UserApi.instance.loginWithKakaoAccount();
+
+      // 로그인 성공 후 유저 정보 가져오기
+      User user = await UserApi.instance.me();
+      print("user: $user");
+      // 서버로 유저 정보 전송하여 데이터베이스에 저장하기
+      var result = await authCon.onSocialKaKaoSignUp(user, "kakao");
+
+      if (result) {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/code',
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      print('카카오톡 회원가입 실패: $e');
+      CustomToast().alert('카카오톡 회원가입 실패');
     }
   }
 
@@ -184,49 +239,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: <Widget>[
                             _buildSocialButton('assets/icons/svg/kakao.svg',
                                 () async {
-                              try {
-                                // 카카오톡 앱을 통한 로그인 시도
-                                bool installed = await isKakaoTalkInstalled();
-                                print('installed: $installed');
-                                // loading overlay start
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                OAuthToken token = installed
-                                    ? await UserApi.instance
-                                        .loginWithKakaoTalk()
-                                    : await UserApi.instance
-                                        .loginWithKakaoAccount();
-
-                                // 로그인 성공 후 유저 정보 가져오기
-                                User user = await UserApi.instance.me();
-                                print("user: $user");
-                                // 서버로 유저 정보 전송하여 데이터베이스에 저장하기
-                                var result =
-                                    await authCon.onSocialSignUp(user, "kakao");
-
-                                if (result) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    '/code',
-                                    (route) => false,
-                                  );
-                                }
-                              } catch (e) {
-                                print('카카오톡 회원가입 실패: $e');
-                                CustomToast().alert('카카오톡 회원가입 실패');
-                              }
+                              _kakaoLogin();
                             }),
                             _buildSocialButton('assets/icons/svg/naver.svg',
                                 () async {
-                              // Handle Naver login
                               _naverLogin();
                             }),
                             _buildSocialButton('assets/icons/svg/apple.svg',
                                 () {
+                              FlutterNaverLogin.logOutAndDeleteToken();
                               // Handle Apple login
                               CustomToast().alert('애플 로그인 준비중입니다.');
                             }),
