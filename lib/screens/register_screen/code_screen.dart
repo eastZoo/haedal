@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
@@ -97,19 +99,21 @@ class _CodeScreenState extends State<CodeScreen> {
 
           return Scaffold(
             resizeToAvoidBottomInset: true,
-            backgroundColor: Colors.grey[300],
+            backgroundColor: AppColors().white,
             body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(70, 0, 70, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 10),
+                      const Gap(150),
                       // logo
-                      Image.asset(
-                        "assets/icons/register-2.png",
-                      ),
+                      // Image.asset(
+                      //   "assets/icons/Step2.png",
+                      //   width: 100,
+                      // ),
 
                       const SizedBox(height: 15),
 
@@ -185,9 +189,28 @@ class _CodeScreenState extends State<CodeScreen> {
                         ),
                       ),
 
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              "나의 초대코드",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors().darkGreyText),
+                              textAlign: TextAlign.left,
+                            ),
+                            MyTextField(
+                              controller: inviteCodeController,
+                              hintText: '전달받은 초대코드 입력',
+                              obscureText: false,
+                            ),
+                          ],
+                        ),
+                      ),
+
                       const SizedBox(height: 10),
 
-                      // password textfield
+                      // 초대코드 입력 테스트 필드
                       MyTextField(
                         controller: inviteCodeController,
                         hintText: '전달받은 초대코드 입력',

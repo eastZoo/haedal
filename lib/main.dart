@@ -11,16 +11,15 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
 
 // 테스트 앱키 ( 동의항목 전체 오픈 )
-  KakaoSdk.init(nativeAppKey: 'e328e398b5297ab57d81161144651db9');
-  // KakaoSdk.init(nativeAppKey: '67241b40f1430b89dee5326a15b225ec');
+  KakaoSdk.init(nativeAppKey: '${dotenv.env['KAKAO_NATIVE_API_KEY']}');
   await NaverMapSdk.instance.initialize(
-      clientId: '01uy52gfk2',
+      clientId: '${dotenv.env['NAVER_CLIENT_ID']}',
       onAuthFailed: (error) {
         print("NAVER AUTH ERROR :  $error");
       });
-  await dotenv.load(fileName: 'assets/config/.env');
 
   initializeDateFormatting().then((_) => runApp(const MyApp()));
 }

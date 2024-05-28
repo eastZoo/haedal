@@ -71,6 +71,9 @@ class _LoginScreenState extends State<LoginScreen> {
   // 네이버 로그인 정보 가져오기
   void _naverLogin() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       final NaverLoginResult user = await FlutterNaverLogin.logIn();
       switch (user.status) {
         case NaverLoginStatus.loggedIn:
@@ -97,6 +100,10 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       CustomToast().alert('네이버 로그인 실패: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -132,6 +139,11 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       print('카카오톡 회원가입 실패: $e');
       CustomToast().alert('카카오톡 회원가입 실패');
+    } finally {
+      // loading overlay end
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 

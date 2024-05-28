@@ -91,6 +91,7 @@ class _MainScreenState extends State<MainScreen> {
                       // board 표현 토글 값
                       void updateToggleIdx(int newValue) {
                         if (newValue == 1) {
+                          print("지도로 변경");
                           mapCon.onInit();
                           setState(() {
                             currentToggleIdx = newValue;
@@ -103,13 +104,11 @@ class _MainScreenState extends State<MainScreen> {
                       }
 
                       return Scaffold(
-                        appBar: _selectedIndex != 0
-                            ? CustomAppbar(
-                                title: appBarName[_selectedIndex],
-                                selectedIndex: _selectedIndex,
-                                updateToggleIdx: updateToggleIdx,
-                                currentToggleIdx: currentToggleIdx)
-                            : null,
+                        appBar: CustomAppbar(
+                            title: appBarName[_selectedIndex],
+                            selectedIndex: _selectedIndex,
+                            updateToggleIdx: updateToggleIdx,
+                            currentToggleIdx: currentToggleIdx),
                         drawer: const CustomDrawer(),
                         body: Column(
                           children: [

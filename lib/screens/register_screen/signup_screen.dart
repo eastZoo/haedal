@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
+import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
@@ -210,25 +212,26 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[300],
+      backgroundColor: AppColors().white,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(70, 0, 70, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 10),
+                const Gap(150),
                 // logo
-                Image.asset(
-                  "assets/icons/register-1.png",
-                ),
+                // Image.asset(
+                //   "assets/icons/Step1.png",
+                // ),
 
                 const SizedBox(height: 15),
 
                 // welcome back, you've been missed!
                 Text(
-                  '반갑습니다!',
+                  '반갑습니다',
                   style: TextStyle(
                     color: Colors.grey[700],
                     fontSize: 16,

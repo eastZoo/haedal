@@ -19,3 +19,7 @@ samples, guidance on mobile development, and a full API reference.
 
 padding:
 const EdgeInsets.fromLTRB(20, 10, 20, 0),
+
+# flutter 주의점
+
+1. static한 그림파일 같은 거 불러올때 pubspec.yaml에 경로 추가하는걸 절대 잊지마..절대....

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 
@@ -57,7 +59,7 @@ class _InfoScreenState extends State<InfoScreen> {
           }
 
           // 만난날, 생일 데이트 피커 모달창
-          Future<void> _selectDate(
+          Future<void> selectDate(
               BuildContext context, TextEditingController controller) async {
             final picked = await showDatePicker(
               context: context,
@@ -75,19 +77,21 @@ class _InfoScreenState extends State<InfoScreen> {
 
           return Scaffold(
             resizeToAvoidBottomInset: true,
-            backgroundColor: Colors.grey[300],
+            backgroundColor: AppColors().white,
             body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(70, 0, 70, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 10),
+                      const Gap(150),
                       // logo
-                      Image.asset(
-                        "assets/icons/register-3.png",
-                      ),
+                      // Image.asset(
+                      //   "assets/icons/Step3.png",
+                      //   width: 100,
+                      // ),
 
                       const SizedBox(height: 15),
 
@@ -155,7 +159,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         obscureText: false,
                         readOnly: true,
                         onTap: () {
-                          _selectDate(context, birthController);
+                          selectDate(context, birthController);
                         },
                       ),
                       const SizedBox(height: 10),
@@ -167,7 +171,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         readOnly: true,
                         obscureText: false,
                         onTap: () {
-                          _selectDate(context, firstDayController);
+                          selectDate(context, firstDayController);
                         },
                       ),
 
