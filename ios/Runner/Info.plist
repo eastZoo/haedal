@@ -46,11 +46,11 @@
 
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+	 <!-- 카카오톡 채널 -->
 		<string>kakaokompassauth</string>
+		<!-- KakaoLink -->
 		<string>kakaolink</string>
 		<string>kakaotalk</string>
-		<string>kakaostory</string>
-		<string>storykompassauth</string>
 		<string>naversearchapp</string>
 		<string>naversearchthirdlogin</string>
 		<string>nlogin</string>
