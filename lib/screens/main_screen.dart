@@ -28,7 +28,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final mapCon = (MapController());
 
-  int _selectedIndex = 2; // 앨범 초기 메인
+  int _selectedIndex = 0; // 앨범 초기 메인
   int _prevSelectedIndex = 1; // 앨범 초기 메인
   final autoSizeGroup = AutoSizeGroup();
   late CalendarController controller;
@@ -104,12 +104,13 @@ class _MainScreenState extends State<MainScreen> {
                       }
 
                       return Scaffold(
+                        extendBody: true,
                         appBar: CustomAppbar(
                             title: appBarName[_selectedIndex],
                             selectedIndex: _selectedIndex,
                             updateToggleIdx: updateToggleIdx,
                             currentToggleIdx: currentToggleIdx),
-                        drawer: const CustomDrawer(),
+                        // drawer: const CustomDrawer(),
                         body: Column(
                           children: [
                             Expanded(

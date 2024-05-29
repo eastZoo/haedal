@@ -17,7 +17,7 @@ class AppColors {
   Color white = const Color(0xFFFFFFFF);
   Color grey = const Color.fromARGB(255, 251, 252, 255);
   Color lightGrey = const Color(0xFFDCDCDC);
-  Color noticeRed = const Color(0xFFFFC2C2);
+  Color noticeRed = const Color.fromARGB(255, 255, 110, 110);
 
 // original color text
   Color darkGreyText = const Color(0xFF858585);

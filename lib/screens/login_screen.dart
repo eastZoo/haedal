@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
             });
             Navigator.pushNamedAndRemoveUntil(
               context,
-              '/code',
+              '/splash',
               (route) => false,
             );
           }
@@ -112,29 +112,31 @@ class _LoginScreenState extends State<LoginScreen> {
       // 카카오톡 앱을 통한 로그인 시도
       bool installed = await isKakaoTalkInstalled();
       print('installed: $installed');
-      // loading overlay start
-      setState(() {
-        isLoading = true;
-      });
+
       OAuthToken token = installed
           ? await UserApi.instance.loginWithKakaoTalk()
           : await UserApi.instance.loginWithKakaoAccount();
 
+      print("token: $token");
       // 로그인 성공 후 유저 정보 가져오기
       User user = await UserApi.instance.me();
       print("user: $user");
+
+      // loading overlay start
+      setState(() {
+        isLoading = true;
+      });
       // 서버로 유저 정보 전송하여 데이터베이스에 저장하기
       var result = await authCon.onSocialKaKaoSignUp(user, "kakao");
 
       if (result) {
-        setState(() {
-          isLoading = false;
-        });
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/code',
+          '/splash',
           (route) => false,
         );
+      } else {
+        CustomToast().alert('카카오톡 회원가입 실패');
       }
     } catch (e) {
       print('카카오톡 회원가입 실패: $e');
