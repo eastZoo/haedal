@@ -11,14 +11,29 @@ class MoreScreen extends StatefulWidget {
 }
 
 class _MoreScreenState extends State<MoreScreen> {
+  void logOut() {
+    const storage = FlutterSecureStorage();
+    storage.delete(key: "accessToken");
+
+    Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Column(
         children: [
           Expanded(
               child: Column(
-            children: [],
+            children: [
+              MyButton(
+                key: const ValueKey("근무표"),
+                onTap: () {
+                  logOut();
+                },
+                title: '로그아웃',
+              ),
+            ],
           ))
         ],
       ),
