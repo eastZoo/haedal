@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       ..backgroundColor = Colors.white
       ..textColor = Colors.blueAccent
       ..maskType = EasyLoadingMaskType.custom
-      ..maskColor = Colors.black.withOpacity(0.2)
+      ..maskColor = Colors.white
       // ..indicatorSize = 30.0
       ..userInteractions = true;
 
