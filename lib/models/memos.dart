@@ -6,7 +6,7 @@ class Memos {
   final String coupleId;
   final String memoCategoryId;
   final String memo;
-  final bool isDone;
+  late final bool isDone;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   Memos({
