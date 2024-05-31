@@ -19,7 +19,7 @@ class Themes {
       navigationBarTheme: NavigationBarThemeData(
           backgroundColor: Colors.white,
           elevation: 10,
-          indicatorColor: AppColors().subContainer,
+          indicatorColor: AppColors().white,
           // iconTheme:  IconThemeData(color: AppColors().textGrey),
           iconTheme: MaterialStateProperty.resolveWith((states) {
             return IconThemeData(
@@ -181,7 +181,6 @@ TextTheme _buildTextTheme(TextTheme base) {
 
 final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
   foregroundColor: Colors.white,
-  backgroundColor: const Color(0xFF0072DB),
   minimumSize: const Size(88, 40),
   padding: const EdgeInsets.symmetric(horizontal: 16),
   shape: const RoundedRectangleBorder(

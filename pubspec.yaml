@@ -54,6 +54,7 @@ dependencies:
   toggle_switch: ^2.3.0
   kakao_flutter_sdk: ^1.9.2
   flutter_naver_login: ^1.8.0
+  flutter_colorpicker: ^1.1.0
 
 dev_dependencies:
   flutter_test:

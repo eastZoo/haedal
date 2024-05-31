@@ -31,18 +31,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    EasyLoading.instance
-      ..displayDuration = const Duration(milliseconds: 1500)
-      ..loadingStyle = EasyLoadingStyle.custom
-      ..indicatorType = EasyLoadingIndicatorType.ring
-      ..indicatorColor = Colors.white
-      ..backgroundColor = Colors.white
-      ..textColor = Colors.blueAccent
-      ..maskType = EasyLoadingMaskType.custom
-      ..maskColor = Colors.white
-      // ..indicatorSize = 30.0
-      ..userInteractions = true;
-
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
