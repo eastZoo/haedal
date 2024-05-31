@@ -29,7 +29,7 @@ class MainAppbar extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w400,
-                  color: AppColors().appBarPrimary,
+                  color: AppColors().mainColor,
                 ),
               ),
             ),

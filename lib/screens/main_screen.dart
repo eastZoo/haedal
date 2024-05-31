@@ -28,8 +28,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final mapCon = (MapController());
 
-  int _selectedIndex = 1; // 앨범 초기 메인
-  int _prevSelectedIndex = 2; // 앨범 초기 메인
+  int _selectedIndex = 0; // 앨범 초기 메인
+  int _prevSelectedIndex = 1; // 앨범 초기 메인
   final autoSizeGroup = AutoSizeGroup();
   late CalendarController controller;
 

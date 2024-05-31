@@ -91,7 +91,7 @@ class MemoGroupWidget extends StatelessWidget {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
-                                        color: AppColors().subColor)),
+                                        color: AppColors().mainColor)),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

@@ -32,7 +32,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w400,
-            color: AppColors().appBarPrimary,
+            color: AppColors().darkGreyText,
           ),
         );
       case 2:
@@ -56,7 +56,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w400,
-            color: AppColors().appBarPrimary,
+            color: AppColors().darkGreyText,
           ),
         );
       case 4:
@@ -66,7 +66,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w400,
-            color: AppColors().appBarPrimary,
+            color: AppColors().darkGreyText,
           ),
         );
       case 5:
@@ -76,7 +76,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w400,
-            color: AppColors().appBarPrimary,
+            color: AppColors().darkGreyText,
           ),
         );
       default:
@@ -86,7 +86,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w400,
-            color: AppColors().appBarPrimary,
+            color: AppColors().darkGreyText,
           ),
         );
     }

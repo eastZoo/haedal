@@ -627,8 +627,8 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
                   _pickedImages.removeAt(idx);
                 });
               },
-              child: Icon(Icons.cancel_rounded,
-                  color: AppColors().semiGrey, size: 21),
+              child:
+                  Icon(Icons.cancel_rounded, color: AppColors().grey, size: 21),
             ),
           )
         ],

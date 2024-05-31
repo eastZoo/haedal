@@ -130,7 +130,7 @@ class BottonSheet extends StatelessWidget {
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors().textGrey),
+                                        color: AppColors().darkGreyText),
                                     overflow: TextOverflow.clip,
                                   ),
                                 ),

@@ -221,7 +221,7 @@ class _MemoScreenState extends State<MemoScreen> {
                         duration: const Duration(milliseconds: 500),
                         height: isExpanded
                             ? 0
-                            : MediaQuery.of(context).size.height / 3,
+                            : MediaQuery.of(context).size.height / 2.8,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: const BorderRadius.only(
@@ -261,7 +261,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                         style: TextStyle(
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColors().textGrey,
+                                          color: AppColors().darkGreyText,
                                         ),
                                       ),
                                     )
@@ -354,7 +354,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                                                       .length,
                                                           backgroundColor:
                                                               AppColors()
-                                                                  .subContainerDisabled,
+                                                                  .mainColor,
                                                           valueColor:
                                                               AlwaysStoppedAnimation<
                                                                       Color>(
@@ -517,7 +517,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                           style: TextStyle(
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
-                                            color: AppColors().textGrey,
+                                            color: AppColors().darkGreyText,
                                           ),
                                         ),
                                         const SizedBox(width: 2),
@@ -525,7 +525,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                           isExpanded
                                               ? Icons.keyboard_arrow_down
                                               : Icons.keyboard_arrow_up,
-                                          color: AppColors().textGrey,
+                                          color: AppColors().darkGreyText,
                                           size: 24.0,
                                         )
                                       ],
