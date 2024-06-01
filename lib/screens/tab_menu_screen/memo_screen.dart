@@ -4,8 +4,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/memos.dart';
 import 'package:haedal/models/todo_task.dart';
 import 'package:haedal/screens/add_memo_category_screen.dart';
 import 'package:haedal/screens/show_add_memo_screen.dart';
@@ -114,7 +116,7 @@ class _MemoScreenState extends State<MemoScreen> {
     }
 
     //  메모 카테고리 카드 위젯
-    Widget buildMemoCard(memoCard) {
+    Widget buildMemoCard(Memo memoCard) {
       return Container(
         width: 100,
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -130,7 +132,7 @@ class _MemoScreenState extends State<MemoScreen> {
             children: [
               const SizedBox(height: 8),
               Text(
-                '${memoCard.category}',
+                memoCard.category!,
                 style: TextStyle(
                   fontSize: 14.0,
                   color: AppColors().white,
@@ -138,7 +140,7 @@ class _MemoScreenState extends State<MemoScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                '${memoCard.title}',
+                memoCard.title!,
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
@@ -151,9 +153,9 @@ class _MemoScreenState extends State<MemoScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
                   child: LinearProgressIndicator(
-                    value: memoCard.memos.isEmpty
+                    value: memoCard.memos!.isEmpty
                         ? 0
-                        : memoCard.clear / memoCard.memos.length,
+                        : memoCard.clear! / memoCard.memos!.length,
                     backgroundColor: AppColors().mainColor,
                     valueColor:
                         AlwaysStoppedAnimation<Color>(AppColors().white),
@@ -173,7 +175,7 @@ class _MemoScreenState extends State<MemoScreen> {
                     ),
                   ),
                   Text(
-                    "${memoCard.memos.isNotEmpty ? ((memoCard.clear / memoCard.memos.length) * 100).toStringAsFixed(2) : 0} %",
+                    "${memoCard.memos!.isNotEmpty ? ((memoCard.clear! / memoCard.memos!.length) * 100).toStringAsFixed(2) : 0} %",
                     style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.w500,
@@ -225,36 +227,52 @@ class _MemoScreenState extends State<MemoScreen> {
 
     // 할일 타일
     Widget buildTaskTile(MemoController memoCon, int index) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          color: AppColors().white,
+      return Slidable(
+        endActionPane: const ActionPane(
+          motion: ScrollMotion(),
+          extentRatio: 0.25,
+          openThreshold: 0.2,
+          children: [
+            SlidableAction(
+              onPressed: null,
+              backgroundColor: Color(0xFFFE4A49),
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: 'Delete',
+            ),
+          ],
         ),
-        child: ListTile(
-          leading: Checkbox(
-            value: memoCon.memos[currentIndex].memos?[index].isDone,
-            onChanged: (bool? value) {
-              // Update logic here
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: AppColors().white,
+          ),
+          child: ListTile(
+            leading: Checkbox(
+              value: memoCon.memos[currentIndex].memos?[index].isDone,
+              onChanged: (bool? value) {
+                // Update logic here
+              },
+            ),
+            title: Text('${memoCon.memos[currentIndex].memos?[index].memo}'),
+            onTap: () async {
+              try {
+                var dataSource = {
+                  "id": memoCon.memos[currentIndex].memos?[index].id,
+                  "isDone": !memoCon.memos[currentIndex].memos![index].isDone,
+                };
+                var result = await memoCon.updateMemoItem(dataSource);
+                print(result);
+                if (!result) {
+                  return CustomToast().alert("업데이트 실패했습니다.", type: "error");
+                }
+              } catch (e) {
+                print(e);
+                print("error");
+              }
             },
           ),
-          title: Text('${memoCon.memos[currentIndex].memos?[index].memo}'),
-          onTap: () async {
-            try {
-              var dataSource = {
-                "id": memoCon.memos[currentIndex].memos?[index].id,
-                "isDone": !memoCon.memos[currentIndex].memos![index].isDone,
-              };
-              var result = await memoCon.updateMemoItem(dataSource);
-              print(result);
-              if (!result) {
-                return CustomToast().alert("업데이트 실패했습니다.", type: "error");
-              }
-            } catch (e) {
-              print(e);
-              print("error");
-            }
-          },
         ),
       );
     }
@@ -341,9 +359,11 @@ class _MemoScreenState extends State<MemoScreen> {
                             if (index == memoCon.memos.length) {
                               return buildAddButton();
                             }
-                            var memoCard = memoCon.memos[index];
-
-                            return buildMemoCard(memoCard);
+                            Memo memoCard = memoCon.memos[index];
+                            if (memoCard.memos!.isNotEmpty) {
+                              return buildMemoCard(memoCard);
+                            }
+                            return null;
                           },
                         ),
                       ),
