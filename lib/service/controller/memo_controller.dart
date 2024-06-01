@@ -22,8 +22,10 @@ class MemoController extends GetxController {
 
     if (memoData["data"].length != 0) {
       List<dynamic> list = memoData["data"];
+      print(list);
       memos.assignAll(list.map<Memo>((item) => Memo.fromJson(item)).toList());
     }
+
     update();
     isLoading.value = false;
   }

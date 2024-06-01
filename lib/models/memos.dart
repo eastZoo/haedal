@@ -40,6 +40,8 @@ class Memo {
   final String? userId;
   final String? coupleId;
   final String? category;
+  final String? title;
+  final String? color;
   final int? clear;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -50,6 +52,8 @@ class Memo {
     this.userId,
     this.coupleId,
     this.category,
+    this.title,
+    this.color,
     this.clear,
     this.createdAt,
     this.updatedAt,
@@ -63,6 +67,8 @@ class Memo {
       userId: json['userId'],
       coupleId: json['coupleId'],
       category: json['category'],
+      title: json['title'],
+      color: json['color'],
       clear: json['clear'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),

@@ -31,9 +31,9 @@ class _AddMemoCategoryScreenState extends State<AddMemoCategoryScreen> {
   String errorMsg = "";
 
   Color selectedColor = AppColors().pickerBlue;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -64,79 +64,81 @@ class _AddMemoCategoryScreenState extends State<AddMemoCategoryScreen> {
             ),
             const Gap(12),
             Expanded(
-                child: Column(
-              children: [
-                LabelTextField(
-                  label: '카테고리',
-                  hintText: "카테고리 이름",
-                  controller: categoryTextController,
-                  fillColor: AppColors().toDoGrey,
-                ),
-                const Gap(15),
-                LabelTextField(
-                  label: '제목',
-                  hintText: "함께하고자 하는 위시를 적어주세요",
-                  controller: titleTextController,
-                  fillColor: AppColors().toDoGrey,
-                ),
-                const Gap(15),
-                CustomBlockPicker(
-                  label: "색상 선택",
-                  currentColor: selectedColor,
-                  onColorChanged: (Color color) {
-                    selectedColor = color;
-                    setState(() {
-                      selectedColor = color;
-                    });
-                    print(selectedColor);
-                    // 원하는 작업 수행
-                  },
-                  availableColors: [
-                    AppColors().pickerBlue,
-                    AppColors().pickerRed,
-                    AppColors().pickerOrange,
-                    AppColors().pickerYellow,
-                    AppColors().pickerGreen,
-                    AppColors().pickerPurple,
-                    AppColors().pickerblack,
-                  ], // 원하는 색상 목록
-                  colorsPerRow: 7, // 한 줄에 보이는 색상의 개수 설정
-                  blockWidth: 60.0, // 색상 블록의 넓이 설정
-                  blockHeight: 60.0, // 색상 블록의 높이 설정
-                ),
-                const Gap(15),
-                MyButton(
-                  onTap: () async {
-                    if (categoryTextController.text.isEmpty) {
+              child: ListView(
+                children: [
+                  LabelTextField(
+                    label: '카테고리',
+                    hintText: "카테고리 이름",
+                    controller: categoryTextController,
+                    fillColor: AppColors().toDoGrey,
+                  ),
+                  const Gap(15),
+                  LabelTextField(
+                    label: '제목',
+                    hintText: "함께하고자 하는 위시를 적어주세요",
+                    controller: titleTextController,
+                    fillColor: AppColors().toDoGrey,
+                  ),
+                  const Gap(15),
+                  CustomBlockPicker(
+                    label: "색상 선택",
+                    currentColor: selectedColor,
+                    onColorChanged: (Color color) {
                       setState(() {
-                        errorMsg = "카테고리를 입력해주세요.";
+                        selectedColor = color;
                       });
-                      return CustomToast().alert(errorMsg);
-                    }
-                    if (titleTextController.text.isEmpty) {
-                      setState(() {
-                        errorMsg = "항목을 입력해주세요.";
-                      });
-                      return CustomToast().alert(errorMsg);
-                    }
-                    var dataSource = {
-                      "category": categoryTextController.text,
-                      "title": titleTextController.text,
-                      "color":
-                          '#${selectedColor.value.toRadixString(16).padLeft(8, '0').toUpperCase()}',
-                    };
+                      print(selectedColor);
+                    },
+                    availableColors: [
+                      AppColors().pickerBlue,
+                      AppColors().pickerRed,
+                      AppColors().pickerOrange,
+                      AppColors().pickerYellow,
+                      AppColors().pickerGreen,
+                      AppColors().pickerPurple,
+                      AppColors().pickerblack,
+                    ],
+                    colorsPerRow: 7,
+                    blockWidth: 60.0,
+                    blockHeight: 60.0,
+                  ),
+                  const Gap(15),
+                  MyButton(
+                    onTap: () async {
+                      if (categoryTextController.text.isEmpty) {
+                        setState(() {
+                          errorMsg = "카테고리를 입력해주세요.";
+                        });
+                        return CustomToast().alert(errorMsg);
+                      }
+                      if (titleTextController.text.isEmpty) {
+                        setState(() {
+                          errorMsg = "항목을 입력해주세요.";
+                        });
+                        return CustomToast().alert(errorMsg);
+                      }
+                      var dataSource = {
+                        "category": categoryTextController.text,
+                        "title": titleTextController.text,
+                        "color": selectedColor.value
+                            .toRadixString(16)
+                            .padLeft(8, '0')
+                            .toUpperCase()
+                            .substring(2),
+                      };
 
-                    print("dataSource : $dataSource");
-                    // var result = await memoCon.createMemoCategory(dataSource);
-                    // if (result) {
-                    //   Navigator.pop(context);
-                    // }
-                  },
-                  title: "저장",
-                  available: true,
-                )
-              ],
-            )),
+                      print("dataSource : $dataSource");
+                      var result = await memoCon.createMemoCategory(dataSource);
+                      if (result) {
+                        Navigator.pop(context, true);
+                      }
+                    },
+                    title: "저장",
+                    available: true,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
