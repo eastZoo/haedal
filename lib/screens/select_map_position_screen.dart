@@ -3,6 +3,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/location_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/add_location_bottom_sheet.dart';
 import 'package:haedal/widgets/animation_marker.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -122,21 +123,26 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
     }
 
     void onCameraIdle() async {
-      setState(() {
-        isMoving = false;
-      });
-      // 카메라 위치를 가져옵니다.
-      final cameraPosition = await mapController.getCameraPosition();
-      currentLatLng = cameraPosition.target;
-      Map<String, dynamic> data = await LocationController()
-          .getAddressFromCoordinates(
-              cameraPosition.target.latitude, cameraPosition.target.longitude);
-      setState(() {
-        addressName = data["addressName"];
-        address = data["address"];
-      });
+      try {
+        setState(() {
+          isMoving = false;
+        });
+        // 카메라 위치를 가져옵니다.
+        final cameraPosition = await mapController.getCameraPosition();
+        currentLatLng = cameraPosition.target;
+        Map<String, dynamic> data = await LocationController()
+            .getAddressFromCoordinates(cameraPosition.target.latitude,
+                cameraPosition.target.longitude);
+        setState(() {
+          addressName = data["addressName"];
+          address = data["address"];
+        });
 
-      panelController.open();
+        panelController.open();
+      } catch (e) {
+        print(e);
+        CustomToast().alert("위치를 가져오는데 실패했습니다. 다시 시도해주세요.");
+      }
     }
 
     void onSelectedIndoorChanged(NSelectedIndoor? selectedIndoor) {}

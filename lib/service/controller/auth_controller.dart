@@ -31,7 +31,7 @@ class AuthController extends GetxController {
     super.onInit();
     const storage = FlutterSecureStorage();
     var token = await storage.read(key: 'accessToken');
-
+    print(token);
     var result = await getConnectState();
     // 상태코드 1번 회원가입 절차중 초대코드( 타이머 작동 ) 입력 단계
     if (result == 1) {

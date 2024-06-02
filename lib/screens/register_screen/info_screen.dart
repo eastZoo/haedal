@@ -86,12 +86,14 @@ class _InfoScreenState extends State<InfoScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Gap(150),
-                      // logo
-                      // Image.asset(
-                      //   "assets/icons/Step3.png",
-                      //   width: 100,
-                      // ),
+                      const Gap(100),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          "assets/icons/Step3.png",
+                          width: 100,
+                        ),
+                      ),
 
                       const SizedBox(height: 15),
 

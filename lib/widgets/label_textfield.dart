@@ -7,10 +7,15 @@ class LabelTextField extends StatelessWidget {
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final bool multiLine;
-  final String hintText;
+  final String? hintText;
   final bool readOnly;
   final Color? fillColor;
   final Function()? onTap;
+  final bool obscureText;
+  final bool isValid;
+  final double height;
+  final Widget? suffixIcon;
+  final TextStyle? textStyle;
 
   const LabelTextField({
     Key? key,
@@ -18,10 +23,15 @@ class LabelTextField extends StatelessWidget {
     this.controller,
     this.focusNode,
     this.multiLine = false,
-    required this.hintText,
+    this.hintText,
     this.readOnly = false,
     this.fillColor,
     this.onTap,
+    this.obscureText = false,
+    this.isValid = true,
+    this.height = 40,
+    this.suffixIcon,
+    this.textStyle,
   }) : super(key: key);
 
   @override
@@ -29,18 +39,23 @@ class LabelTextField extends StatelessWidget {
     return Column(
       children: [
         if (label.isNotEmpty)
-          Row(
+          Column(
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors().darkGreyText),
+              Row(
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors().darkGreyText,
+                    ),
+                  ),
+                ],
               ),
+              const Gap(8),
             ],
           ),
-        const Gap(8),
         multiLine
             ? Container(
                 margin: const EdgeInsets.all(12),
@@ -50,6 +65,7 @@ class LabelTextField extends StatelessWidget {
                   focusNode: focusNode,
                   readOnly: readOnly,
                   onTap: onTap,
+                  obscureText: obscureText,
                   maxLines: multiLine ? 5 : 1,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -59,34 +75,53 @@ class LabelTextField extends StatelessWidget {
                     filled: true,
                     hintText: hintText,
                     hintStyle: const TextStyle(color: Colors.grey),
+                    prefixIcon: isValid
+                        ? null
+                        : const Icon(Icons.error, color: Colors.red),
+                    suffixIcon: suffixIcon,
                   ),
+                  style: textStyle,
                 ),
               )
             : SizedBox(
-                height: 3 * 14.0,
+                height: height,
                 child: TextField(
                   controller: controller,
                   focusNode: focusNode,
                   readOnly: readOnly,
                   onTap: onTap,
+                  obscureText: obscureText,
                   maxLines: multiLine ? null : 1,
                   textDirection: TextDirection.ltr,
-                  cursorHeight: 30,
                   decoration: InputDecoration(
-                    filled: true,
-                    fillColor: fillColor ?? AppColors().white, // 배경색을 빨간색으로 설정
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none, // 기본 border 색상 없애기
-                      borderRadius:
-                          BorderRadius.circular(5), // border radius를 10으로 설정
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 15.0,
                     ),
-                    focusedBorder: const OutlineInputBorder(
+                    filled: true,
+                    fillColor: fillColor ?? AppColors().white,
+                    border: OutlineInputBorder(
                       borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors().mainColor,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors().mainYellowColor,
+                      ),
                     ),
                     hintText: hintText,
                     hintStyle:
-                        const TextStyle(color: Colors.grey, fontSize: 14.0),
+                        TextStyle(color: AppColors().mainColor, fontSize: 14.0),
+                    prefixIcon: isValid
+                        ? null
+                        : const Icon(Icons.error, color: Colors.red),
+                    suffixIcon: suffixIcon,
                   ),
+                  style: textStyle,
                 ),
               )
       ],

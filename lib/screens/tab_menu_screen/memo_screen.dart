@@ -155,9 +155,9 @@ class _MemoScreenState extends State<MemoScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
                   child: LinearProgressIndicator(
-                    value: memoCard.memos!.isEmpty
+                    value: memoCard.memos.isEmpty
                         ? 0
-                        : memoCard.clear! / memoCard.memos!.length,
+                        : memoCard.clear! / memoCard.memos.length,
                     backgroundColor: AppColors().mainColor,
                     valueColor:
                         AlwaysStoppedAnimation<Color>(AppColors().white),
@@ -177,7 +177,7 @@ class _MemoScreenState extends State<MemoScreen> {
                     ),
                   ),
                   Text(
-                    "${memoCard.memos!.isNotEmpty ? ((memoCard.clear! / memoCard.memos!.length) * 100).toStringAsFixed(2) : 0} %",
+                    "${memoCard.memos.isNotEmpty ? ((memoCard.clear! / memoCard.memos.length) * 100).toStringAsFixed(2) : 0} %",
                     style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.w500,
@@ -252,17 +252,17 @@ class _MemoScreenState extends State<MemoScreen> {
           ),
           child: ListTile(
             leading: Checkbox(
-              value: memoCon.memos[currentIndex].memos?[index].isDone,
+              value: memoCon.memos[currentIndex].memos[index].isDone,
               onChanged: (bool? value) {
                 // Update logic here
               },
             ),
-            title: Text('${memoCon.memos[currentIndex].memos?[index].memo}'),
+            title: Text(memoCon.memos[currentIndex].memos[index].memo),
             onTap: () async {
               try {
                 var dataSource = {
-                  "id": memoCon.memos[currentIndex].memos?[index].id,
-                  "isDone": !memoCon.memos[currentIndex].memos![index].isDone,
+                  "id": memoCon.memos[currentIndex].memos[index].id,
+                  "isDone": !memoCon.memos[currentIndex].memos[index].isDone,
                 };
                 var result = await memoCon.updateMemoItem(dataSource);
                 print(result);
@@ -348,9 +348,9 @@ class _MemoScreenState extends State<MemoScreen> {
                         child: PageView.builder(
                           controller: pageController,
                           onPageChanged: (index) {
-                            print("index :  $index");
                             if (index != memoCon.memos.length) {
                               currentIndex = index;
+                              print("currentIndex :  $index");
                               memoCon.currentMemo = memoCon.memos[index];
                             }
                             pageNo = index;
@@ -478,11 +478,11 @@ class _MemoScreenState extends State<MemoScreen> {
                         child: ListView.builder(
                           padding: const EdgeInsets.only(bottom: 10), // 패딩 추가
                           itemCount: memoCon.memos.isNotEmpty &&
-                                  memoCon.memos[0].memos != null
-                              ? memoCon.memos[0].memos!.length
+                                  memoCon.memos[currentIndex].memos.isNotEmpty
+                              ? memoCon.memos[currentIndex].memos.length
                               : 0,
                           itemBuilder: (BuildContext context, int index) {
-                            if (memoCon.memos[currentIndex].memos!.isNotEmpty) {
+                            if (memoCon.memos[currentIndex].memos.isNotEmpty) {
                               return buildTaskTile(memoCon, index);
                             }
                             return const SizedBox.shrink();

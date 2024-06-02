@@ -4,7 +4,7 @@ import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/service/provider/memo_provider.dart';
 
 class MemoController extends GetxController {
-  var memos = <Memo>[].obs;
+  late var memos = <Memo>[].obs;
   Memo? currentMemo;
   final isLoading = false.obs;
 

@@ -45,7 +45,7 @@ class Memo {
   final int? clear;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final List<Memos>? memos;
+  final List<Memos> memos;
 
   Memo({
     this.id,
@@ -57,7 +57,7 @@ class Memo {
     this.clear,
     this.createdAt,
     this.updatedAt,
-    this.memos,
+    required this.memos,
   });
 
   // Add a factory method to create an Memos object from a Map

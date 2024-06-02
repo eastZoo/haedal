@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
+import 'package:haedal/widgets/label_textfield.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
@@ -175,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 50),
 
                         // username textfield
-                        MyTextField(
+                        LabelTextField(
                           controller: emailController,
                           hintText: '이메일',
                           focusNode: userEmailfocusNode,
@@ -185,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 10),
 
                         // password textfield
-                        MyTextField(
+                        LabelTextField(
                           controller: passwordController,
                           hintText: '비밀번호',
                           obscureText: true,

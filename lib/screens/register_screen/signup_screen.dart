@@ -4,6 +4,7 @@ import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
+import 'package:haedal/widgets/label_textfield.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 import 'package:get/get.dart';
@@ -47,39 +48,42 @@ class _SignupScreenState extends State<SignupScreen> {
   void initState() {
     super.initState();
     // 이메일 텍스트 얻어오는 컨트롤러 부착
-    emailController.addListener(() {
-      // 공백제거
-
-      if (emailRegex.hasMatch(emailController.text)) {
-        setState(() {
-          email = emailController.text.isNotEmpty;
-          isEmailValid = true;
-        });
-      } else {
-        setState(() {
-          email = false;
-        });
-      }
-    });
-    // 비밀번호 얻어오는 컨트롤러 부착
-    passwordController.addListener(() {
-      // 영문 숫자 포함 8자 이상일 때만 true
-      if (passwordRegex.hasMatch(passwordController.text)) {
-        setState(() {
-          password = passwordController.text.isNotEmpty;
-        });
-      } else {
-        setState(() {
-          password = false;
-        });
-      }
-    });
-    // 이메일 커서 포커스 감지하는 함수 부착
-    userEmailfocusNode.addListener(() {
-      if (!userEmailfocusNode.hasFocus) {
-        cursorMovedOutOfEmailTextField();
-      }
-    });
+    try {
+      emailController.addListener(() {
+        // 공백제거
+        if (emailRegex.hasMatch(emailController.text)) {
+          setState(() {
+            email = emailController.text.isNotEmpty;
+            isEmailValid = true;
+          });
+        } else {
+          setState(() {
+            email = false;
+          });
+        }
+      });
+      // 비밀번호 얻어오는 컨트롤러 부착
+      passwordController.addListener(() {
+        // 영문 숫자 포함 8자 이상일 때만 true
+        if (passwordRegex.hasMatch(passwordController.text)) {
+          setState(() {
+            password = passwordController.text.isNotEmpty;
+          });
+        } else {
+          setState(() {
+            password = false;
+          });
+        }
+      });
+      // 이메일 커서 포커스 감지하는 함수 부착
+      userEmailfocusNode.addListener(() {
+        if (!userEmailfocusNode.hasFocus) {
+          cursorMovedOutOfEmailTextField();
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -122,11 +126,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
 // 이메일 텍스트필드에서 커서 Out 됬을때 실행되는 함수
   void cursorMovedOutOfEmailTextField() async {
-    // 커서 아웃됬을때 공백 전부 삭제
-    emailController.text = emailController.text.replaceAll(" ", "");
-    // 이메일 중복 확인하는 API
-    await authCon.checkDuplicateEmail(emailController.text);
-
     // 이메일 필드가 <비어있으며> 커서 Out 됬을때
     if (emailController.text.isEmpty) {
       setState(() {
@@ -135,6 +134,12 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       return CustomToast().alert(errorMsg);
     }
+
+    // 커서 아웃됬을때 공백 전부 삭제
+    emailController.text = emailController.text.replaceAll(" ", "");
+    // 이메일 중복 확인하는 API
+    await authCon.checkDuplicateEmail(emailController.text);
+
     // 이메일 필드가 <이메일 형식에 맞지 않으며> 커서 Out 됬을때
     if (!emailRegex.hasMatch(emailController.text)) {
       setState(() {
@@ -223,9 +228,13 @@ class _SignupScreenState extends State<SignupScreen> {
               children: [
                 const Gap(150),
                 // logo
-                // Image.asset(
-                //   "assets/icons/Step1.png",
-                // ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(
+                    "assets/icons/Step1.png",
+                    width: 100,
+                  ),
+                ),
 
                 const SizedBox(height: 15),
 
@@ -248,7 +257,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 20),
 
                 // username textfield
-                MyTextField(
+                LabelTextField(
                     controller: emailController,
                     hintText: '이메일',
                     obscureText: false,
@@ -258,7 +267,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 10),
 
                 // password textfield
-                MyTextField(
+                LabelTextField(
                   controller: passwordController,
                   hintText: '비밀번호',
                   obscureText: true,
