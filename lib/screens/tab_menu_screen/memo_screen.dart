@@ -117,6 +117,8 @@ class _MemoScreenState extends State<MemoScreen> {
 
     //  메모 카테고리 카드 위젯
     Widget buildMemoCard(Memo memoCard) {
+      print(memoCard.color);
+      print("memoCard.color");
       return Container(
         width: 100,
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -360,7 +362,9 @@ class _MemoScreenState extends State<MemoScreen> {
                               return buildAddButton();
                             }
                             Memo memoCard = memoCon.memos[index];
-                            if (memoCard.memos!.isNotEmpty) {
+                            print("memoCard");
+                            print(memoCard);
+                            if (memoCard.id != null) {
                               return buildMemoCard(memoCard);
                             }
                             return null;
