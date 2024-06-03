@@ -36,14 +36,15 @@ class _SelectMapPositionScreenState extends State<SelectMapPositionScreen> {
   void initState() {
     super.initState();
     final mapCon = Get.put(MapController());
-
-    options = options.copyWith(
-      initialCameraPosition: NCameraPosition(
-        target: NLatLng(
-            mapCon.currentLatLng!.latitude, mapCon.currentLatLng!.longitude),
-        zoom: 14,
-      ),
-    );
+    if (mapCon.currentLatLng != null) {
+      options = options.copyWith(
+        initialCameraPosition: NCameraPosition(
+          target: NLatLng(
+              mapCon.currentLatLng!.latitude, mapCon.currentLatLng!.longitude),
+          zoom: 14,
+        ),
+      );
+    }
   }
 
   @override

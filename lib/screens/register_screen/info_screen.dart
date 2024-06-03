@@ -29,7 +29,7 @@ class _InfoScreenState extends State<InfoScreen> {
       builder: (BuildContext context) {
         return SafeArea(
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.3,
             color: Colors.white,
             child: Column(
               children: [
@@ -47,6 +47,8 @@ class _InfoScreenState extends State<InfoScreen> {
                   ),
                 ),
                 CupertinoButton(
+                  color: AppColors().mainColor,
+                  padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
                   child: const Text('확인'),
                   onPressed: () {
                     Navigator.of(context).pop();
