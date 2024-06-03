@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/app_button.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -45,14 +46,21 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Stack(
+        child: Column(
           children: [
-            const CircularProgressIndicator(),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors().mainColor),
+            ),
+            const Gap(20), // Gap for spacing
             InkWell(
               onTap: () {
                 checkAutoLogout(token, connectState);
               },
-            )
+              child: Text(
+                "Tap to check",
+                style: TextStyle(color: AppColors().mainColor),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
@@ -21,6 +22,43 @@ class _InfoScreenState extends State<InfoScreen> {
 
   String? selectedValue;
   DateTime selectedDate = DateTime.now();
+
+  void _showDatePicker(BuildContext context, TextEditingController controller) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            color: Colors.white,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 200,
+                  child: CupertinoDatePicker(
+                    initialDateTime: selectedDate,
+                    mode: CupertinoDatePickerMode.date,
+                    onDateTimeChanged: (DateTime newDate) {
+                      setState(() {
+                        selectedDate = newDate;
+                        controller.text = "${newDate.toLocal()}".split(' ')[0];
+                      });
+                    },
+                  ),
+                ),
+                CupertinoButton(
+                  child: const Text('확인'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,23 +93,6 @@ class _InfoScreenState extends State<InfoScreen> {
                 '/splash',
                 (route) => false,
               );
-            }
-          }
-
-          // 만난날, 생일 데이트 피커 모달창
-          Future<void> selectDate(
-              BuildContext context, TextEditingController controller) async {
-            final picked = await showDatePicker(
-              context: context,
-              initialDate: selectedDate ?? DateTime.now(),
-              firstDate: DateTime(1980),
-              lastDate: DateTime(2050),
-            );
-            if (picked != null && picked != selectedDate) {
-              setState(() {
-                selectedDate = picked;
-                controller.text = "${picked.toLocal()}".split(' ')[0];
-              });
             }
           }
 
@@ -161,7 +182,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         obscureText: false,
                         readOnly: true,
                         onTap: () {
-                          selectDate(context, birthController);
+                          _showDatePicker(context, birthController);
                         },
                       ),
                       const SizedBox(height: 10),
@@ -173,7 +194,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         readOnly: true,
                         obscureText: false,
                         onTap: () {
-                          selectDate(context, firstDayController);
+                          _showDatePicker(context, firstDayController);
                         },
                       ),
 
