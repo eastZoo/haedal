@@ -45,6 +45,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return GetBuilder<AuthController>(
         init: AuthController(),
         builder: (authCon) {
+          // 현재 날짜
+          DateTime currentDate = DateTime.now();
+
+          // 두 날짜 사이의 차이 계산
+          Duration difference = currentDate.difference(
+              authCon.coupleInfo?.coupleData?.firstDay ?? DateTime.now());
+
+          // D-Day 계산
+          int dDay = difference.inDays;
+
           return Scaffold(
             body: Stack(
               children: [
@@ -65,16 +75,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text(
-                        '2024-05-31', // formattedDate 대신 임시 문자열 사용
-                        style: TextStyle(
+                      Text(
+                        authCon.coupleInfo?.coupleData?.firstDay.toString() ??
+                            "", // foattedDate 대신 임시 문자열 사용
+                        style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
                             fontSize: 18),
                       ),
-                      const Text(
-                        "428일",
-                        style: TextStyle(
+                      Text(
+                        "${dDay.toString()}일",
+                        style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 40),
