@@ -1,11 +1,19 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/service/endpoints.dart';
 import 'package:haedal/styles/colors.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:speech_balloon/speech_balloon.dart';
+import 'package:path/path.dart' hide context;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,8 +23,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final authCon = Get.put(AuthController());
+
   bool _showEmotion1 = false;
   bool _showEmotion2 = false;
+  File? _backgroundImage;
 
   void _toggleEmotion1() {
     setState(() {
@@ -40,6 +51,113 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    print(image);
+    if (image != null) {
+      File? croppedImage = await _cropImage(File(image.path));
+      if (croppedImage != null) {
+        Map<String, dynamic> requestData = {};
+        var images = [];
+        print("croppedImage.path: ${croppedImage.path}");
+        images.add(await MultipartFile.fromFile(
+          croppedImage.path,
+          filename: basename(croppedImage.path),
+        ));
+
+        requestData["images"] = images;
+        // 이미지를 nestjs에 전송
+        var res = await authCon.uploadHomeImage(requestData);
+
+        if (res) {
+          print("이미지 업로드 성공");
+          await authCon.getUserInfo();
+        }
+      }
+    } else {
+      CustomToast().alert("이미지를 선택해주세요.");
+    }
+  }
+
+  // 이미지 자르기
+  Future<File?> _cropImage(File imageFile) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 100,
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: '배경 이미지 설정',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: '배경 이미지 설정',
+        ),
+        WebUiSettings(
+          context: context,
+          presentStyle: CropperPresentStyle.dialog,
+          boundary: const CroppieBoundary(
+            width: 520,
+            height: 520,
+          ),
+          viewPort:
+              const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+          enableExif: true,
+          enableZoom: true,
+          showZoomer: true,
+        ),
+      ],
+    );
+    if (croppedFile != null) {
+      return File(croppedFile.path);
+    }
+    return null;
+  }
+
+  void showBackgroundDialog(BuildContext context) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('메인 배경 설정'),
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _pickImage();
+            },
+            child: const Text('앨범에서 사진/동영상 선택'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _backgroundImage = null;
+              });
+            },
+            child: const Text('기본 이미지'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('취소'),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
@@ -52,23 +170,23 @@ class _HomeScreenState extends State<HomeScreen> {
           Duration difference = currentDate.difference(
               authCon.coupleInfo?.coupleData?.firstDay ?? DateTime.now());
 
-          // D-Day 계산
-          int dDay = difference.inDays;
+          // D-Day 계산 사귄날 ( +1 )
+          int dDay = difference.inDays + 1;
 
           return Scaffold(
             body: Stack(
               children: [
                 // 배경 이미지 추가
                 Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(
-                          'assets/icons/background.png'), // 배경 이미지 경로
+                      image: NetworkImage(
+                          "${Endpoints.hostUrl}/${authCon.coupleInfo?.coupleData?.homeProfileUrl}"),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                //오른쪽 위 날짜 디데이
+                // 오른쪽 위 날짜 디데이
                 Positioned(
                   top: 20,
                   right: 20,
@@ -76,8 +194,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        authCon.coupleInfo?.coupleData?.firstDay.toString() ??
-                            "", // foattedDate 대신 임시 문자열 사용
+                        DateFormat('yyyy-MM-dd').format(
+                            authCon.coupleInfo?.coupleData?.firstDay ??
+                                DateTime.now()), // 첫 만남 날짜
+                        // formattedDate 대신 임시 문자열 사용
                         style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
@@ -119,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   left: 20,
                   child: GestureDetector(
                     onTap: () {
-                      _showBackgroundDialog(context);
+                      showBackgroundDialog(context);
                     },
                     child: Container(
                       width: 40, // 원의 너비
@@ -163,9 +283,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: _toggleEmotion1,
                         child: CircleAvatar(
                           radius: 32, // 프로필 사진의 크기
-                          backgroundImage: NetworkImage(authCon
-                                  .coupleInfo?.me?.profileUrl ??
-                              'assets/icons/profile1.png'), // 왼쪽 아래 프로필 사진 경로
+                          backgroundImage: NetworkImage(
+                              "${authCon.coupleInfo?.me?.profileUrl}"), // 왼쪽 아래 프로필 사진 경로
                         ),
                       ),
                       Text(
@@ -207,9 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: _toggleEmotion2,
                         child: CircleAvatar(
                           radius: 32, // 프로필 사진의 크기
-                          backgroundImage: NetworkImage(authCon
-                                  .coupleInfo?.partner?.profileUrl ??
-                              'assets/icons/profile2.png'), // 오른쪽 아래 프로필 사진 경로
+                          backgroundImage: NetworkImage(
+                              "${authCon.coupleInfo?.partner?.profileUrl}"), // 오른쪽 아래 프로필 사진 경로
                         ),
                       ),
                       Text(
@@ -226,34 +344,5 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         });
-  }
-
-  void _showBackgroundDialog(BuildContext context) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: const Text('메인 배경 설정'),
-        actions: <CupertinoActionSheetAction>[
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('앨범에서 사진/동영상 선택'),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('기본 이미지'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('취소'),
-        ),
-      ),
-    );
   }
 }

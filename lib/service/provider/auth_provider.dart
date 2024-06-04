@@ -67,4 +67,9 @@ class AuthProvider extends GetxController {
   getUserInfoProvider() async {
     return await ApiRequest(url: '${Endpoints.authUrl}/profile').asyncGet();
   }
+
+  uploadHomeImage(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/background', data: data)
+        .formPost();
+  }
 }

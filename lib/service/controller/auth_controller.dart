@@ -319,4 +319,22 @@ class AuthController extends GetxController {
 
     connectState.update(RxInt(0));
   }
+
+// 배경화면 이미지 업로드
+  uploadHomeImage(requestData) async {
+    try {
+      // 회원가입(로그인) API
+      var res = await AuthProvider().uploadHomeImage(requestData);
+      print(res);
+      print("uploadHomeImage");
+      if (res["data"]["success"]) {
+        return res["success"];
+      } else {
+        print('Image upload failed');
+        CustomToast().alert("이미지 업로드에 실패했습니다.");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }
