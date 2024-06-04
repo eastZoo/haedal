@@ -32,8 +32,8 @@ class CustomDrawer extends StatelessWidget {
                 backgroundImage: AssetImage('assets/icons/profile.png'),
                 backgroundColor: Colors.white,
               ),
-              accountName: Text(AuthCon.userInfo?.name ?? ""),
-              accountEmail: Text(AuthCon.userInfo?.userEmail ?? ""),
+              accountName: Text(AuthCon.coupleInfo?.me?.name ?? ""),
+              accountEmail: Text(AuthCon.coupleInfo?.me?.userEmail ?? ""),
               decoration: BoxDecoration(
                 color: AppColors().mainColor,
               ),

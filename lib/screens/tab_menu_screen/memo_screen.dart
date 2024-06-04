@@ -77,7 +77,7 @@ class _MemoScreenState extends State<MemoScreen> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.45,
+              height: MediaQuery.of(context).size.height * 0.58,
               child: const Padding(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: AddMemoCategoryScreen(),
@@ -99,15 +99,14 @@ class _MemoScreenState extends State<MemoScreen> {
           ),
         ),
         builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          maxChildSize: 0.6,
-          minChildSize: 0.5,
-          expand: false,
-          snap: true,
-          builder: (context, scrollController) {
-            return ShowAddMemoScreen();
-          },
-        ),
+            initialChildSize: 0.6,
+            maxChildSize: 0.6,
+            minChildSize: 0.5,
+            expand: false,
+            snap: true,
+            builder: (context, scrollController) {
+              return ShowAddMemoScreen();
+            }),
       );
       Timer(const Duration(milliseconds: 300), () {
         if (mounted) {
@@ -118,6 +117,8 @@ class _MemoScreenState extends State<MemoScreen> {
 
     //  메모 카테고리 카드 위젯
     Widget buildMemoCard(Memo memoCard) {
+      print(memoCard.color);
+      print("memoCard.color");
       return Container(
         width: 100,
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -157,10 +158,7 @@ class _MemoScreenState extends State<MemoScreen> {
                     value: memoCard.memos.isEmpty
                         ? 0
                         : memoCard.clear! / memoCard.memos.length,
-                    backgroundColor: Color.alphaBlend(
-                      Colors.white.withOpacity(0.25), // 흰색을 50% 섞습니다.
-                      Color(int.parse('0xFF${memoCard.color}')),
-                    ),
+                    backgroundColor: AppColors().mainColor,
                     valueColor:
                         AlwaysStoppedAnimation<Color>(AppColors().white),
                   ),
@@ -232,31 +230,17 @@ class _MemoScreenState extends State<MemoScreen> {
     // 할일 타일
     Widget buildTaskTile(MemoController memoCon, int index) {
       return Slidable(
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
+        endActionPane: const ActionPane(
+          motion: ScrollMotion(),
           extentRatio: 0.25,
           openThreshold: 0.2,
           children: [
             SlidableAction(
-              onPressed: (context) async {
-                try {
-                  var dataSource = {
-                    "id": memoCon.memos[currentIndex].memos[index].id,
-                    "isDone": !memoCon.memos[currentIndex].memos[index].isDone,
-                  };
-                  var result = await memoCon.updateMemoItem(dataSource);
-                  if (!result) {
-                    return CustomToast().alert("업데이트 실패했습니다.", type: "error");
-                  }
-                } catch (e) {
-                  print(e);
-                }
-              },
-              backgroundColor: const Color(0xFFFE4A49),
+              onPressed: null,
+              backgroundColor: Color(0xFFFE4A49),
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: 'Delete',
-              borderRadius: BorderRadius.circular(10.0),
             ),
           ],
         ),
@@ -270,28 +254,10 @@ class _MemoScreenState extends State<MemoScreen> {
             leading: Checkbox(
               value: memoCon.memos[currentIndex].memos[index].isDone,
               onChanged: (bool? value) {
-                setState(() {
-                  memoCon.memos[currentIndex].memos[index].isDone = value!;
-                });
+                // Update logic here
               },
-              activeColor: AppColors().mainColor,
-              side: BorderSide(color: AppColors().mainColor, width: 2),
             ),
             title: Text(memoCon.memos[currentIndex].memos[index].memo),
-            titleTextStyle: memoCon.memos[currentIndex].memos[index].isDone
-                ? TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors().mainColor,
-                    decoration: TextDecoration.lineThrough,
-                    decorationColor: AppColors().mainColor,
-                    decorationThickness: 1.0,
-                  )
-                : TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors().mainColor,
-                  ),
             onTap: () async {
               try {
                 var dataSource = {
@@ -299,11 +265,13 @@ class _MemoScreenState extends State<MemoScreen> {
                   "isDone": !memoCon.memos[currentIndex].memos[index].isDone,
                 };
                 var result = await memoCon.updateMemoItem(dataSource);
+                print(result);
                 if (!result) {
                   return CustomToast().alert("업데이트 실패했습니다.", type: "error");
                 }
               } catch (e) {
                 print(e);
+                print("error");
               }
             },
           ),
@@ -324,7 +292,7 @@ class _MemoScreenState extends State<MemoScreen> {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   height:
-                      isExpanded ? 0 : MediaQuery.of(context).size.height / 3.5,
+                      isExpanded ? 0 : MediaQuery.of(context).size.height / 2.8,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: const BorderRadius.only(
@@ -356,6 +324,7 @@ class _MemoScreenState extends State<MemoScreen> {
                               onTap: () async {
                                 var result = await showAddGroupModal();
                                 print(result);
+                                // AddMemoCategoryScreen 에서 true 반환시 페이지 이동
                                 if (result != null && result == true) {
                                   pageController.jumpToPage(0);
                                 }
@@ -381,6 +350,7 @@ class _MemoScreenState extends State<MemoScreen> {
                           onPageChanged: (index) {
                             if (index != memoCon.memos.length) {
                               currentIndex = index;
+                              print("currentIndex :  $index");
                               memoCon.currentMemo = memoCon.memos[index];
                             }
                             pageNo = index;
@@ -392,10 +362,12 @@ class _MemoScreenState extends State<MemoScreen> {
                               return buildAddButton();
                             }
                             Memo memoCard = memoCon.memos[index];
+                            print("memoCard");
+                            print(memoCard);
                             if (memoCard.id != null) {
                               return buildMemoCard(memoCard);
                             }
-                            return const SizedBox.shrink();
+                            return null;
                           },
                         ),
                       ),
@@ -425,8 +397,8 @@ class _MemoScreenState extends State<MemoScreen> {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   height: isExpanded
-                      ? MediaQuery.of(context).size.height / 1.5
-                      : MediaQuery.of(context).size.height / 1.5,
+                      ? MediaQuery.of(context).size.height
+                      : MediaQuery.of(context).size.height / 2,
                   decoration: BoxDecoration(
                     color: AppColors().toDoGrey,
                     borderRadius: const BorderRadius.only(
@@ -473,6 +445,7 @@ class _MemoScreenState extends State<MemoScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
+                                print("모두 보기");
                                 setState(() {
                                   isExpanded = !isExpanded;
                                 });
@@ -503,7 +476,7 @@ class _MemoScreenState extends State<MemoScreen> {
                       ),
                       Expanded(
                         child: ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 10), // 패딩 추가
                           itemCount: memoCon.memos.isNotEmpty &&
                                   memoCon.memos[currentIndex].memos.isNotEmpty
                               ? memoCon.memos[currentIndex].memos.length

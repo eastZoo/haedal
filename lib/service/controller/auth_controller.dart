@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/couple_connect_info.dart';
 import 'package:haedal/models/social_user_info.dart';
-import 'package:haedal/models/user_info.dart';
+import 'package:haedal/models/couple_info.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -23,7 +23,7 @@ class AuthController extends GetxController {
   int accessCodeTimer = 86400;
 
 // user profile info
-  UserInfo? userInfo;
+  CoupleInfo? coupleInfo;
   bool isLoading = true;
 
   @override
@@ -98,6 +98,7 @@ class AuthController extends GetxController {
               : "0"
           : "",
       "birth": birthDate ?? "",
+      "profileUrl": user.kakaoAccount?.profile?.thumbnailImageUrl ?? "",
     };
     try {
       // 회원가입(로그인) API
@@ -130,6 +131,7 @@ class AuthController extends GetxController {
     // 최종 날짜 문자열 생성
     birthDate = '$birthyear-$birthday';
 
+    print(user);
     // 데이터 없을 때 빈 값 처리
     Map<String, dynamic> dataSource = {
       "userEmail": user.email ?? "",
@@ -142,6 +144,7 @@ class AuthController extends GetxController {
               : "0"
           : "",
       "birth": birthDate ?? "",
+      "profileUrl": user.profileImage ?? "",
     };
     try {
       // 회원가입(로그인) API
@@ -292,12 +295,15 @@ class AuthController extends GetxController {
       var res = await AuthProvider().getUserInfoProvider();
       print("USERINFO   : : $res");
 
-      if (res["success"]) {}
-      userInfo = UserInfo.fromJson(res["data"]);
+      if (res["success"]) {
+        coupleInfo = CoupleInfo.fromJson(res["data"]);
+        print("coupleInfo : $coupleInfo");
+      }
 
-      print("USERINFO   : : $userInfo");
+      print("coupleInfo : $coupleInfo");
       isLoading = false;
     } catch (error) {
+      print("getUserInfo $error");
       // error 캐치해도 일단 아바타 로딩 잡기 위해서 강제 false 처리
       isLoading = false;
     } finally {
