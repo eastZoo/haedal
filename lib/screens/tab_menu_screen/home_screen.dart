@@ -136,7 +136,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pop(context);
               await _pickImage();
             },
-            child: const Text('앨범에서 사진/동영상 선택'),
+            child: const Text(
+              '앨범에서 사진/동영상 선택',
+            ),
           ),
           CupertinoActionSheetAction(
             onPressed: () {
@@ -145,7 +147,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 _backgroundImage = null;
               });
             },
-            child: const Text('기본 이미지'),
+            child: const Text(
+              '기본 이미지',
+            ),
           ),
         ],
         cancelButton: CupertinoActionSheetAction(

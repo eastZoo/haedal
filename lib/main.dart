@@ -39,7 +39,15 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              fontFamily: 'Pretendard', primaryColor: AppColors().mainColor),
+            fontFamily: 'Pretendard',
+            primaryColor: AppColors().mainColor,
+            appBarTheme: AppBarTheme(backgroundColor: AppColors().white),
+            // 기본 텍스트 스타일 설정
+            textTheme: TextTheme(
+              bodyLarge: TextStyle(color: AppColors().mainColor),
+              bodyMedium: TextStyle(color: AppColors().mainColor),
+            ),
+          ),
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -57,6 +65,7 @@ class MyApp extends StatelessWidget {
           initialRoute: "/splash",
           getPages: AppPages.routes,
           builder: (context, child) {
+            // EasyLoading 적용
             child = EasyLoading.init()(context, child);
             return MediaQuery(
               data: MediaQuery.of(context)
