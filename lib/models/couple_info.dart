@@ -51,7 +51,8 @@ class Partner {
       birth: json['birth'] != null ? DateTime.parse(json['birth']) : null,
       age: json['age'] != null ? json['age'] as int : null,
       sex: json['sex'] as String?,
-      profileUrl: json['profileUrl'] as String?,
+      profileUrl:
+          json['profileUrl'] != null ? json["profileUrl"] as String : null,
       emotion: json['emotion'] as String?,
       connectState:
           json['connectState'] != null ? json['connectState'] as int : null,
@@ -91,7 +92,8 @@ class Me {
       birth: json['birth'] != null ? DateTime.parse(json['birth']) : null,
       age: json['age'] != null ? json['age'] as int : null,
       sex: json['sex'] as String?,
-      profileUrl: json['profileUrl'] as String?,
+      profileUrl:
+          json['profileUrl'] != null ? json["profileUrl"] as String : null,
       emotion: json['emotion'] as String?,
       connectState:
           json['connectState'] != null ? json['connectState'] as int : null,

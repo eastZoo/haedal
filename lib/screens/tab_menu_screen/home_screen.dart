@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                // 오른쪽 위 날짜 디데이
+                // 오른쪽 위 날짜 디데이 ( 날짜 컴포넌트화 시급 중복 너무 많아 )
                 Positioned(
                   top: 20,
                   right: 20,
@@ -198,39 +198,76 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        DateFormat('yyyy-MM-dd').format(
-                            authCon.coupleInfo?.coupleData?.firstDay ??
-                                DateTime.now()), // 첫 만남 날짜
-                        // formattedDate 대신 임시 문자열 사용
-                        style: const TextStyle(
+                          DateFormat('yyyy-MM-dd').format(
+                              authCon.coupleInfo?.coupleData?.firstDay ??
+                                  DateTime.now()), // 첫 만남 날짜
+                          // formattedDate 대신 임시 문자열 사용
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
-                            fontSize: 18),
-                      ),
+                            fontSize: 18,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 9.0,
+                                color: Colors.black54,
+                                offset: Offset(1.0, 1.5),
+                              ),
+                            ],
+                          )),
                       Text(
                         "${dDay.toString()}일",
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 40),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 9.0,
+                              color: Colors.black54,
+                              offset: Offset(1.0, 1.5),
+                            ),
+                          ],
+                        ),
                       ),
                       Row(
                         children: [
                           Text(
                             authCon.coupleInfo?.me?.name ?? "",
                             style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 9.0,
+                                  color: Colors.black54,
+                                  offset: Offset(1.0, 1.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 4,
                           ),
                           const Icon(Icons.favorite,
                               color: Colors.white, size: 18),
+                          const SizedBox(
+                            width: 4,
+                          ),
                           Text(
                             authCon.coupleInfo?.partner?.name ?? "",
                             style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 9.0,
+                                  color: Colors.black54,
+                                  offset: Offset(1.0, 1.5),
+                                ),
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -250,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 40, // 원의 높이
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(0.8), // 투명도 50%
+                        color: Colors.grey.withOpacity(0.4), // 투명도 40%
                       ),
                       alignment: Alignment.center,
                       child:
@@ -287,16 +324,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: _toggleEmotion1,
                         child: CircleAvatar(
                           radius: 32, // 프로필 사진의 크기
-                          backgroundImage: NetworkImage(
+                          foregroundImage: NetworkImage(
                               "${authCon.coupleInfo?.me?.profileUrl}"), // 왼쪽 아래 프로필 사진 경로
+
+                          backgroundImage:
+                              const AssetImage("assets/icons/profile.png"),
                         ),
                       ),
                       Text(
                         authCon.coupleInfo?.me?.name ?? "",
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14),
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 9.0,
+                              color: Colors.black54,
+                              offset: Offset(1.0, 1.5),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -330,16 +378,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: _toggleEmotion2,
                         child: CircleAvatar(
                           radius: 32, // 프로필 사진의 크기
-                          backgroundImage: NetworkImage(
+                          foregroundImage: NetworkImage(
                               "${authCon.coupleInfo?.partner?.profileUrl}"), // 오른쪽 아래 프로필 사진 경로
+                          backgroundImage:
+                              const AssetImage("assets/icons/profile.png"),
                         ),
                       ),
                       Text(
                         authCon.coupleInfo?.partner?.name ?? "",
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14),
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 8.0,
+                              color: Colors.black54,
+                              offset: Offset(1.0, 1.5),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

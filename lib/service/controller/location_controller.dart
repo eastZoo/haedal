@@ -20,48 +20,54 @@ class LocationController extends GetxController {
     }
   }
 
+  // 위치 가져오는 함수
   getAddressFromCoordinates(lat, lon) async {
-    var res = await LocationProvider().getAddressFromCoordinates(lon, lat);
+    try {
+      var res = await LocationProvider().getAddressFromCoordinates(lon, lat);
 
-    print("kakao GEOCODING");
-    print(res);
-    if (res["data"]["meta"]["total_count"] != 0) {
-      // 도로명 주소가 없을때
-      if (res["data"]["documents"][0]['road_address'] == null) {
-        var address = res["data"]["documents"][0]['address']['address_name'];
-        var dataSource = {
-          "addressName": address,
-          "address": address,
-        };
-        return dataSource;
-      }
+      print("kakao GEOCODING");
+      print(res);
+      if (res["data"]["meta"]["total_count"] != 0) {
+        // 도로명 주소가 없을때
+        if (res["data"]["documents"][0]['road_address'] == null) {
+          var address = res["data"]["documents"][0]['address']['address_name'];
+          var dataSource = {
+            "addressName": address,
+            "address": address,
+          };
+          return dataSource;
+        }
 
-      // 지번주소가 없을때
-      if (res["data"]["documents"][0]['address'] == null) {
+        // 지번주소가 없을때
+        if (res["data"]["documents"][0]['address'] == null) {
+          var addressName =
+              res["data"]["documents"][0]['road_address']['address_name'];
+          var dataSource = {
+            "addressName": addressName,
+            "address": addressName,
+          };
+          return dataSource;
+        }
+        // 도로명 주소
         var addressName =
             res["data"]["documents"][0]['road_address']['address_name'];
+        // 지번 주소
+        var address = res["data"]["documents"][0]['address']['address_name'];
+
         var dataSource = {
           "addressName": addressName,
-          "address": addressName,
+          "address": address,
         };
+
         return dataSource;
       }
-      // 도로명 주소
-      var addressName =
-          res["data"]["documents"][0]['road_address']['address_name'];
-      // 지번 주소
-      var address = res["data"]["documents"][0]['address']['address_name'];
-
-      var dataSource = {
-        "addressName": addressName,
-        "address": address,
-      };
-
-      return dataSource;
-    }
-    if (res["data"]["meta"]["total_count"] == 0) {
-      String msg = "주소데이터를 찾을 수 없는 위치.";
-      return msg;
+      if (res["data"]["meta"]["total_count"] == 0) {
+        String msg = "주소데이터를 찾을 수 없는 위치.";
+        return msg;
+      }
+    } catch (e) {
+      print("getAddressFromCoordinates error");
+      print(e);
     }
   }
 

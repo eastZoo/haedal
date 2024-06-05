@@ -107,7 +107,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           ), // 로고 아이콘 경로
         ),
         title: _appBarTitle(selectedIndex!),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors().white,
+        surfaceTintColor: AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
         centerTitle: true,
         actions: [
           Stack(children: [

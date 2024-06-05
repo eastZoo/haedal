@@ -28,7 +28,6 @@ class MemoScreen extends StatefulWidget {
 class _MemoScreenState extends State<MemoScreen> {
   late final PageController pageController;
 
-  final ScrollController _scrollController = ScrollController();
   int pageNo = 0;
   int currentIndex = 0;
 
@@ -37,16 +36,7 @@ class _MemoScreenState extends State<MemoScreen> {
   @override
   void initState() {
     pageController = PageController(initialPage: 0, viewportFraction: 0.85);
-    _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        showBtmAppBr = false;
-        setState(() {});
-      } else {
-        showBtmAppBr = true;
-        setState(() {});
-      }
-    });
+
     super.initState();
   }
 
@@ -158,9 +148,11 @@ class _MemoScreenState extends State<MemoScreen> {
                     value: memoCard.memos.isEmpty
                         ? 0
                         : memoCard.clear! / memoCard.memos.length,
-                    backgroundColor: AppColors().mainColor,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors().white),
+                    backgroundColor: Color.alphaBlend(
+                        AppColors().white.withOpacity(0.2),
+                        Color(int.parse('0xFF${memoCard.color}'))),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors().white.withOpacity(0.8)),
                   ),
                 ),
               ),
@@ -292,7 +284,7 @@ class _MemoScreenState extends State<MemoScreen> {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   height:
-                      isExpanded ? 0 : MediaQuery.of(context).size.height / 2.8,
+                      isExpanded ? 0 : MediaQuery.of(context).size.height / 3.5,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: const BorderRadius.only(
@@ -372,6 +364,7 @@ class _MemoScreenState extends State<MemoScreen> {
                         ),
                       ),
                       const Gap(15),
+                      // 페이지 네이션
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
@@ -383,7 +376,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                 Icons.circle,
                                 size: 12.0,
                                 color: pageNo == index
-                                    ? AppColors().subContainer
+                                    ? AppColors().mainColor
                                     : Colors.grey.shade300,
                               ),
                             ),
@@ -409,7 +402,7 @@ class _MemoScreenState extends State<MemoScreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -474,21 +467,32 @@ class _MemoScreenState extends State<MemoScreen> {
                           ],
                         ),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 10), // 패딩 추가
-                          itemCount: memoCon.memos.isNotEmpty &&
-                                  memoCon.memos[currentIndex].memos.isNotEmpty
-                              ? memoCon.memos[currentIndex].memos.length
-                              : 0,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (memoCon.memos[currentIndex].memos.isNotEmpty) {
-                              return buildTaskTile(memoCon, index);
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        ),
-                      ),
+                      memoCon.memos.isNotEmpty &&
+                              memoCon.memos[currentIndex].memos.isNotEmpty
+                          ? Expanded(
+                              child: ListView.builder(
+                                padding: EdgeInsets.only(
+                                    bottom: isExpanded ? 200 : 10), // 패딩 추가
+                                itemCount: memoCon.memos.isNotEmpty &&
+                                        memoCon.memos[currentIndex].memos
+                                            .isNotEmpty
+                                    ? memoCon.memos[currentIndex].memos.length
+                                    : 0,
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (memoCon
+                                      .memos[currentIndex].memos.isNotEmpty) {
+                                    return buildTaskTile(memoCon, index);
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            )
+                          : Text("등록된 위시가 없습니다.",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors().mainColor,
+                              ))
                     ],
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -40,8 +41,14 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: 'Pretendard',
+            cupertinoOverrideTheme: CupertinoThemeData(
+              primaryColor: AppColors().mainColor,
+            ),
             primaryColor: AppColors().mainColor,
             appBarTheme: AppBarTheme(backgroundColor: AppColors().white),
+            scaffoldBackgroundColor: AppColors().white,
+            radioTheme: RadioThemeData(
+                fillColor: WidgetStateProperty.all(AppColors().mainColor)),
             // 기본 텍스트 스타일 설정
             textTheme: TextTheme(
               bodyLarge: TextStyle(color: AppColors().mainColor),

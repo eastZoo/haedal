@@ -52,7 +52,7 @@ class ApiRequest {
       print(e);
 
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
-      if (e is DioError) {
+      if (e is DioException) {
         errorMsg = "오류발생 내용을 다시 확인해 주세요.";
         // errorMsg =
         //     e.response?.data["message"].toString() ?? "오류발생 내용을 다시 확인해 주세요.";
@@ -78,7 +78,7 @@ class ApiRequest {
       print(e);
 
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
-      if (e is DioError) {
+      if (e is DioException) {
         errorMsg = "오류발생 내용을 다시 확인해 주세요.";
         // errorMsg =
         //     e.response?.data["message"].toString() ?? "오류발생 내용을 다시 확인해 주세요.";
@@ -98,7 +98,7 @@ class ApiRequest {
     } catch (e) {
       print(e);
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
-      if (e is DioError) {
+      if (e is DioException) {
         errorMsg = e.response?.data["message"] ?? "오류발생 내용을 다시 확인해 주세요.";
       }
       return {"success": false, "msg": errorMsg};
@@ -117,7 +117,7 @@ class ApiRequest {
       };
     } catch (e) {
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
-      if (e is DioError) {
+      if (e is DioException) {
         errorMsg = e.response?.data["message"] ?? "오류발생 내용을 다시 확인해 주세요.";
       }
       return {"success": false, "msg": errorMsg};
@@ -139,7 +139,7 @@ class ApiRequest {
       return {"success": true, "data": response.data};
     } catch (e) {
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
-      if (e is DioError) {
+      if (e is DioException) {
         print(e);
         errorMsg =
             e.response?.data["message"].toString() ?? "오류발생 내용을 다시 확인해 주세요.";
