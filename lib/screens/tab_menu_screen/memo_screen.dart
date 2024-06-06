@@ -542,7 +542,7 @@ class _MemoScreenState extends State<MemoScreen> {
                           ? Expanded(
                               child: ListView.builder(
                                 padding: EdgeInsets.only(
-                                    bottom: isExpanded ? 200 : 10), // 패딩 추가
+                                    bottom: isExpanded ? 200 : 230), // 패딩 추가
                                 itemCount: memoCon.memos.isNotEmpty &&
                                         memoCon.memos[memoCon.currentIndex]
                                             .memos.isNotEmpty
