@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/styles/colors.dart';
-import 'package:haedal/widgets/app_button.dart';
 
 class LoadingScreen extends StatefulWidget {
   String? token;
@@ -23,6 +22,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   String? token;
   RxInt? connectState;
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +47,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return Scaffold(
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+          crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
           children: [
             CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors().mainColor),
@@ -57,8 +59,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 checkAutoLogout(token, connectState);
               },
               child: Text(
-                "Tap to check",
-                style: TextStyle(color: AppColors().mainColor),
+                "로그아웃 하기",
+                style: TextStyle(
+                  color: AppColors().mainColor,
+                  fontSize: 20,
+                ),
               ),
             ),
           ],

@@ -8,10 +8,19 @@ class MemoController extends GetxController {
   Memo? currentMemo;
   final isLoading = false.obs;
 
+  int pageNo = 0;
+  int currentIndex = 0;
+
   @override
   void onInit() {
     super.onInit();
     _getMemoData();
+  }
+
+  // Set the current index
+  void setCurrentIndex(int index) {
+    currentIndex = index;
+    update();
   }
 
   /// 메모 카테고리 및 하위 리스트 가져오기
