@@ -328,243 +328,225 @@ class _MemoScreenState extends State<MemoScreen> {
         return LoadingOverlay(
           isLoading: memoCon.isLoading.value,
           child: Scaffold(
-            backgroundColor: AppColors().white,
+            resizeToAvoidBottomInset: false,
             body: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                isExpanded
-                    ? const SizedBox.shrink()
-                    : AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        height: delayedChange
-                            ? 0
-                            : MediaQuery.of(context).size.height / 3.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(50.0),
-                            bottomRight: Radius.circular(50.0),
-                          ),
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: AnimatedOpacity(
-                          opacity: delayedChange ? 0.1 : 1.0,
-                          duration: const Duration(milliseconds: 100),
-                          child: delayedChange
-                              ? const SizedBox.shrink()
-                              : Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          20, 0, 20, 0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Wish List",
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors().darkGrey,
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              var result =
-                                                  await showAddGroupModal();
-
-                                              // AddMemoCategoryScreen 에서 true 반환시 페이지 이동
-                                              if (result != null &&
-                                                  result == true) {
-                                                pageController.jumpToPage(0);
-                                              }
-                                            },
-                                            child: Text(
-                                              "카테고리 추가 >",
-                                              style: TextStyle(
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors().darkGreyText,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                // 위의 Flex
+                Flexible(
+                  flex: isExpanded ? 0 : 4,
+                  child: SingleChildScrollView(
+                    // 스크롤 추가했더니 overflow 문제 해결
+                    child: Center(
+                      child: isExpanded
+                          ? Container()
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Wish List",
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors().darkGrey,
+                                        ),
                                       ),
-                                    ),
-                                    const Gap(10),
-                                    SizedBox(
-                                      height: 160,
-                                      width: 120,
-                                      child: PageView.builder(
-                                        controller: pageController,
-                                        onPageChanged: (index) {
-                                          if (index != memoCon.memos.length) {
-                                            memoCon.currentIndex = index;
+                                      GestureDetector(
+                                        onTap: () async {
+                                          var result =
+                                              await showAddGroupModal();
 
-                                            memoCon.currentMemo =
-                                                memoCon.memos[index];
+                                          // AddMemoCategoryScreen 에서 true 반환시 페이지 이동
+                                          if (result != null &&
+                                              result == true) {
+                                            pageController.jumpToPage(0);
                                           }
-
-                                          memoCon.pageNo = index;
-
-                                          setState(() {});
                                         },
-                                        itemCount: memoCon.memos.length + 1,
-                                        itemBuilder: (_, index) {
-                                          if (index == memoCon.memos.length) {
-                                            return buildAddButton();
-                                          }
-                                          Memo memoCard = memoCon.memos[index];
-                                          print("memoCard");
-                                          print(memoCard);
-                                          if (memoCard.id != null) {
-                                            return buildMemoCard(memoCard);
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    const Gap(15),
-                                    // 페이지 네이션
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: List.generate(
-                                        memoCon.memos.length + 1,
-                                        (index) => GestureDetector(
-                                          child: Container(
-                                            margin: const EdgeInsets.all(2.0),
-                                            child: Icon(
-                                              Icons.circle,
-                                              size: 12.0,
-                                              color: memoCon.pageNo == index
-                                                  ? AppColors().mainColor
-                                                  : Colors.grey.shade300,
-                                            ),
+                                        child: Text(
+                                          "카테고리 추가 >",
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors().darkGreyText,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                        ),
-                      ),
-
-                // 리스트 확장
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  height: isExpanded
-                      ? MediaQuery.of(context).size.height
-                      : MediaQuery.of(context).size.height / 2 + 220,
-                  decoration: BoxDecoration(
-                    color: AppColors().toDoGrey,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "Task",
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors().darkGreyText,
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-                                GestureDetector(
-                                  onTap: () async {
-                                    await showAddMemoModal();
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors().mainColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: const Icon(
-                                      Icons.add_outlined,
-                                      color: Colors.white,
-                                      size: 16.0,
+                                const Gap(10),
+                                SizedBox(
+                                  height: 160,
+                                  width: 120,
+                                  child: PageView.builder(
+                                    controller: pageController,
+                                    onPageChanged: (index) {
+                                      if (index != memoCon.memos.length) {
+                                        memoCon.currentIndex = index;
+
+                                        memoCon.currentMemo =
+                                            memoCon.memos[index];
+                                      }
+
+                                      memoCon.pageNo = index;
+
+                                      setState(() {});
+                                    },
+                                    itemCount: memoCon.memos.length + 1,
+                                    itemBuilder: (_, index) {
+                                      if (index == memoCon.memos.length) {
+                                        return buildAddButton();
+                                      }
+                                      Memo memoCard = memoCon.memos[index];
+                                      print("memoCard");
+                                      print(memoCard);
+                                      if (memoCard.id != null) {
+                                        return buildMemoCard(memoCard);
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const Gap(15),
+                                // 페이지 네이션
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(
+                                    memoCon.memos.length + 1,
+                                    (index) => GestureDetector(
+                                      child: Container(
+                                        margin: const EdgeInsets.all(2.0),
+                                        child: Icon(
+                                          Icons.circle,
+                                          size: 12.0,
+                                          color: memoCon.pageNo == index
+                                              ? AppColors().mainColor
+                                              : Colors.grey.shade300,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                print("모두 보기");
-                                toggleExpanded();
-                              },
-                              child: Row(
+                    ),
+                  ),
+                ),
+                // 아래의 Flex
+                Flexible(
+                  flex: isExpanded ? 1 : 7,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors().toDoGrey,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
                                 children: [
                                   Text(
-                                    "All Task",
+                                    "Task",
                                     style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
                                       color: AppColors().darkGreyText,
                                     ),
                                   ),
-                                  const SizedBox(width: 2),
-                                  Icon(
-                                    isExpanded
-                                        ? Icons.keyboard_arrow_down
-                                        : Icons.keyboard_arrow_up,
-                                    color: AppColors().darkGreyText,
-                                    size: 24.0,
+                                  const SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await showAddMemoModal();
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColors().mainColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: const Icon(
+                                        Icons.add_outlined,
+                                        color: Colors.white,
+                                        size: 16.0,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      memoCon.memos.isNotEmpty &&
-                              memoCon.memos[memoCon.currentIndex].memos
-                                  .isNotEmpty &&
-                              memoCon.pageNo == memoCon.currentIndex
-                          ? Expanded(
-                              child: ListView.builder(
-                                padding: EdgeInsets.only(
-                                    bottom: isExpanded ? 200 : 230), // 패딩 추가
-                                itemCount: memoCon.memos.isNotEmpty &&
-                                        memoCon.memos[memoCon.currentIndex]
-                                            .memos.isNotEmpty
-                                    ? memoCon.memos[memoCon.currentIndex].memos
-                                        .length
-                                    : 0,
-                                itemBuilder: (BuildContext context, int index) {
-                                  if (memoCon.memos[memoCon.currentIndex].memos
-                                      .isNotEmpty) {
-                                    return buildTaskTile(memoCon, index);
-                                  }
-                                  return const SizedBox.shrink();
+                              GestureDetector(
+                                onTap: () {
+                                  print("모두 보기");
+                                  toggleExpanded();
                                 },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "All Task",
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors().darkGreyText,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 2),
+                                    Icon(
+                                      isExpanded
+                                          ? Icons.keyboard_arrow_down
+                                          : Icons.keyboard_arrow_up,
+                                      color: AppColors().darkGreyText,
+                                      size: 24.0,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            )
-                          : Text("등록된 위시가 없습니다.",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors().mainColor,
-                              ))
-                    ],
+                            ],
+                          ),
+                        ),
+                        memoCon.memos.isNotEmpty &&
+                                memoCon.memos[memoCon.currentIndex].memos
+                                    .isNotEmpty &&
+                                memoCon.pageNo == memoCon.currentIndex
+                            ? Expanded(
+                                child: ListView.builder(
+                                  padding: EdgeInsets.only(
+                                      bottom: isExpanded ? 100 : 110), // 패딩 추가
+                                  itemCount: memoCon.memos.isNotEmpty &&
+                                          memoCon.memos[memoCon.currentIndex]
+                                              .memos.isNotEmpty
+                                      ? memoCon.memos[memoCon.currentIndex]
+                                          .memos.length
+                                      : 0,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    if (memoCon.memos[memoCon.currentIndex]
+                                        .memos.isNotEmpty) {
+                                      return buildTaskTile(memoCon, index);
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                              )
+                            : Text("등록된 위시가 없습니다.",
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors().mainColor,
+                                ))
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -308,7 +308,6 @@ class _MoreScreenState extends State<MoreScreen> {
                 Flexible(
                   flex: isExpanded ? 0 : 4,
                   child: Container(
-                    color: Colors.blue,
                     child: Center(
                       child: isExpanded
                           ? Container()
@@ -413,9 +412,15 @@ class _MoreScreenState extends State<MoreScreen> {
                 ),
                 // 아래의 Flex
                 Flexible(
-                  flex: isExpanded ? 1 : 4,
+                  flex: isExpanded ? 1 : 8,
                   child: Container(
-                    color: Colors.green,
+                    decoration: BoxDecoration(
+                      color: AppColors().toDoGrey,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      ),
+                    ),
                     child: Column(
                       children: [
                         Padding(
@@ -489,7 +494,7 @@ class _MoreScreenState extends State<MoreScreen> {
                             ? Expanded(
                                 child: ListView.builder(
                                   padding: EdgeInsets.only(
-                                      bottom: isExpanded ? 200 : 230), // 패딩 추가
+                                      bottom: isExpanded ? 00 : 110), // 패딩 추가
                                   itemCount: memoCon.memos.isNotEmpty &&
                                           memoCon.memos[memoCon.currentIndex]
                                               .memos.isNotEmpty
