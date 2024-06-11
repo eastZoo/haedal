@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:get/get.dart' as GET;
 import 'package:haedal/screens/drawer_screen/custom_drawer.dart';
+import 'package:haedal/screens/notification_screen.dart';
 import 'package:haedal/screens/select_photo_options_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
@@ -25,20 +26,20 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   final mapCon = (MapController());
 
-  int _selectedIndex = 1; // 앨범 초기 메인
+  int _selectedIndex = 0; // 앨범 초기 메인
   int _prevSelectedIndex = 1; // 앨범 초기 메인
   final autoSizeGroup = AutoSizeGroup();
   late CalendarController controller;
+  bool _hideBottomNavBar = false;
 
   // 앨범 토글 인덱스 값
   int currentToggleIdx = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
     controller = CalendarController();
     super.initState();
   }
@@ -84,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
         builder: (ScheduleCon) {
           return GET.GetBuilder<AuthController>(
               init: AuthController(),
-              builder: (AuthCon) {
+              builder: (authCon) {
                 return GET.GetBuilder<MapController>(
                     init: MapController(),
                     builder: (mapCon) {
@@ -106,10 +107,29 @@ class _MainScreenState extends State<MainScreen> {
                       return Scaffold(
                         extendBody: true,
                         appBar: CustomAppbar(
-                            title: appBarName[_selectedIndex],
-                            selectedIndex: _selectedIndex,
-                            updateToggleIdx: updateToggleIdx,
-                            currentToggleIdx: currentToggleIdx),
+                          title: appBarName[_selectedIndex],
+                          selectedIndex: _selectedIndex,
+                          updateToggleIdx: updateToggleIdx,
+                          currentToggleIdx: currentToggleIdx,
+                          onNotificationIconTap: () {
+                            setState(() {
+                              _hideBottomNavBar = true;
+                            });
+                            Future.delayed(const Duration(milliseconds: 100),
+                                () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NotificationScreen()),
+                              ).then((_) {
+                                setState(() {
+                                  _hideBottomNavBar = false;
+                                });
+                              });
+                            });
+                          },
+                        ),
                         // drawer: const CustomDrawer(),
                         body: Column(
                           children: [
@@ -129,71 +149,100 @@ class _MainScreenState extends State<MainScreen> {
                             ),
                           ],
                         ),
-                        bottomNavigationBar: SnakeNavigationBar.color(
-                          backgroundColor: AppColors().mainColor,
-
-                          ///configuration for SnakeNavigationBar.color
-                          //선택된 아이콘 커버 색깔
-                          snakeViewColor: AppColors().mainYellowColor,
-                          //선택된 아이콘 색깔
-                          selectedItemColor: AppColors().mainColor,
-                          //선택되지 않은 아이콘 색깔
-                          unselectedItemColor: AppColors().mainYellowColor,
-
-                          ///configuration for SnakeNavigationBar.gradient
-                          //snakeViewGradient: selectedGradient,
-                          //selectedItemGradient: snakeShape == SnakeShape.indicator ? selectedGradient : null,
-                          //unselectedItemGradient: unselectedGradient,
-
-                          showUnselectedLabels: true,
-                          showSelectedLabels: true,
-
-                          currentIndex: _selectedIndex,
-                          onTap: (index) {
-                            setState(() {
-                              _prevSelectedIndex = _selectedIndex;
-                              _selectedIndex = index;
-                            });
-                            if (_prevSelectedIndex == 3 &&
-                                _selectedIndex == 3) {
-                              controller.displayDate = DateTime.now();
-                            }
-                            // 2번 앨범 부분 두번 째 클릭 일때 동작
-                            if (_prevSelectedIndex == 2 &&
-                                _selectedIndex == 2) {
-                              HapticFeedback.lightImpact();
-                              mapCon.setPrevMapController(mapCon.mapController);
-                              _showSelectPhotoOptions();
-                            }
-                          },
-
-                          items: [
-                            const BottomNavigationBarItem(
-                                icon: Icon(Icons.map_outlined, size: 22),
-                                label: '지도'),
-                            const BottomNavigationBarItem(
-                                icon: Icon(Icons.check_box_outlined, size: 22),
-                                label: "메모"),
-                            BottomNavigationBarItem(
-                                icon: Icon(
-                                    _selectedIndex == 2
-                                        ? Icons.add
-                                        : Icons.photo_camera_back_outlined,
-                                    size: 22),
-                                label: '앨범'),
-                            const BottomNavigationBarItem(
-                                icon: Icon(Icons.calendar_month_outlined,
-                                    size: 22),
-                                label: '일정'),
-                            const BottomNavigationBarItem(
-                                icon: Icon(Icons.more_horiz, size: 22),
-                                label: '더보기')
-                          ],
-                          unselectedLabelStyle: const TextStyle(fontSize: 10),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
+                        bottomNavigationBar: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          height: _hideBottomNavBar ? 0 : 100,
+                          child: SnakeNavigationBar.color(
+                            backgroundColor: AppColors().mainColor,
+                            snakeViewColor: AppColors().mainYellowColor,
+                            selectedItemColor: AppColors().mainColor,
+                            unselectedItemColor: AppColors().mainYellowColor,
+                            showUnselectedLabels: true,
+                            showSelectedLabels: true,
+                            currentIndex: _selectedIndex,
+                            onTap: (index) {
+                              setState(() {
+                                _prevSelectedIndex = _selectedIndex;
+                                _selectedIndex = index;
+                              });
+                              if (_prevSelectedIndex == 3 &&
+                                  _selectedIndex == 3) {
+                                controller.displayDate = DateTime.now();
+                              }
+                              if (_prevSelectedIndex == 2 &&
+                                  _selectedIndex == 2) {
+                                HapticFeedback.lightImpact();
+                                mapCon
+                                    .setPrevMapController(mapCon.mapController);
+                                _showSelectPhotoOptions();
+                              }
+                            },
+                            items: [
+                              BottomNavigationBarItem(
+                                icon: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Image.asset('assets/icons/home.png',
+                                      width: 25,
+                                      height: 25,
+                                      color: _selectedIndex == 0
+                                          ? AppColors().mainColor
+                                          : AppColors().mainYellowColor),
+                                ),
+                              ),
+                              BottomNavigationBarItem(
+                                icon: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Image.asset(
+                                      'assets/icons/insert_drive_file.png',
+                                      width: 25,
+                                      height: 25,
+                                      color: _selectedIndex == 1
+                                          ? AppColors().mainColor
+                                          : AppColors().mainYellowColor),
+                                ),
+                              ),
+                              BottomNavigationBarItem(
+                                icon: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: _selectedIndex == 2
+                                      ? const Icon(Icons.add, size: 25)
+                                      : Image.asset(
+                                          'assets/icons/insert_photo.png',
+                                          width: 25,
+                                          height: 25),
+                                ),
+                              ),
+                              const BottomNavigationBarItem(
+                                icon: Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Icon(Icons.calendar_month_outlined,
+                                      size: 25),
+                                ),
+                              ),
+                              BottomNavigationBarItem(
+                                icon: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: CircleAvatar(
+                                    radius: 20, // 프로필 사진의 크기
+                                    foregroundImage: NetworkImage(
+                                        "${authCon.coupleInfo?.me?.profileUrl}"), // 프로필 사진 경로
+                                    backgroundImage: const AssetImage(
+                                        "assets/icons/profile.png"),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            unselectedLabelStyle: const TextStyle(fontSize: 10),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0),
+                              ),
                             ),
                           ),
                         ),

@@ -328,7 +328,6 @@ class _MemoScreenState extends State<MemoScreen> {
         return LoadingOverlay(
           isLoading: memoCon.isLoading.value,
           child: Scaffold(
-            resizeToAvoidBottomInset: false,
             body: Column(
               children: [
                 // 위의 Flex
@@ -433,6 +432,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                     ),
                                   ),
                                 ),
+                                const Gap(20),
                               ],
                             ),
                     ),
@@ -440,7 +440,7 @@ class _MemoScreenState extends State<MemoScreen> {
                 ),
                 // 아래의 Flex
                 Flexible(
-                  flex: isExpanded ? 1 : 7,
+                  flex: isExpanded ? 1 : 6,
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColors().toDoGrey,
@@ -522,7 +522,7 @@ class _MemoScreenState extends State<MemoScreen> {
                             ? Expanded(
                                 child: ListView.builder(
                                   padding: EdgeInsets.only(
-                                      bottom: isExpanded ? 100 : 110), // 패딩 추가
+                                      bottom: isExpanded ? 100 : 50), // 패딩 추가
                                   itemCount: memoCon.memos.isNotEmpty &&
                                           memoCon.memos[memoCon.currentIndex]
                                               .memos.isNotEmpty

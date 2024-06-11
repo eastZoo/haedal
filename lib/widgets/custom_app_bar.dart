@@ -5,19 +5,21 @@ import 'package:toggle_switch/toggle_switch.dart';
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(56);
+
   CustomAppbar(
       {super.key,
       required this.title,
       this.action,
       this.selectedIndex,
       this.updateToggleIdx,
-      this.currentToggleIdx});
+      this.currentToggleIdx,
+      this.onNotificationIconTap});
 
   final Function(int)? updateToggleIdx;
-
   final int? currentToggleIdx;
   final String title;
   final int? selectedIndex;
+  final VoidCallback? onNotificationIconTap;
 
   Widget _appBarTitle(int selectedIndex) {
     switch (selectedIndex) {
@@ -93,6 +95,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget? action;
+
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -100,8 +103,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         leadingWidth: 130,
         leading: Padding(
-          padding: const EdgeInsets.fromLTRB(
-              20, 0, 0, 0), // 아이콘 주위에 패딩을 추가하여 여백을 만듭니다.
+          padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
           child: Image.asset(
             'assets/icons/logo.png',
           ), // 로고 아이콘 경로
@@ -111,29 +113,34 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
         surfaceTintColor: AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
         centerTitle: true,
         actions: [
-          Stack(children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-              child: Image.asset(
-                "assets/icons/notice.png",
-                width: 25,
-              ),
-            ),
-            Positioned(
-              right: 15,
-              child: CircleAvatar(
-                radius: 8,
-                backgroundColor: AppColors().noticeRed,
-                child: const Text(
-                  '1',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
+          GestureDetector(
+            onTap: onNotificationIconTap,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  child: Image.asset(
+                    "assets/icons/notice.png",
+                    width: 25,
                   ),
                 ),
-              ),
+                Positioned(
+                  right: 15,
+                  child: CircleAvatar(
+                    radius: 8,
+                    backgroundColor: AppColors().noticeRed,
+                    child: const Text(
+                      '1',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ])
+          )
         ],
       ),
     );
