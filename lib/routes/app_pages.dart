@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:haedal/screens/login_screen.dart';
 import 'package:haedal/screens/main_screen.dart';
+import 'package:haedal/screens/notification_screen.dart';
 import 'package:haedal/screens/register_screen/code_screen.dart';
 import 'package:haedal/screens/register_screen/signup_screen.dart';
 import 'package:haedal/splash.dart';
@@ -32,6 +33,11 @@ class AppPages {
     GetPage(
       name: "/main",
       page: () => const MainScreen(),
+    ),
+    GetPage(
+      name: "/notification",
+      page: () => const NotificationScreen(),
+      transition: Transition.zoom,
     ),
     // GetPage(
     //   name: "/addWalk",

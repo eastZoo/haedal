@@ -349,7 +349,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "Wish List",
+                                        "Luvket List",
                                         style: TextStyle(
                                           fontSize: 20.0,
                                           fontWeight: FontWeight.bold,

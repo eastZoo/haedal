@@ -7,6 +7,7 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors().toDoGrey,
       appBar: AppBar(
         title: Text(
           '알림',
@@ -20,8 +21,60 @@ class NotificationScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: AppColors().darkGreyText),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text('알림 페이지 내용'),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 10, 5, 10),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    // 전체
+
+                    Container(
+                      width: 70,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: AppColors().mainColor,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '전체',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors().white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // 읽지 않음
+                    Container(
+                      width: 80,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: AppColors().darkGrey,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '읽지 않음',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors().white,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
