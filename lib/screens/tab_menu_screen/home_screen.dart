@@ -177,6 +177,8 @@ class _HomeScreenState extends State<HomeScreen> {
           // D-Day 계산 사귄날 ( +1 )
           int dDay = difference.inDays + 1;
 
+          print(authCon.coupleInfo);
+          print("${Endpoints.hostUrl}/${authCon.coupleInfo}");
           return Scaffold(
             body: Stack(
               children: [
@@ -324,9 +326,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: _toggleEmotion1,
                         child: CircleAvatar(
                           radius: 32, // 프로필 사진의 크기
-                          foregroundImage: NetworkImage(
-                              "${authCon.coupleInfo?.me?.profileUrl}"), // 왼쪽 아래 프로필 사진 경로
-
+                          foregroundImage: authCon
+                                      .coupleInfo?.partner?.profileUrl !=
+                                  null
+                              ? NetworkImage(
+                                  "${authCon.coupleInfo?.partner?.profileUrl}")
+                              : null, // 조건에 따라 프로필 사진 경로 설정
                           backgroundImage:
                               const AssetImage("assets/icons/profile.png"),
                         ),
@@ -378,8 +383,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: _toggleEmotion2,
                         child: CircleAvatar(
                           radius: 32, // 프로필 사진의 크기
-                          foregroundImage: NetworkImage(
-                              "${authCon.coupleInfo?.partner?.profileUrl}"), // 오른쪽 아래 프로필 사진 경로
+                          foregroundImage: authCon
+                                      .coupleInfo?.partner?.profileUrl !=
+                                  null
+                              ? NetworkImage(
+                                  "${authCon.coupleInfo?.partner?.profileUrl}")
+                              : null, // 조건에 따라 프로필 사진 경로 설정
+
                           backgroundImage:
                               const AssetImage("assets/icons/profile.png"),
                         ),

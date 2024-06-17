@@ -18,4 +18,5 @@ class Endpoints {
   static String get locationUrl => "$hostUrl/location";
   static String get caledarUrl => "$hostUrl/calendar";
   static String get memoUrl => "$hostUrl/memo";
+  static String get alarmUrl => "$hostUrl/alarm-history";
 }

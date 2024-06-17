@@ -106,6 +106,7 @@ class AuthController extends GetxController {
       if (res["data"]["success"]) {
         // 로그인 후 응답으로 부터 토큰 저장
         storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+        storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
 
         connectState = RxInt(res["data"]["connectState"]);
 
@@ -152,6 +153,7 @@ class AuthController extends GetxController {
       if (res["data"]["success"]) {
         // 로그인 후 응답으로 부터 토큰 저장
         storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+        storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
 
         connectState = RxInt(res["data"]["connectState"]);
 

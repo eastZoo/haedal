@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:get/get.dart' as GET;
 import 'package:haedal/screens/drawer_screen/custom_drawer.dart';
-import 'package:haedal/screens/notification_screen.dart';
+import 'package:haedal/screens/alarm_screen.dart';
 import 'package:haedal/screens/select_photo_options_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/album_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/calender_screen.dart';
@@ -120,8 +120,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const NotificationScreen()),
+                                    builder: (context) => const AlarmScreen()),
                               ).then((_) {
                                 setState(() {
                                   _hideBottomNavBar = false;
