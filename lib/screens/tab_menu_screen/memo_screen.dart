@@ -108,7 +108,7 @@ class _MemoScreenState extends State<MemoScreen> {
 
         // 메모 추가 모달
         Future<void> showAddMemoModal() async {
-          await showModalBottomSheet(
+          var result = await showModalBottomSheet(
             context: context,
             isScrollControlled: true,
             shape: const RoundedRectangleBorder(
@@ -131,11 +131,11 @@ class _MemoScreenState extends State<MemoScreen> {
               );
             },
           );
-          Timer(const Duration(seconds: 300), () {
-            if (mounted) {
-              pageController.jumpToPage(memoCon.currentIndex);
-            }
-          });
+
+          // AddMemoCategoryScreen 에서 true 반환시 페이지 이동
+          if (result != null && result == true) {
+            pageController.jumpToPage(memoCon.currentIndex); // 모달이 닫힌 후 페이지 이동
+          }
         }
 
         //  메모 카테고리 카드 위젯
@@ -386,6 +386,7 @@ class _MemoScreenState extends State<MemoScreen> {
                                   child: PageView.builder(
                                     controller: pageController,
                                     onPageChanged: (index) {
+                                      print(index);
                                       if (index != memoCon.memos.length) {
                                         memoCon.currentIndex = index;
 

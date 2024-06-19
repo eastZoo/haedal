@@ -11,5 +11,5 @@ String convertToKoreanTime(String dateTimeString) {
 
   // 원하는 포맷으로 변환
   DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
-  return dateFormat.format(koreanDateTime);
+  return dateFormat.format(utcDateTime);
 }

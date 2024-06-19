@@ -222,16 +222,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                       size: 25),
                                 ),
                               ),
-                              BottomNavigationBarItem(
+                              const BottomNavigationBarItem(
                                 icon: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 8.0),
                                   child: CircleAvatar(
                                     radius: 20, // 프로필 사진의 크기
-                                    foregroundImage: NetworkImage(
-                                        "${authCon.coupleInfo?.me?.profileUrl}"), // 프로필 사진 경로
-                                    backgroundImage: const AssetImage(
-                                        "assets/icons/profile.png"),
+                                    // foregroundImage: NetworkImage(
+                                    //     "${authCon.coupleInfo?.me?.profileUrl}"), // 프로필 사진 경로
+                                    backgroundImage:
+                                        AssetImage("assets/icons/profile.png"),
                                   ),
                                 ),
                               ),

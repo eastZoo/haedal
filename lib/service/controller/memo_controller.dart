@@ -31,7 +31,7 @@ class MemoController extends GetxController {
 
     if (memoData["data"].length != 0) {
       List<dynamic> list = memoData["data"];
-      print(list);
+
       memos.assignAll(list.map<Memo>((item) => Memo.fromJson(item)).toList());
     }
 
@@ -68,7 +68,6 @@ class MemoController extends GetxController {
       var res = await MemoProvider().updateMemoItem(data);
       var isSuccess = res["data"]["success"];
 
-      print("  String errorMsg = " "; $isSuccess");
       if (isSuccess == true) {
         await _getMemoData();
         return isSuccess;
@@ -91,7 +90,7 @@ class MemoController extends GetxController {
       var res = await MemoProvider().createMemo(data);
       var isSuccess = res["success"];
       if (isSuccess == true) {
-        await _getMemoData();
+        await _getMemoData(); // 리패칭
         return isSuccess;
       } else {
         return false;
@@ -111,6 +110,7 @@ class MemoController extends GetxController {
       var res = await MemoProvider().getDetailMemo(id);
       if (res["data"].length != 0) {
         currentMemo = Memo.fromJson(res["data"]["currentMemo"][0]);
+        update();
       }
 
       return true;

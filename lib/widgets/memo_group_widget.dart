@@ -66,11 +66,8 @@ class MemoGroupWidget extends StatelessWidget {
                               onTap: () async {
                                 var result = await memoCon
                                     .getDetailMemoData(memoCon.memos[i].id!);
-                                print(result);
-                                if (result) {
-                                  print("ININ OGOGOG");
-                                  // ignore: use_build_context_synchronously
 
+                                if (result) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -119,7 +116,7 @@ class MemoGroupWidget extends StatelessWidget {
                                               size: 18,
                                             ),
                                             Text(
-                                              "0/${memoCon.memos[i].memos!.length} 완료",
+                                              "0/${memoCon.memos[i].memos.length} 완료",
                                               style: const TextStyle(
                                                 fontSize: 11,
                                                 color: Colors.black,
@@ -133,18 +130,18 @@ class MemoGroupWidget extends StatelessWidget {
                                     const Gap(6),
                                     // 메모가 한개 이상일 때
 
-                                    memoCon.memos[i].memos!.isNotEmpty
+                                    memoCon.memos[i].memos.isNotEmpty
                                         ? Column(
                                             children: [
                                               for (int j = 0;
                                                   j <
-                                                      memoCon.memos[i].memos!
+                                                      memoCon.memos[i].memos
                                                           .length;
                                                   j++)
                                                 Container(
                                                   child: MemoBoxItemWidget(
                                                       memos: memoCon
-                                                          .memos[i].memos?[j]),
+                                                          .memos[i].memos[j]),
                                                 ),
                                             ],
                                           )

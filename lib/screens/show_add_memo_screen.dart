@@ -64,15 +64,15 @@ class _ShowAddMemoScreenState extends State<ShowAddMemoScreen> {
               ),
             ),
             const Center(
-              child: Text("투두 카테고리 추가"),
+              child: Text("럽킷 추가"),
             ),
             const Gap(12),
             Expanded(
               child: ListView(
                 children: [
                   LabelTextField(
-                    label: '카테고리',
-                    hintText: "카테고리 이름",
+                    label: '할일',
+                    hintText: "할일을 입력해주세요.",
                     controller: memoTextController,
                     fillColor: AppColors().toDoGrey,
                   ),
@@ -88,13 +88,12 @@ class _ShowAddMemoScreenState extends State<ShowAddMemoScreen> {
 
                       var dataSource = {
                         "memo": memoTextController.text,
-                        "categoryId": memoCon.currentMemo?.id
+                        "categoryId": memoCon.memos[memoCon.currentIndex].id
                       };
 
                       var res = await memoCon.createMemo(dataSource);
 
                       if (res) {
-                        memoCon.reload();
                         Navigator.pop(context, true);
                       }
                     },

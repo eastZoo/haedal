@@ -176,9 +176,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // D-Day 계산 사귄날 ( +1 )
           int dDay = difference.inDays + 1;
-
-          print(authCon.coupleInfo);
-          print("${Endpoints.hostUrl}/${authCon.coupleInfo}");
           return Scaffold(
             body: Stack(
               children: [
