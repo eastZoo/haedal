@@ -33,4 +33,13 @@ class AlarmController extends GetxController {
     update();
     isLoading.value = false;
   }
+
+  /// 알림 읽음 처리
+  /// [alarmId] 알림 아이디
+  readAlarm(String alarmId) async {
+    var res = await AlarmProvider().readAlarm(alarmId);
+    if (res["data"]["success"]) {
+      _getNotiData();
+    }
+  }
 }

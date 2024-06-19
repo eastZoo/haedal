@@ -6,4 +6,10 @@ class AlarmProvider {
   getAlarmList() async {
     return await ApiRequest(url: Endpoints.alarmUrl).asyncGet();
   }
+
+  // 알람 읽음 처리
+  readAlarm(String alarmId) async {
+    return await ApiRequest(url: "${Endpoints.alarmUrl}/read/$alarmId")
+        .asyncGet();
+  }
 }

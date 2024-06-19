@@ -1,7 +1,7 @@
 import 'package:haedal/models/couple_info.dart';
 
 class AlarmHistory {
-  final int id;
+  final String id;
   final String alarmId;
   final String type;
   final int? picQty;

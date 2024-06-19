@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -220,6 +221,9 @@ class AuthController extends GetxController {
     // 토큰이 있을때만 연결상태 GET API 실행
     if (token != null) {
       var res = await AuthProvider().getConnectState();
+      if (res["data"] == 3) {
+        return Navigator.pushNamed(Get.context!, '/home');
+      }
       print(res);
       print("getConnectState : ${res["data"]}");
       if (res["data"] == "false") {

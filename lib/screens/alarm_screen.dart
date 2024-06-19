@@ -43,59 +43,65 @@ class AlarmScreen extends StatelessWidget {
         print("qeweqwe ${alarmCon.alarmList}");
         // 할일 타일
         Widget buildTaskTile(int index) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.r),
-              color: AppColors().white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1), // 그림자 색상
-                  spreadRadius: 1, // 그림자 확산 반경
-                  blurRadius: 1, // 그림자 흐림 정도
-                  offset: const Offset(0, 1.5), // 그림자 위치 (x, y)
-                ),
-              ],
-            ),
+          return GestureDetector(
+            onTap: () {
+              print("알람 읽음!!!!!!!!");
+              alarmCon.readAlarm(alarmCon.alarmList[index].id);
+            },
             child: Container(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 45.w,
-                    height: 45.h,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: CircleAvatar(
-                        foregroundImage: alarmCon
-                                    .alarmList[index].user?.profileUrl !=
-                                null
-                            ? NetworkImage(
-                                "${alarmCon.alarmList[index].user?.profileUrl}")
-                            : null, // 조건에 따라 프로필 사진 경로 설정
-                        backgroundImage:
-                            const AssetImage("assets/icons/profile.png"),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  // 프로필 사진 옆 텍스트
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text:
-                              AlarmCategoryTranslate(alarmCon.alarmList[index]),
-                        ),
-                        Text(
-                          timeAgo(
-                              alarmCon.alarmList[index].createdAt.toString()),
-                        ),
-                      ],
-                    ),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.r),
+                color: AppColors().white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1), // 그림자 색상
+                    spreadRadius: 1, // 그림자 확산 반경
+                    blurRadius: 1, // 그림자 흐림 정도
+                    offset: const Offset(0, 1.5), // 그림자 위치 (x, y)
                   ),
                 ],
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 45.w,
+                      height: 45.h,
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: CircleAvatar(
+                          foregroundImage: alarmCon
+                                      .alarmList[index].user?.profileUrl !=
+                                  null
+                              ? NetworkImage(
+                                  "${alarmCon.alarmList[index].user?.profileUrl}")
+                              : null, // 조건에 따라 프로필 사진 경로 설정
+                          backgroundImage:
+                              const AssetImage("assets/icons/profile.png"),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    // 프로필 사진 옆 텍스트
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: AlarmCategoryTranslate(
+                                alarmCon.alarmList[index]),
+                          ),
+                          Text(
+                            timeAgo(
+                                alarmCon.alarmList[index].createdAt.toString()),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
