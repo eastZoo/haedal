@@ -6,6 +6,7 @@ class AlarmHistory {
   final String type;
   final int? picQty;
   final String content;
+  final String? sub_content;
   final String crud;
   final String userId;
   final String coupleId;
@@ -19,6 +20,7 @@ class AlarmHistory {
     required this.type,
     this.picQty,
     required this.content,
+    this.sub_content,
     required this.crud,
     required this.userId,
     required this.coupleId,
@@ -34,6 +36,8 @@ class AlarmHistory {
       type: json['type'],
       picQty: json['pic_qty'] != null ? json['pic_qty'] as int : null,
       content: json['content'],
+      sub_content:
+          json['sub_content'] != null ? json['sub_content'] as String : null,
       crud: json['crud'],
       userId: json['userId'],
       coupleId: json['coupleId'],

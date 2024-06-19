@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import 'package:haedal/models/alarm_history.dart';
 import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/styles/colors.dart';
+import 'package:haedal/utils/alarmCategoryTranslate.dart';
 import 'package:haedal/utils/toast.dart';
 
 class AlarmScreen extends StatelessWidget {
@@ -14,8 +16,12 @@ class AlarmScreen extends StatelessWidget {
     return GetBuilder<AlarmController>(
       init: AlarmController(),
       builder: (alarmCon) {
+        // 시간 변환 함수
         String timeAgo(String dateTimeString) {
           final dateTime = DateTime.parse(dateTimeString);
+
+          print(dateTime);
+
           final now = DateTime.now();
           final difference = now.difference(dateTime);
 
@@ -38,9 +44,9 @@ class AlarmScreen extends StatelessWidget {
         // 할일 타일
         Widget buildTaskTile(int index) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.0),
+              borderRadius: BorderRadius.circular(4.r),
               color: AppColors().white,
               boxShadow: [
                 BoxShadow(
@@ -52,13 +58,12 @@ class AlarmScreen extends StatelessWidget {
               ],
             ),
             child: Container(
-              height: 60.h,
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
                   SizedBox(
-                    width: 40.w,
-                    height: 40.h,
+                    width: 45.w,
+                    height: 45.h,
                     child: GestureDetector(
                       onTap: () {},
                       child: CircleAvatar(
@@ -74,13 +79,21 @@ class AlarmScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Column(
-                    children: [
-                      Text(
-                          '${alarmCon.alarmList[index].user?.name} 님이 ${alarmCon.alarmList[index].type}를 ${alarmCon.alarmList[index].crud}'),
-                      Text(timeAgo(
-                          alarmCon.alarmList[index].createdAt.toString())),
-                    ],
+                  // 프로필 사진 옆 텍스트
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text:
+                              AlarmCategoryTranslate(alarmCon.alarmList[index]),
+                        ),
+                        Text(
+                          timeAgo(
+                              alarmCon.alarmList[index].createdAt.toString()),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
