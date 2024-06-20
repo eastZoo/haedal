@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -98,51 +100,57 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(150.0),
-      child: AppBar(
-        leadingWidth: 130,
-        leading: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-          child: Image.asset(
-            'assets/icons/logo.png',
-          ), // 로고 아이콘 경로
-        ),
-        title: _appBarTitle(selectedIndex!),
-        backgroundColor: AppColors().white,
-        surfaceTintColor: AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
-        centerTitle: true,
-        actions: [
-          GestureDetector(
-            onTap: onNotificationIconTap,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                  child: Image.asset(
-                    "assets/icons/notice.png",
-                    width: 25,
-                  ),
-                ),
-                Positioned(
-                  right: 15,
-                  child: CircleAvatar(
-                    radius: 8,
-                    backgroundColor: AppColors().noticeRed,
-                    child: const Text(
-                      '1',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
+    return GetBuilder<AlarmController>(
+        init: AlarmController(),
+        builder: (alarmCon) {
+          return PreferredSize(
+            preferredSize: const Size.fromHeight(150.0),
+            child: AppBar(
+              leadingWidth: 130,
+              leading: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: Image.asset(
+                  'assets/icons/logo.png',
+                ), // 로고 아이콘 경로
+              ),
+              title: _appBarTitle(selectedIndex!),
+              backgroundColor: AppColors().white,
+              surfaceTintColor: AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
+              centerTitle: true,
+              actions: [
+                GestureDetector(
+                  onTap: onNotificationIconTap,
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                        child: Image.asset(
+                          "assets/icons/notice.png",
+                          width: 25,
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        right: 15,
+                        child: CircleAvatar(
+                          radius: 8,
+                          backgroundColor: alarmCon.unreadAlarmCount == 0
+                              ? AppColors().lightGrey
+                              : AppColors().noticeRed,
+                          child: Text(
+                            alarmCon.unreadAlarmCount.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                )
               ],
             ),
-          )
-        ],
-      ),
-    );
+          );
+        });
   }
 }

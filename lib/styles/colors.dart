@@ -25,7 +25,7 @@ class AppColors {
 
   Color noticeRed = const Color.fromARGB(255, 255, 110, 110);
 
-// original color text
+  // original color text
   Color darkGreyText = const Color(0xFF858585);
 
   Color subContainer = const Color(0xFF8085FF);

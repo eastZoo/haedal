@@ -7,6 +7,7 @@ import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/alarmCategoryTranslate.dart';
 import 'package:haedal/utils/toast.dart';
+import 'package:haedal/widgets/triangle_painter_widget.dart';
 
 class AlarmScreen extends StatelessWidget {
   const AlarmScreen({Key? key}) : super(key: key);
@@ -48,62 +49,74 @@ class AlarmScreen extends StatelessWidget {
               print("알람 읽음!!!!!!!!");
               alarmCon.readAlarm(alarmCon.alarmList[index].id);
             },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.r),
-                color: AppColors().white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1), // 그림자 색상
-                    spreadRadius: 1, // 그림자 확산 반경
-                    blurRadius: 1, // 그림자 흐림 정도
-                    offset: const Offset(0, 1.5), // 그림자 위치 (x, y)
-                  ),
-                ],
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 45.w,
-                      height: 45.h,
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: CircleAvatar(
-                          foregroundImage: alarmCon
-                                      .alarmList[index].user?.profileUrl !=
-                                  null
-                              ? NetworkImage(
-                                  "${alarmCon.alarmList[index].user?.profileUrl}")
-                              : null, // 조건에 따라 프로필 사진 경로 설정
-                          backgroundImage:
-                              const AssetImage("assets/icons/profile.png"),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // 프로필 사진 옆 텍스트
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: AlarmCategoryTranslate(
-                                alarmCon.alarmList[index]),
-                          ),
-                          Text(
-                            timeAgo(
-                                alarmCon.alarmList[index].createdAt.toString()),
-                          ),
-                        ],
-                      ),
+            child: Stack(children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4.r),
+                  color: AppColors().white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1), // 그림자 색상
+                      spreadRadius: 1, // 그림자 확산 반경
+                      blurRadius: 1, // 그림자 흐림 정도
+                      offset: const Offset(0, 1.5), // 그림자 위치 (x, y)
                     ),
                   ],
                 ),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 45.w,
+                        height: 45.h,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: CircleAvatar(
+                            foregroundImage: alarmCon
+                                        .alarmList[index].user?.profileUrl !=
+                                    null
+                                ? NetworkImage(
+                                    "${alarmCon.alarmList[index].user?.profileUrl}")
+                                : null, // 조건에 따라 프로필 사진 경로 설정
+                            backgroundImage:
+                                const AssetImage("assets/icons/profile.png"),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // 프로필 사진 옆 텍스트
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: AlarmCategoryTranslate(
+                                  alarmCon.alarmList[index]),
+                            ),
+                            Text(
+                              timeAgo(alarmCon.alarmList[index].createdAt
+                                  .toString()),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              // Conditional red slash in the top-right corner
+              if (alarmCon.alarmList[index].alarmReadStatuses == false)
+                Positioned(
+                  top: 6,
+                  right: 10,
+                  child: CustomPaint(
+                    size: Size(18.w, 18.h), // Width and height of the triangle
+                    painter: TrianglePainter(),
+                  ),
+                ),
+            ]),
           );
         }
 

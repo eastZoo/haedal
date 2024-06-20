@@ -12,4 +12,9 @@ class AlarmProvider {
     return await ApiRequest(url: "${Endpoints.alarmUrl}/read/$alarmId")
         .asyncGet();
   }
+
+// 읽지 않은 알람 갯수 가져오기
+  getUnreadAlarmCount() async {
+    return await ApiRequest(url: "${Endpoints.alarmUrl}/unread-all").asyncGet();
+  }
 }

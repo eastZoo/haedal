@@ -7,6 +7,8 @@ class AlarmController extends GetxController {
   // Noti? currentNoti;
   final isLoading = false.obs;
 
+  int unreadAlarmCount = 0.obs.value;
+
   // int pageNo = 0;
   // int currentIndex = 0;
 
@@ -14,6 +16,7 @@ class AlarmController extends GetxController {
   void onInit() {
     super.onInit();
     _getNotiData();
+    getUnreadAlarmCount();
   }
 
   /// 알림 리스트 가져오기
@@ -41,5 +44,12 @@ class AlarmController extends GetxController {
     if (res["data"]["success"]) {
       _getNotiData();
     }
+  }
+
+  /// 읽지 않은 알림 갯수 가져오기
+  getUnreadAlarmCount() async {
+    var res = await AlarmProvider().getUnreadAlarmCount();
+    unreadAlarmCount = res["data"]["unreadAlarmCount"];
+    update();
   }
 }

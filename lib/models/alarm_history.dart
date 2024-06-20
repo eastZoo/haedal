@@ -13,21 +13,22 @@ class AlarmHistory {
   final DateTime createdAt;
   final DateTime updatedAt;
   final User? user;
+  final bool? alarmReadStatuses;
 
-  AlarmHistory({
-    required this.id,
-    required this.alarmId,
-    required this.type,
-    this.picQty,
-    required this.content,
-    this.sub_content,
-    required this.crud,
-    required this.userId,
-    required this.coupleId,
-    required this.createdAt,
-    required this.updatedAt,
-    this.user,
-  });
+  AlarmHistory(
+      {required this.id,
+      required this.alarmId,
+      required this.type,
+      this.picQty,
+      required this.content,
+      this.sub_content,
+      required this.crud,
+      required this.userId,
+      required this.coupleId,
+      required this.createdAt,
+      required this.updatedAt,
+      this.user,
+      this.alarmReadStatuses});
 
   factory AlarmHistory.fromJson(Map<String, dynamic> json) {
     return AlarmHistory(
@@ -44,6 +45,9 @@ class AlarmHistory {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       user: json['user'] != null ? User.fromJson(json['user']) : null,
+      alarmReadStatuses: json['alarmReadStatuses'] != null
+          ? json['alarmReadStatuses'] as bool
+          : null,
     );
   }
 }

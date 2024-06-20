@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:haedal/models/alarm_history.dart';
+import 'package:haedal/styles/colors.dart';
 
 // 카테고리별 알람 메시지 변환 함수
 TextSpan AlarmCategoryTranslate(AlarmHistory alarm) {
@@ -37,9 +38,9 @@ TextSpan AlarmCategoryTranslate(AlarmHistory alarm) {
           ),
           TextSpan(
             text: '${alarm.picQty}',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.red,
+              color: AppColors().mainYellowColor,
             ),
           ),
           const TextSpan(
@@ -84,9 +85,9 @@ TextSpan AlarmCategoryTranslate(AlarmHistory alarm) {
           ),
           TextSpan(
             text: alarm.sub_content,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.red,
+              color: AppColors().mainColor,
             ),
           ),
           const TextSpan(
@@ -156,7 +157,7 @@ TextSpan AlarmCategoryTranslate(AlarmHistory alarm) {
             ),
           ),
           const TextSpan(
-            text: '캘린더에 ',
+            text: '🗓️캘린더에 ',
             style: TextStyle(
               fontWeight: FontWeight.normal,
               color: Colors.black,
@@ -165,8 +166,8 @@ TextSpan AlarmCategoryTranslate(AlarmHistory alarm) {
           TextSpan(
             text: alarm.sub_content,
             style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
             ),
           ),
           const TextSpan(
@@ -191,6 +192,14 @@ TextSpan AlarmCategoryTranslate(AlarmHistory alarm) {
             ),
           ),
         ],
+      );
+    case 'event':
+      return const TextSpan(
+        text: '이벤트',
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
+        ),
       );
     default:
       return const TextSpan(
