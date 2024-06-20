@@ -406,6 +406,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
+                      Positioned(
+                        top: 20,
+                        bottom: 120,
+                        child: GestureDetector(
+                          onTap: () {
+                            showBackgroundDialog(context);
+                          },
+                          child: Container(
+                            width: 80, // 원의 너비
+                            height: 40, // 원의 높이
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
+                            ),
+                            alignment: Alignment.center,
+                            child: Image.asset("assets/icons/camera_alt.png",
+                                width: 24),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
