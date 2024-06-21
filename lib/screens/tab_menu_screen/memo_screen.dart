@@ -64,18 +64,6 @@ class _MemoScreenState extends State<MemoScreen> {
             setState(() {
               isExpanded = !isExpanded;
             });
-            // 2초 후에 delayedChange 값 변경
-            Timer(const Duration(seconds: 2), () {
-              if (mounted) {
-                setState(() {
-                  delayedChange = !delayedChange;
-                });
-              }
-            });
-            if (mounted) {
-              print("currentIndex ${memoCon.currentIndex}");
-              pageController.jumpToPage(memoCon.currentIndex);
-            }
           }
         }
 

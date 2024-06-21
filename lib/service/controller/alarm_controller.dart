@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/alarm_history.dart';
 import 'package:haedal/service/provider/alarm_provider.dart';
@@ -13,10 +14,15 @@ class AlarmController extends GetxController {
   // int currentIndex = 0;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    _getNotiData();
-    getUnreadAlarmCount();
+    const storage = FlutterSecureStorage();
+    var token = await storage.read(key: 'accessToken');
+
+    if (token != null) {
+      _getNotiData();
+      getUnreadAlarmCount();
+    }
   }
 
   /// 알림 리스트 가져오기

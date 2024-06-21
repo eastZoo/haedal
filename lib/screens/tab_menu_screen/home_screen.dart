@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:haedal/service/controller/auth_controller.dart';
@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:speech_balloon/speech_balloon.dart';
 import 'package:path/path.dart' hide context;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,10 +25,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final authCon = Get.put(AuthController());
-
   bool _showEmotion1 = false;
   bool _showEmotion2 = false;
   File? _backgroundImage;
+
+  Offset _itemOffset = const Offset(100, 100);
 
   void _toggleEmotion1() {
     setState(() {
@@ -55,13 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    print(image);
     if (image != null) {
       File? croppedImage = await _cropImage(File(image.path));
       if (croppedImage != null) {
         Map<String, dynamic> requestData = {};
         var images = [];
-        print("croppedImage.path: ${croppedImage.path}");
         images.add(await MultipartFile.fromFile(
           croppedImage.path,
           filename: basename(croppedImage.path),
@@ -72,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
         var res = await authCon.uploadHomeImage(requestData);
 
         if (res) {
-          print("이미지 업로드 성공");
           await authCon.getUserInfo();
         }
       }
@@ -160,6 +159,29 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPosition();
+  }
+
+  Future<void> _loadPosition() async {
+    final prefs = await SharedPreferences.getInstance();
+    final double? dx = prefs.getDouble('item_dx');
+    final double? dy = prefs.getDouble('item_dy');
+    if (dx != null && dy != null) {
+      setState(() {
+        _itemOffset = Offset(dx, dy);
+      });
+    }
+  }
+
+  Future<void> _savePosition() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('item_dx', _itemOffset.dx);
+    await prefs.setDouble('item_dy', _itemOffset.dy);
   }
 
   @override
@@ -406,27 +428,66 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      Positioned(
-                        top: 20,
-                        bottom: 120,
-                        child: GestureDetector(
-                          onTap: () {
-                            showBackgroundDialog(context);
-                          },
-                          child: Container(
-                            width: 80, // 원의 너비
-                            height: 40, // 원의 높이
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
-                            ),
-                            alignment: Alignment.center,
-                            child: Image.asset("assets/icons/camera_alt.png",
-                                width: 24),
-                          ),
-                        ),
-                      ),
                     ],
+                  ),
+                ),
+                // 드래그 앤 드롭 가능한 요소
+                Positioned(
+                  left: _itemOffset.dx.w,
+                  top: _itemOffset.dy.h,
+                  child: Draggable(
+                    feedback: Container(
+                      width: 100,
+                      height: 100,
+                      color: AppColors().mainColor,
+                    ),
+                    childWhenDragging: Container(),
+                    onDragEnd: (details) {
+                      setState(() {
+                        _itemOffset = details.offset;
+                      });
+                      _savePosition();
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      color: AppColors().mainColor,
+                      child: const Center(child: Text("Drag me")),
+                    ),
+                  ),
+                ),
+                // 편집 버튼
+                Positioned(
+                  bottom: 50,
+                  left: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SizedBox(
+                            height: 200,
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: const Text('Add Item'),
+                                  onTap: () {
+                                    setState(() {
+                                      _itemOffset = const Offset(100, 100);
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: const Text(
+                      "Edit",
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 ),
               ],
