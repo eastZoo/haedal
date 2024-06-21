@@ -33,14 +33,18 @@ class AuthController extends GetxController {
     const storage = FlutterSecureStorage();
     var token = await storage.read(key: 'accessToken');
     print(token);
-    var result = await getConnectState();
-    // 상태코드 1번 회원가입 절차중 초대코드( 타이머 작동 ) 입력 단계
-    if (result == 1) {
-      await getInviteCodeInfo();
-    }
-    // 토큰이 없다면 사용자 프로필 얻어오지 않는다
-    if (token != null) {
-      getUserInfo();
+    try {
+      var result = await getConnectState();
+      // 상태코드 1번 회원가입 절차중 초대코드( 타이머 작동 ) 입력 단계
+      if (result == 1) {
+        await getInviteCodeInfo();
+      }
+      // 토큰이 없다면 사용자 프로필 얻어오지 않는다
+      if (token != null) {
+        getUserInfo();
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -216,22 +220,26 @@ class AuthController extends GetxController {
 
   // 현재 커플과 연결 상태 (1: 승인코드 미입력 , 2:개인정보 미입력, 3:모두입력)
   getConnectState() async {
-    const storage = FlutterSecureStorage();
-    var token = await storage.read(key: "accessToken");
-    // 토큰이 있을때만 연결상태 GET API 실행
-    if (token != null) {
-      var res = await AuthProvider().getConnectState();
-      if (res["data"] == 3) {
-        return Navigator.pushNamed(Get.context!, '/home');
+    try {
+      const storage = FlutterSecureStorage();
+      var token = await storage.read(key: "accessToken");
+      // 토큰이 있을때만 연결상태 GET API 실행
+      if (token != null) {
+        var res = await AuthProvider().getConnectState();
+        if (res["data"] == 3) {
+          return Navigator.pushNamed(Get.context!, '/home');
+        }
+        print(res);
+        print("getConnectState : ${res["data"]}");
+        if (res["data"] == "false") {
+          return await logOut();
+        }
+        connectState = RxInt(int.parse(res["data"]));
+        update();
+        return int.parse(res["data"]);
       }
-      print(res);
-      print("getConnectState : ${res["data"]}");
-      if (res["data"] == "false") {
-        return await logOut();
-      }
-      connectState = RxInt(int.parse(res["data"]));
-      update();
-      return int.parse(res["data"]);
+    } catch (e) {
+      print(e);
     }
   }
 

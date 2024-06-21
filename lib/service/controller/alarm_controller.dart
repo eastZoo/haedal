@@ -29,33 +29,45 @@ class AlarmController extends GetxController {
   _getNotiData() async {
     // notis.clear();
     isLoading.value = true;
-    var notiData = await AlarmProvider().getAlarmList();
+    try {
+      var notiData = await AlarmProvider().getAlarmList();
 
-    if (notiData["data"]["success"]) {
-      List<dynamic> list = notiData["data"]["alarmHistoryList"];
+      if (notiData["data"]["success"]) {
+        List<dynamic> list = notiData["data"]["alarmHistoryList"];
 
-      alarmList
-          .assignAll(list.map((item) => AlarmHistory.fromJson(item)).toList());
+        alarmList.assignAll(
+            list.map((item) => AlarmHistory.fromJson(item)).toList());
+      }
+      update();
+      isLoading.value = false;
+    } catch (e) {
+      print(e);
+
+      isLoading.value = false;
     }
-
-    print("213123 , $alarmList");
-    update();
-    isLoading.value = false;
   }
 
   /// 알림 읽음 처리
   /// [alarmId] 알림 아이디
   readAlarm(String alarmId) async {
-    var res = await AlarmProvider().readAlarm(alarmId);
-    if (res["data"]["success"]) {
-      _getNotiData();
+    try {
+      var res = await AlarmProvider().readAlarm(alarmId);
+      if (res["data"]["success"]) {
+        _getNotiData();
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   /// 읽지 않은 알림 갯수 가져오기
   getUnreadAlarmCount() async {
-    var res = await AlarmProvider().getUnreadAlarmCount();
-    unreadAlarmCount = res["data"]["unreadAlarmCount"];
-    update();
+    try {
+      var res = await AlarmProvider().getUnreadAlarmCount();
+      unreadAlarmCount = res["data"]["unreadAlarmCount"];
+      update();
+    } catch (e) {
+      print(e);
+    }
   }
 }
