@@ -12,6 +12,7 @@ import 'package:haedal/service/endpoints.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/home_widget.dart';
+import 'package:haedal/widgets/home_widget_modal.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -358,41 +359,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () async {
                             homeCon.onEditButtonPressed();
                             homeCon.isEditMode.value = true;
-                            var result = await showModalBottomSheet(
+                            await showModalBottomSheet(
                               context: context,
                               barrierColor: Colors.transparent,
                               backgroundColor: Colors.black.withOpacity(0.5),
                               builder: (BuildContext context) {
-                                return SizedBox(
-                                  height: 390.h,
-                                  child: Column(
-                                    children: [
-                                      const Gap(10),
-                                      Center(
-                                        child: Container(
-                                          width: 50,
-                                          height: 3,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(2.5),
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      ListTile(
-                                        title: const Text('Add Item'),
-                                        onTap: () {
-                                          setState(() {
-                                            homeCon.isElementVisible.value =
-                                                true;
-                                            homeCon.elementOffset =
-                                                RxOffset(100, 100);
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
+                                return HomeWidgetModal();
                               },
                             );
                           },
