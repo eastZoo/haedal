@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,9 +7,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/service/controller/home_controller.dart';
 import 'package:haedal/service/endpoints.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
+import 'package:haedal/widgets/home_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -29,7 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _showEmotion2 = false;
   File? _backgroundImage;
 
-  Offset _itemOffset = const Offset(100, 100);
+  bool isClick = false;
+
+  // GlobalKey to track the position of the draggable widget
+  final GlobalKey _dragKey = GlobalKey();
+  final Offset _position =
+      const Offset(100.0, 100.0); // Initial position of the draggable widget
 
   void _toggleEmotion1() {
     setState(() {
@@ -40,6 +48,44 @@ class _HomeScreenState extends State<HomeScreen> {
         _showEmotion1 = false;
       });
     });
+  }
+
+// 배경화면 설정 모달
+  void showBackgroundDialog(BuildContext context) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('메인 배경 설정'),
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _pickImage();
+            },
+            child: const Text(
+              '앨범에서 사진/동영상 선택',
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _backgroundImage = null;
+              });
+            },
+            child: const Text(
+              '기본 이미지',
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('취소'),
+        ),
+      ),
+    );
   }
 
   void _toggleEmotion2() {
@@ -124,375 +170,248 @@ class _HomeScreenState extends State<HomeScreen> {
     return null;
   }
 
-  void showBackgroundDialog(BuildContext context) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: const Text('메인 배경 설정'),
-        actions: <CupertinoActionSheetAction>[
-          CupertinoActionSheetAction(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _pickImage();
-            },
-            child: const Text(
-              '앨범에서 사진/동영상 선택',
-            ),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _backgroundImage = null;
-              });
-            },
-            child: const Text(
-              '기본 이미지',
-            ),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('취소'),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPosition();
-  }
-
-  Future<void> _loadPosition() async {
-    final prefs = await SharedPreferences.getInstance();
-    final double? dx = prefs.getDouble('item_dx');
-    final double? dy = prefs.getDouble('item_dy');
-    if (dx != null && dy != null) {
-      setState(() {
-        _itemOffset = Offset(dx, dy);
-      });
-    }
-  }
-
-  Future<void> _savePosition() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('item_dx', _itemOffset.dx);
-    await prefs.setDouble('item_dy', _itemOffset.dy);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AuthController>(
-        init: AuthController(),
-        builder: (authCon) {
-          // 현재 날짜
-          DateTime currentDate = DateTime.now();
-
-          // 두 날짜 사이의 차이 계산
-          Duration difference = currentDate.difference(
-              authCon.coupleInfo?.coupleData?.firstDay ?? DateTime.now());
-
-          // D-Day 계산 사귄날 ( +1 )
-          int dDay = difference.inDays + 1;
-          return Scaffold(
-            body: Stack(
-              children: [
-                // 배경 이미지 추가
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "${Endpoints.hostUrl}/${authCon.coupleInfo?.coupleData?.homeProfileUrl}"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                // 오른쪽 위 날짜 디데이 ( 날짜 컴포넌트화 시급 중복 너무 많아 )
-                Positioned(
-                  top: 20,
-                  right: 20,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+    return GetBuilder<HomeController>(
+        init: HomeController(),
+        builder: (homeCon) {
+          return GetBuilder<AuthController>(
+              init: AuthController(),
+              builder: (authCon) {
+                return Scaffold(
+                  body: Stack(
                     children: [
-                      Text(
-                          DateFormat('yyyy-MM-dd').format(
-                              authCon.coupleInfo?.coupleData?.firstDay ??
-                                  DateTime.now()), // 첫 만남 날짜
-                          // formattedDate 대신 임시 문자열 사용
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 9.0,
-                                color: Colors.black54,
-                                offset: Offset(1.0, 1.5),
+                      // 배경 이미지 추가
+                      Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                "${Endpoints.hostUrl}/${authCon.coupleInfo?.coupleData?.homeProfileUrl}"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      // 왼쪽 위 배경 변경 아이콘
+                      Positioned(
+                        bottom: 70,
+                        left: 120,
+                        child: GestureDetector(
+                          onTap: () {
+                            showBackgroundDialog(context);
+                          },
+                          child: Container(
+                            width: 40, // 원의 너비
+                            height: 40, // 원의 높이
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
+                            ),
+                            alignment: Alignment.center,
+                            child: Image.asset("assets/icons/camera_alt.png",
+                                width: 24),
+                          ),
+                        ),
+                      ),
+                      //이모션 편집 버튼
+                      Positioned(
+                        bottom: 70,
+                        left: 240,
+                        child: GestureDetector(
+                          onTap: () {
+                            showBackgroundDialog(context);
+                          },
+                          child: Container(
+                            width: 40, // 원의 너비
+                            height: 40, // 원의 높이
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
+                            ),
+                            alignment: Alignment.center,
+                            child: Image.asset("assets/icons/emotion.png",
+                                width: 24),
+                          ),
+                        ),
+                      ),
+                      // 왼쪽 아래 프로필 사진
+                      Positioned(
+                        bottom: 100,
+                        left: 20,
+                        child: Column(
+                          children: [
+                            AnimatedOpacity(
+                              opacity: _showEmotion1 ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 500),
+                              child: const SpeechBalloon(
+                                nipLocation: NipLocation.bottom,
+                                borderColor: Colors.white,
+                                height: 60,
+                                width: 60,
+                                borderRadius: 40,
+                                offset: Offset(0, -1),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('😜', style: TextStyle(fontSize: 20)),
+                                  ],
+                                ),
                               ),
-                            ],
-                          )),
-                      Text(
-                        "${dDay.toString()}일",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 40,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 9.0,
-                              color: Colors.black54,
-                              offset: Offset(1.0, 1.5),
+                            ),
+                            const Gap(15),
+                            GestureDetector(
+                              onTap: _toggleEmotion1,
+                              child: CircleAvatar(
+                                radius: 32, // 프로필 사진의 크기
+                                foregroundImage: authCon
+                                            .coupleInfo?.partner?.profileUrl !=
+                                        null
+                                    ? NetworkImage(
+                                        "${authCon.coupleInfo?.partner?.profileUrl}")
+                                    : null, // 조건에 따라 프로필 사진 경로 설정
+                                backgroundImage: const AssetImage(
+                                    "assets/icons/profile.png"),
+                              ),
+                            ),
+                            Text(
+                              authCon.coupleInfo?.me?.name ?? "",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 9.0,
+                                    color: Colors.black54,
+                                    offset: Offset(1.0, 1.5),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            authCon.coupleInfo?.me?.name ?? "",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 9.0,
-                                  color: Colors.black54,
-                                  offset: Offset(1.0, 1.5),
+                      // 오른쪽 아래 프로필 사진
+                      Positioned(
+                        bottom: 100,
+                        right: 20,
+                        child: Column(
+                          children: [
+                            AnimatedOpacity(
+                              opacity: _showEmotion2 ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 500),
+                              child: const SpeechBalloon(
+                                borderColor: Colors.white,
+                                nipLocation: NipLocation.bottom,
+                                height: 60,
+                                width: 60,
+                                borderRadius: 40,
+                                offset: Offset(0, -1),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('😜', style: TextStyle(fontSize: 20)),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          const Icon(Icons.favorite,
-                              color: Colors.white, size: 18),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            authCon.coupleInfo?.partner?.name ?? "",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 9.0,
-                                  color: Colors.black54,
-                                  offset: Offset(1.0, 1.5),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                // 왼쪽 위 배경 변경 아이콘
-                Positioned(
-                  top: 20,
-                  left: 20,
-                  child: GestureDetector(
-                    onTap: () {
-                      showBackgroundDialog(context);
-                    },
-                    child: Container(
-                      width: 40, // 원의 너비
-                      height: 40, // 원의 높이
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(0.4), // 투명도 40%
-                      ),
-                      alignment: Alignment.center,
-                      child:
-                          Image.asset("assets/icons/camera_alt.png", width: 24),
-                    ),
-                  ),
-                ),
-                // 왼쪽 아래 프로필 사진
-                Positioned(
-                  bottom: 120,
-                  left: 20,
-                  child: Column(
-                    children: [
-                      AnimatedOpacity(
-                        opacity: _showEmotion1 ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                        child: const SpeechBalloon(
-                          nipLocation: NipLocation.bottom,
-                          borderColor: Colors.white,
-                          height: 60,
-                          width: 60,
-                          borderRadius: 40,
-                          offset: Offset(0, -1),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('😜', style: TextStyle(fontSize: 20)),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Gap(15),
-                      GestureDetector(
-                        onTap: _toggleEmotion1,
-                        child: CircleAvatar(
-                          radius: 32, // 프로필 사진의 크기
-                          foregroundImage: authCon
-                                      .coupleInfo?.partner?.profileUrl !=
-                                  null
-                              ? NetworkImage(
-                                  "${authCon.coupleInfo?.partner?.profileUrl}")
-                              : null, // 조건에 따라 프로필 사진 경로 설정
-                          backgroundImage:
-                              const AssetImage("assets/icons/profile.png"),
-                        ),
-                      ),
-                      Text(
-                        authCon.coupleInfo?.me?.name ?? "",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 9.0,
-                              color: Colors.black54,
-                              offset: Offset(1.0, 1.5),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // 오른쪽 아래 프로필 사진
-                Positioned(
-                  bottom: 120,
-                  right: 20,
-                  child: Column(
-                    children: [
-                      AnimatedOpacity(
-                        opacity: _showEmotion2 ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                        child: const SpeechBalloon(
-                          borderColor: Colors.white,
-                          nipLocation: NipLocation.bottom,
-                          height: 60,
-                          width: 60,
-                          borderRadius: 40,
-                          offset: Offset(0, -1),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('😜', style: TextStyle(fontSize: 20)),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Gap(15),
-                      GestureDetector(
-                        onTap: _toggleEmotion2,
-                        child: CircleAvatar(
-                          radius: 32, // 프로필 사진의 크기
-                          foregroundImage: authCon
-                                      .coupleInfo?.partner?.profileUrl !=
-                                  null
-                              ? NetworkImage(
-                                  "${authCon.coupleInfo?.partner?.profileUrl}")
-                              : null, // 조건에 따라 프로필 사진 경로 설정
+                            const Gap(15),
+                            GestureDetector(
+                              onTap: _toggleEmotion2,
+                              child: CircleAvatar(
+                                radius: 32, // 프로필 사진의 크기
+                                foregroundImage: authCon
+                                            .coupleInfo?.partner?.profileUrl !=
+                                        null
+                                    ? NetworkImage(
+                                        "${authCon.coupleInfo?.partner?.profileUrl}")
+                                    : null, // 조건에 따라 프로필 사진 경로 설정
 
-                          backgroundImage:
-                              const AssetImage("assets/icons/profile.png"),
-                        ),
-                      ),
-                      Text(
-                        authCon.coupleInfo?.partner?.name ?? "",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 8.0,
-                              color: Colors.black54,
-                              offset: Offset(1.0, 1.5),
+                                backgroundImage: const AssetImage(
+                                    "assets/icons/profile.png"),
+                              ),
+                            ),
+                            Text(
+                              authCon.coupleInfo?.partner?.name ?? "",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 8.0,
+                                    color: Colors.black54,
+                                    offset: Offset(1.0, 1.5),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
+                      // 홈화면 위젯 관리 위젯
+                      const HomeWidget(),
+                      // 편집 버튼
+                      Positioned(
+                        bottom: 70,
+                        left: 180,
+                        child: GestureDetector(
+                          onTap: () async {
+                            homeCon.onEditButtonPressed();
+                            homeCon.isEditMode.value = true;
+                            var result = await showModalBottomSheet(
+                              context: context,
+                              barrierColor: Colors.transparent,
+                              backgroundColor: Colors.black.withOpacity(0.5),
+                              builder: (BuildContext context) {
+                                return SizedBox(
+                                  height: 390.h,
+                                  child: Column(
+                                    children: [
+                                      const Gap(10),
+                                      Center(
+                                        child: Container(
+                                          width: 50,
+                                          height: 3,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(2.5),
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      ListTile(
+                                        title: const Text('Add Item'),
+                                        onTap: () {
+                                          setState(() {
+                                            homeCon.isElementVisible.value =
+                                                true;
+                                            homeCon.elementOffset =
+                                                RxOffset(100, 100);
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            width: 40, // 원의 너비
+                            height: 40, // 원의 높이
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
+                            ),
+                            alignment: Alignment.center,
+                            child: const Icon(Icons.edit, color: Colors.white),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                // 드래그 앤 드롭 가능한 요소
-                Positioned(
-                  left: _itemOffset.dx.w,
-                  top: _itemOffset.dy.h,
-                  child: Draggable(
-                    feedback: Container(
-                      width: 100,
-                      height: 100,
-                      color: AppColors().mainColor,
-                    ),
-                    childWhenDragging: Container(),
-                    onDragEnd: (details) {
-                      setState(() {
-                        _itemOffset = details.offset;
-                      });
-                      _savePosition();
-                    },
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      color: AppColors().mainColor,
-                      child: const Center(child: Text("Drag me")),
-                    ),
-                  ),
-                ),
-                // 편집 버튼
-                Positioned(
-                  bottom: 50,
-                  left: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return SizedBox(
-                            height: 200,
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: const Text('Add Item'),
-                                  onTap: () {
-                                    setState(() {
-                                      _itemOffset = const Offset(100, 100);
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: const Text(
-                      "Edit",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+                );
+              });
         });
   }
 }

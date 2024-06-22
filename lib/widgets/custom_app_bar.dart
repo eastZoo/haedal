@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/alarm_controller.dart';
+import 'package:haedal/service/controller/home_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -100,57 +101,98 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AlarmController>(
-        init: AlarmController(),
-        builder: (alarmCon) {
-          return PreferredSize(
-            preferredSize: const Size.fromHeight(150.0),
-            child: AppBar(
-              leadingWidth: 130,
-              leading: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                child: Image.asset(
-                  'assets/icons/logo.png',
-                ), // 로고 아이콘 경로
-              ),
-              title: _appBarTitle(selectedIndex!),
-              backgroundColor: AppColors().white,
-              surfaceTintColor: AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
-              centerTitle: true,
-              actions: [
-                GestureDetector(
-                  onTap: onNotificationIconTap,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                        child: Image.asset(
-                          "assets/icons/notice.png",
-                          width: 25,
-                        ),
-                      ),
-                      Positioned(
-                        right: 15,
-                        child: CircleAvatar(
-                          radius: 8,
-                          backgroundColor: alarmCon.unreadAlarmCount == 0
-                              ? AppColors().lightGrey
-                              : AppColors().noticeRed,
-                          child: Text(
-                            alarmCon.unreadAlarmCount.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                      ),
+    return GetBuilder<HomeController>(
+        init: HomeController(),
+        builder: (homeCon) {
+          return GetBuilder<AlarmController>(
+              init: AlarmController(),
+              builder: (alarmCon) {
+                return PreferredSize(
+                  preferredSize: const Size.fromHeight(150.0),
+                  child: AppBar(
+                    leadingWidth: 130,
+                    leading: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                      child: Obx(() => homeCon.isEditMode.value
+                          ? GestureDetector(
+                              onTap: () {
+                                homeCon.onCancelButtonPressed();
+                                homeCon.isEditMode.value = false;
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 15, 0, 0),
+                                child: Text(
+                                  '취소',
+                                  style: TextStyle(
+                                      color: AppColors().mainColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            )
+                          : Image.asset(
+                              'assets/icons/logo.png',
+                            )),
+                    ),
+                    title: _appBarTitle(selectedIndex!),
+                    backgroundColor: AppColors().white,
+                    surfaceTintColor:
+                        AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
+                    centerTitle: true,
+                    actions: [
+                      Obx(() => homeCon.isEditMode.value
+                          ? GestureDetector(
+                              onTap: () {
+                                homeCon.isEditMode.value = false;
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                child: Text(
+                                  '저장',
+                                  style: TextStyle(
+                                      color: AppColors().mainColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            )
+                          : GestureDetector(
+                              onTap: onNotificationIconTap,
+                              child: Stack(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                    child: Image.asset(
+                                      "assets/icons/notice.png",
+                                      width: 25,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 15,
+                                    child: CircleAvatar(
+                                      radius: 8,
+                                      backgroundColor:
+                                          alarmCon.unreadAlarmCount == 0
+                                              ? AppColors().lightGrey
+                                              : AppColors().noticeRed,
+                                      child: Text(
+                                        alarmCon.unreadAlarmCount.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ))
                     ],
                   ),
-                )
-              ],
-            ),
-          );
+                );
+              });
         });
   }
 }
