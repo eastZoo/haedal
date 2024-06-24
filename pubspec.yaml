@@ -113,5 +113,13 @@ flutter:
           weight: 700
         - asset: assets/fonts/Pretendard-ExtraBold.ttf
           weight: 800
+    - family: Cafe24Decoshadow
+      fonts:
+        - asset: assets/fonts/Cafe24Decoshadow.ttf
+          weight: 100
+    - family: Cafe24Meongi
+      fonts:
+        - asset: assets/fonts/Cafe24Meongi-W-v1.0.ttf
+          weight: 100
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

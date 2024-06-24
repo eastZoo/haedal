@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haedal/service/controller/home_controller.dart';
 import 'package:haedal/styles/colors.dart';
-import 'package:haedal/widgets/home_widget_sample.dart';
+import 'package:haedal/widgets/home_widget_dday_sample.dart';
+import 'package:haedal/widgets/home_widget_firstday_sample.dart';
 
-class HomeWidgetModal extends StatelessWidget {
-  final homeCon = Get.put(HomeController());
-
-  HomeWidgetModal({
+class HomeWidgetModal extends StatefulWidget {
+  const HomeWidgetModal({
     Key? key,
   }) : super(
           key: key,
         );
+
+  @override
+  State<HomeWidgetModal> createState() => _HomeWidgetModalState();
+}
+
+class _HomeWidgetModalState extends State<HomeWidgetModal> {
+  final homeCon = Get.put(HomeController());
+  ScrollController scrollController = ScrollController();
+
+  String homeWidgetCategory = "firstDay";
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +49,7 @@ class HomeWidgetModal extends StatelessWidget {
                 Expanded(
                   child: GridView.builder(
                     padding: const EdgeInsets.all(10),
+                    controller: scrollController,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, // 3열
@@ -61,10 +72,45 @@ class HomeWidgetModal extends StatelessWidget {
                             color: Colors.black.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: home_widget_sample(index), // index에 따라 위젯 선택
+                          child: homeWidgetCategory == "firstDay"
+                              ? home_widget_firstday_sample(
+                                  index) // 처음 만난날 위젯 샘플
+                              : home_widget_dday_sample(index), // d-day 위젯 샘플
                         ),
                       );
                     },
+                  ),
+                ),
+                // Footer Navigation Bar
+                Container(
+                  height: 60.h,
+                  color: Colors.black.withOpacity(0.5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        icon: Image.asset('assets/icons/firstDay.png',
+                            color: Colors.white, width: 30.w, height: 25.h),
+                        onPressed: () {
+                          scrollController.jumpTo(0);
+                          // D-day 버튼 눌렀을 때 동작
+                          setState(() {
+                            homeWidgetCategory = "firstDay";
+                          });
+                        },
+                      ),
+                      IconButton(
+                        icon: Image.asset('assets/icons/Dday.png',
+                            color: Colors.white, width: 30.w, height: 25.h),
+                        onPressed: () {
+                          scrollController.jumpTo(0);
+                          // D-day 버튼 눌렀을 때 동작
+                          setState(() {
+                            homeWidgetCategory = "D-day";
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],

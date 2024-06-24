@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget home_widget_sample(int index) {
+Widget home_widget_firstday_sample(int index) {
   switch (index) {
     case 0:
       return Padding(
@@ -91,13 +91,37 @@ Widget home_widget_sample(int index) {
       );
     case 1:
       return const Text(
-        'Add Item 2',
-        style: TextStyle(color: Colors.white),
+        "365",
+        style: TextStyle(
+          color: Colors.white,
+          fontFamily: 'Cafe24Decoshadow',
+          fontWeight: FontWeight.w500,
+          fontSize: 55,
+          shadows: [
+            Shadow(
+              blurRadius: 9.0,
+              color: Colors.black54,
+              offset: Offset(1.0, 1.5),
+            ),
+          ],
+        ),
       );
     case 2:
       return const Text(
-        'Add Item 3',
-        style: TextStyle(color: Colors.white),
+        "365",
+        style: TextStyle(
+          color: Colors.white,
+          fontFamily: 'Cafe24Meongi',
+          fontWeight: FontWeight.w500,
+          fontSize: 70,
+          shadows: [
+            Shadow(
+              blurRadius: 9.0,
+              color: Colors.black54,
+              offset: Offset(1.0, 1.5),
+            ),
+          ],
+        ),
       );
     case 3:
       return const Text(
