@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,6 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isClick = false;
 
+  // 이모티콘 피커 관련 변수
+  bool isEmojiPickerVisible = false;
+  String selectedEmoji = '';
+
   // GlobalKey to track the position of the draggable widget
   final GlobalKey _dragKey = GlobalKey();
   final Offset _position =
@@ -48,6 +54,33 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _showEmotion1 = false;
       });
+    });
+  }
+
+// 이모지 피커 온오프 함수
+  void _toggleEmojiPicker() {
+    setState(() {
+      isEmojiPickerVisible = !isEmojiPickerVisible;
+    });
+
+    // Adjust the position based on the Positioned widget
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final RenderBox renderBox =
+          _dragKey.currentContext!.findRenderObject() as RenderBox;
+      final position = renderBox.localToGlobal(Offset.zero);
+      final size = renderBox.size;
+
+      // Example calculation for speech balloon position above the widget
+      final balloonPosition =
+          Offset(position.dx + size.width / 2, position.dy - 20);
+    });
+  }
+
+// 선택한 이모지 담는 함수
+  void _onEmojiSelected(Emoji emoji) {
+    setState(() {
+      selectedEmoji = emoji.emoji;
+      // isEmojiPickerVisible = false; // 선택 후 이모티콘 피커 숨김
     });
   }
 
@@ -222,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('😜', style: TextStyle(fontSize: 20)),
+                                    Text('😜', style: TextStyle(fontSize: 25)),
                                   ],
                                 ),
                               ),
@@ -279,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('😜', style: TextStyle(fontSize: 20)),
+                                    Text('😜', style: TextStyle(fontSize: 25)),
                                   ],
                                 ),
                               ),
@@ -320,6 +353,110 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       // 홈화면 위젯 관리 위젯
                       const HomeWidget(),
+                      // 이모지 선택 시 배경화면 블러처리
+                      isEmojiPickerVisible
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                              ),
+                            )
+                          : Container(),
+                      isEmojiPickerVisible
+                          ? Positioned(
+                              top: 100,
+                              right: 175,
+                              child: Column(
+                                children: [
+                                  SpeechBalloon(
+                                    borderColor: Colors.white,
+                                    nipLocation: NipLocation.bottom,
+                                    height: 60,
+                                    width: 60,
+                                    borderRadius: 40,
+                                    offset: const Offset(0, -1),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(selectedEmoji,
+                                            style:
+                                                const TextStyle(fontSize: 25)),
+                                      ],
+                                    ),
+                                  ),
+                                  const Gap(15),
+                                  GestureDetector(
+                                    onTap: _toggleEmotion2,
+                                    child: CircleAvatar(
+                                      radius: 32, // 프로필 사진의 크기
+                                      foregroundImage: authCon.coupleInfo
+                                                  ?.partner?.profileUrl !=
+                                              null
+                                          ? NetworkImage(
+                                              "${authCon.coupleInfo?.partner?.profileUrl}")
+                                          : null, // 조건에 따라 프로필 사진 경로 설정
+
+                                      backgroundImage: const AssetImage(
+                                          "assets/icons/profile.png"),
+                                    ),
+                                  ),
+                                  Text(
+                                    authCon.coupleInfo?.partner?.name ?? "",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 8.0,
+                                          color: Colors.black54,
+                                          offset: Offset(1.0, 1.5),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      // 이모지 선택 시 이모지 피커 온오프
+                      if (isEmojiPickerVisible)
+                        Positioned(
+                          key: _dragKey,
+                          bottom: 180,
+                          left: 30,
+                          child: SizedBox(
+                            // Adjust the height as per your need
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: SpeechBalloon(
+                                borderRadius: 15,
+                                height: 300,
+                                width: 350,
+                                child: EmojiPicker(
+                                  onEmojiSelected: (category, emoji) {
+                                    _onEmojiSelected(emoji);
+                                  },
+                                  config: const Config(
+                                    height: 100,
+                                    checkPlatformCompatibility: false,
+                                    emojiViewConfig: EmojiViewConfig(
+                                      // Issue: https://github.com/flutter/flutter/issues/28894
+                                      columns: 8,
+                                      emojiSizeMax: 30,
+                                    ),
+                                    swapCategoryAndBottomBar: true,
+                                    skinToneConfig: SkinToneConfig(),
+                                    categoryViewConfig: CategoryViewConfig(),
+                                    bottomActionBarConfig:
+                                        BottomActionBarConfig(enabled: false),
+                                    searchViewConfig: SearchViewConfig(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       // # 1 배경 변경 아이콘
                       !homeCon.isEditMode01.value
                           ? Positioned(
@@ -421,7 +558,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               left: 245,
                               child: GestureDetector(
                                 onTap: () {
-                                  showBackgroundDialog(context);
+                                  _toggleEmojiPicker();
                                 },
                                 child: Container(
                                   width: 40, // 원의 너비

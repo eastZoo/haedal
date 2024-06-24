@@ -4,7 +4,7 @@ Widget home_widget_dday_sample(int index) {
   switch (index) {
     case 0:
       return const Text(
-        'D- day 0',
+        '준비중',
         style: TextStyle(color: Colors.white),
       );
     case 1:
