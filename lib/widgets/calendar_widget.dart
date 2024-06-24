@@ -69,12 +69,13 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               controller: controller,
               // 달력 뷰 세팅
               headerStyle: const CalendarHeaderStyle(
+                textAlign: TextAlign.center,
+                backgroundColor: Colors.white, // 원하는 배경 색으로 변경
                 textStyle: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),
-                textAlign: TextAlign.center,
               ),
               showNavigationArrow: true,
               appointmentTextStyle: const TextStyle(

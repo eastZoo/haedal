@@ -158,7 +158,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   () => AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
                                     height: _hideBottomNavBar ||
-                                            homeCon.isEditMode.value
+                                            homeCon.isEditMode01.value
                                         ? 0
                                         : 100,
                                     child: SnakeNavigationBar.color(

@@ -113,11 +113,11 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                     leadingWidth: 130,
                     leading: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      child: Obx(() => homeCon.isEditMode.value
+                      child: Obx(() => homeCon.isEditMode01.value
                           ? GestureDetector(
                               onTap: () {
                                 homeCon.onCancelButtonPressed();
-                                homeCon.isEditMode.value = false;
+                                homeCon.isEditMode01.value = false;
                               },
                               child: Padding(
                                 padding:
@@ -141,10 +141,11 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                         AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
                     centerTitle: true,
                     actions: [
-                      Obx(() => homeCon.isEditMode.value
+                      Obx(() => homeCon.isEditMode01.value
                           ? GestureDetector(
                               onTap: () {
-                                homeCon.isEditMode.value = false;
+                                homeCon.isEditMode01.value = false;
+                                homeCon.update();
                               },
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),

@@ -90,20 +90,90 @@ Widget home_widget_firstday_sample(int index) {
         ),
       );
     case 1:
-      return const Text(
-        "365",
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: 'Cafe24Decoshadow',
-          fontWeight: FontWeight.w500,
-          fontSize: 55,
-          shadows: [
-            Shadow(
-              blurRadius: 9.0,
-              color: Colors.black54,
-              offset: Offset(1.0, 1.5),
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.transparent,
             ),
-          ],
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "365일",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 9.0,
+                      color: Colors.black54,
+                      offset: Offset(1.0, 1.5),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "해달",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 9.0,
+                          color: Colors.black54,
+                          offset: Offset(1.0, 1.5),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 2),
+                  Icon(Icons.favorite, color: Colors.white, size: 18),
+                  SizedBox(width: 2),
+                  Text(
+                    "수달",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 9.0,
+                          color: Colors.black54,
+                          offset: Offset(1.0, 1.5),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4),
+              Text(
+                "2024.06.23",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 9.0,
+                      color: Colors.black54,
+                      offset: Offset(1.0, 1.5),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       );
     case 2:

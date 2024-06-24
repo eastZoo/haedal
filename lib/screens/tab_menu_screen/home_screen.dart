@@ -56,7 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
-        title: const Text('메인 배경 설정'),
+        title: SizedBox(
+          height: 15.h,
+          child: const Text(
+            '메인 배경 설정',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
         actions: <CupertinoActionSheetAction>[
           CupertinoActionSheetAction(
             onPressed: () async {
@@ -65,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: const Text(
               '앨범에서 사진/동영상 선택',
+              style: TextStyle(fontSize: 20),
             ),
           ),
           CupertinoActionSheetAction(
@@ -76,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: const Text(
               '기본 이미지',
+              style: TextStyle(fontSize: 21),
             ),
           ),
         ],
@@ -83,7 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('취소'),
+          child: const Text(
+            '취소',
+            style: TextStyle(fontSize: 21),
+          ),
         ),
       ),
     );
@@ -189,48 +200,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             image: NetworkImage(
                                 "${Endpoints.hostUrl}/${authCon.coupleInfo?.coupleData?.homeProfileUrl}"),
                             fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      // 왼쪽 위 배경 변경 아이콘
-                      Positioned(
-                        bottom: 70,
-                        left: 120,
-                        child: GestureDetector(
-                          onTap: () {
-                            showBackgroundDialog(context);
-                          },
-                          child: Container(
-                            width: 40, // 원의 너비
-                            height: 40, // 원의 높이
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
-                            ),
-                            alignment: Alignment.center,
-                            child: Image.asset("assets/icons/camera_alt.png",
-                                width: 24),
-                          ),
-                        ),
-                      ),
-                      //이모션 편집 버튼
-                      Positioned(
-                        bottom: 70,
-                        left: 240,
-                        child: GestureDetector(
-                          onTap: () {
-                            showBackgroundDialog(context);
-                          },
-                          child: Container(
-                            width: 40, // 원의 너비
-                            height: 40, // 원의 높이
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
-                            ),
-                            alignment: Alignment.center,
-                            child: Image.asset("assets/icons/emotion.png",
-                                width: 24),
                           ),
                         ),
                       ),
@@ -351,35 +320,124 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       // 홈화면 위젯 관리 위젯
                       const HomeWidget(),
-                      // 편집 버튼
-                      Positioned(
-                        bottom: 70,
-                        left: 180,
-                        child: GestureDetector(
-                          onTap: () async {
-                            homeCon.onEditButtonPressed();
-                            homeCon.isEditMode.value = true;
-                            await showModalBottomSheet(
-                              context: context,
-                              barrierColor: Colors.transparent,
-                              backgroundColor: Colors.black.withOpacity(0.5),
-                              builder: (BuildContext context) {
-                                return HomeWidgetModal();
-                              },
-                            );
-                          },
-                          child: Container(
-                            width: 40, // 원의 너비
-                            height: 40, // 원의 높이
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey.withOpacity(0.4), // 투명도 40%
+                      // # 1 배경 변경 아이콘
+                      !homeCon.isEditMode01.value
+                          ? Positioned(
+                              bottom: 110,
+                              left: 125,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showBackgroundDialog(context);
+                                },
+                                child: Container(
+                                  width: 40, // 원의 너비
+                                  height: 40, // 원의 높이
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        Colors.grey.withOpacity(0.4), // 투명도 40%
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Image.asset(
+                                      "assets/icons/camera_alt.png",
+                                      width: 24),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      // #2 홈화면 편집 버튼
+                      !homeCon.isEditMode01.value
+                          ? Positioned(
+                              bottom: 110,
+                              left: 185,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  homeCon.onEditButtonPressed();
+                                  homeCon.isEditMode01.value = true;
+                                  await showModalBottomSheet(
+                                    context: context,
+                                    barrierColor: Colors.transparent,
+                                    backgroundColor:
+                                        Colors.black.withOpacity(0.5),
+                                    builder: (BuildContext context) {
+                                      return const HomeWidgetModal();
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  width: 40, // 원의 너비
+                                  height: 40, // 원의 높이
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        Colors.grey.withOpacity(0.4), // 투명도 40%
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Icon(Icons.edit,
+                                      color: Colors.white),
+                                ),
+                              ),
+                            )
+                          // 위젯 편집 모드일때 넓이 조절
+                          : Positioned(
+                              bottom: 110,
+                              left: 145,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  homeCon.onEditButtonPressed();
+                                  homeCon.isEditMode01.value = true;
+                                  await showModalBottomSheet(
+                                    context: context,
+                                    barrierColor: Colors.transparent,
+                                    backgroundColor:
+                                        Colors.black.withOpacity(0.5),
+                                    builder: (BuildContext context) {
+                                      return const HomeWidgetModal();
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  width: 120, // 원의 너비
+                                  height: 40, // 원의 높이
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    color:
+                                        Colors.grey.withOpacity(0.4), // 투명도 40%
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Icon(Icons.edit,
+                                      color: Colors.white),
+                                ),
+                              ),
                             ),
-                            alignment: Alignment.center,
-                            child: const Icon(Icons.edit, color: Colors.white),
-                          ),
-                        ),
-                      ),
+                      //이모션 편집 버튼
+                      !homeCon.isEditMode01.value
+                          ? Positioned(
+                              bottom: 110,
+                              left: 245,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showBackgroundDialog(context);
+                                },
+                                child: Container(
+                                  width: 40, // 원의 너비
+                                  height: 40, // 원의 높이
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        Colors.grey.withOpacity(0.4), // 투명도 40%
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Image.asset("assets/icons/emotion.png",
+                                      width: 24),
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 );

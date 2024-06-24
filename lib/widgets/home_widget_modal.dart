@@ -57,13 +57,20 @@ class _HomeWidgetModalState extends State<HomeWidgetModal> {
                       crossAxisSpacing: 10,
                       childAspectRatio: 1, // 아이템의 가로 세로 비율
                     ),
-                    itemCount: 9, // 아이템 수
+                    itemCount: 1, // 아이템 수
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
-                          homeCon.isElementVisible.value = true;
-                          homeCon.elementOffset = RxOffset(100, 100);
-                          homeCon.update();
+                          print("index: $index");
+                          switch (index) {
+                            case 0:
+                              homeCon.first01Visible.value = true;
+                              homeCon.elementOffset01 = RxOffset(100, 100);
+                              homeCon.update();
+                              break;
+                            default:
+                              break;
+                          }
                           Navigator.pop(context); // 닫기
                         },
                         child: Container(
@@ -83,12 +90,13 @@ class _HomeWidgetModalState extends State<HomeWidgetModal> {
                 ),
                 // Footer Navigation Bar
                 Container(
-                  height: 60.h,
+                  height: 80.h,
                   color: Colors.black.withOpacity(0.5),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
+                        padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
                         icon: Image.asset('assets/icons/firstDay.png',
                             color: Colors.white, width: 30.w, height: 25.h),
                         onPressed: () {
@@ -100,6 +108,7 @@ class _HomeWidgetModalState extends State<HomeWidgetModal> {
                         },
                       ),
                       IconButton(
+                        padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
                         icon: Image.asset('assets/icons/Dday.png',
                             color: Colors.white, width: 30.w, height: 25.h),
                         onPressed: () {

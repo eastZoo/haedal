@@ -27,12 +27,16 @@ class RxOffset {
 }
 
 class HomeController extends GetxController {
-  RxBool isEditMode = false.obs;
+  RxBool isEditMode01 = false.obs;
+  RxBool isEditMode02 = false.obs;
 
   RxOffset initialOffset = RxOffset(0, 0); // 초기 위치 저장용 변수
-  RxOffset elementOffset = RxOffset(100, 100);
+  RxOffset elementOffset01 = RxOffset(100, 100);
+  RxOffset elementOffset02 = RxOffset(200, 200);
 
-  RxBool isElementVisible = false.obs;
+// 처음만난날 위젯의 가시성을 제어하기 위한 변수
+  RxBool first01Visible = false.obs;
+  RxBool first02Visible = false.obs;
 
   // 드래그 위치 보정용 변수
   Offset startDragOffset = Offset.zero;
@@ -46,25 +50,32 @@ class HomeController extends GetxController {
 
   // 편집 버튼을 눌렀을 때 초기 위치 저장
   void onEditButtonPressed() {
-    initialOffset.setOffset(elementOffset.dx, elementOffset.dy);
+    initialOffset.setOffset(elementOffset01.dx, elementOffset01.dy);
     update();
   }
 
   // 취소 버튼을 눌렀을 때 초기 위치로 돌아가기
-  void onCancelButtonPressed() {
-    elementOffset.setOffset(initialOffset.dx, initialOffset.dy);
+  void onCancelButtonPressed() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String position =
+        jsonEncode({'dx': initialOffset.dx, 'dy': initialOffset.dy});
+    await prefs.setString('first01', position);
+
+    elementOffset01.setOffset(initialOffset.dx, initialOffset.dy);
+    await loadElementPosition();
     update();
   }
 
   // 위젯의 위치를 저장하고 불러오기 위한 메서드
   Future<void> loadElementPosition() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? position = prefs.getString('element_position');
+    String? position = prefs.getString('first01');
+
     if (position != null) {
       Map<String, dynamic> posMap = jsonDecode(position);
 
-      elementOffset.setOffset(posMap['dx'], posMap['dy']);
-      isElementVisible.value = true;
+      elementOffset01.setOffset(posMap['dx'], posMap['dy']);
+      first01Visible.value = true;
       update();
     }
   }
@@ -73,8 +84,8 @@ class HomeController extends GetxController {
   Future<void> saveElementPosition() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String position =
-        jsonEncode({'dx': elementOffset.dx, 'dy': elementOffset.dy});
-    await prefs.setString('element_position', position);
+        jsonEncode({'dx': elementOffset01.dx, 'dy': elementOffset01.dy});
+    await prefs.setString('first01', position);
   }
 
   // 위젯의 위치를 업데이트하는 메서드
@@ -82,35 +93,19 @@ class HomeController extends GetxController {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final Size screenSize = renderBox.size;
 
-    print(
-        elementStartOffset.dx + details.globalPosition.dx - startDragOffset.dx);
-    print(
-        elementStartOffset.dy + details.globalPosition.dy - startDragOffset.dy);
+    // 새로운 위치 계산
+    double newDx =
+        elementStartOffset.dx + details.globalPosition.dx - startDragOffset.dx;
+    double newDy =
+        elementStartOffset.dy + details.globalPosition.dy - startDragOffset.dy;
 
-    if (elementStartOffset.dx +
-                details.globalPosition.dx -
-                startDragOffset.dx >=
-            1 &&
-        elementStartOffset.dx +
-                details.globalPosition.dx -
-                startDragOffset.dx <=
-            265 &&
-        elementStartOffset.dy +
-                details.globalPosition.dy -
-                startDragOffset.dy >=
-            1 &&
-        elementStartOffset.dy +
-                details.globalPosition.dy -
-                startDragOffset.dy <=
-            350) {
-      elementOffset.setOffset(
-          elementStartOffset.dx +
-              details.globalPosition.dx -
-              startDragOffset.dx,
-          elementStartOffset.dy +
-              details.globalPosition.dy -
-              startDragOffset.dy);
-      update();
-    }
+    // 경계값을 넘어가지 않도록 조정
+    if (newDx < 1) newDx = 1;
+    if (newDx > 285) newDx = 285;
+    if (newDy < 1) newDy = 1;
+    if (newDy > 450) newDy = 450;
+
+    elementOffset01.setOffset(newDx, newDy);
+    update();
   }
 }
