@@ -1,6 +1,8 @@
 PODS:
   - camera_avfoundation (0.0.1):
     - Flutter
+  - emoji_picker_flutter (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_compass (0.0.1):
     - Flutter
@@ -68,6 +70,7 @@ PODS:
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - Flutter (from `Flutter`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
@@ -103,6 +106,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
+  emoji_picker_flutter:
+    :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   Flutter:
     :path: Flutter
   flutter_compass:
@@ -150,6 +155,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   camera_avfoundation: 8b8d780bcfb6a4a02b0fbe2b4bd17b5b71946e68
+  emoji_picker_flutter: fe2e6151c5b548e975d546e6eeb567daf0962a58
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
@@ -179,6 +185,6 @@ SPEC CHECKSUMS:
   video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
   webview_flutter_wkwebview: 4f3e50f7273d31e5500066ed267e3ae4309c5ae4
 
-PODFILE CHECKSUM: 00cd3c9f6fbf4ba7b9ae930ca3178be2640c44dd
+PODFILE CHECKSUM: 52f2f73638a2bcd4c0617019ac8b4834cf1effc4
 
 COCOAPODS: 1.14.3
