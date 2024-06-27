@@ -260,12 +260,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 () async {
                               _naverLogin();
                             }),
-                            _buildSocialButton('assets/icons/svg/apple.svg',
-                                () {
-                              FlutterNaverLogin.logOutAndDeleteToken();
-                              // Handle Apple login
-                              CustomToast().alert('애플 로그인 준비중입니다.');
-                            }),
+                            // _buildSocialButton('assets/icons/svg/apple.svg',
+                            //     () {
+                            //   FlutterNaverLogin.logOutAndDeleteToken();
+                            //   // Handle Apple login
+                            //   CustomToast().alert('애플 로그인 준비중입니다.');
+                            // }),
                           ],
                         ),
                         const Gap(10),

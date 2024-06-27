@@ -63,17 +63,23 @@ class _HomeScreenState extends State<HomeScreen> {
       isEmojiPickerVisible = !isEmojiPickerVisible;
     });
 
-    // Adjust the position based on the Positioned widget
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final RenderBox renderBox =
-          _dragKey.currentContext!.findRenderObject() as RenderBox;
-      final position = renderBox.localToGlobal(Offset.zero);
-      final size = renderBox.size;
+    try {
+      if (isEmojiPickerVisible) {
+        // Adjust the position based on the Positioned widget
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          RenderBox? renderBox =
+              _dragKey.currentContext?.findRenderObject() as RenderBox;
+          final position = renderBox.localToGlobal(Offset.zero);
+          final size = renderBox.size;
 
-      // Example calculation for speech balloon position above the widget
-      final balloonPosition =
-          Offset(position.dx + size.width / 2, position.dy - 20);
-    });
+          // Example calculation for speech balloon position above the widget
+          final balloonPosition =
+              Offset(position.dx + size.width / 2, position.dy - 20);
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
 // 선택한 이모지 담는 함수

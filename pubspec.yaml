@@ -60,6 +60,7 @@ dependencies:
   speech_balloon: ^0.0.4
   image_cropper: ^5.0.1
   emoji_picker_flutter: ^2.2.0
+  app_tracking_transparency: ^2.0.5
 
 dev_dependencies:
   flutter_test:

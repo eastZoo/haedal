@@ -62,28 +62,38 @@
     <!-- Permission Descriptions -->
 
     <key>NSCameraUsageDescription</key>
-    <string>Need to upload image</string>
+    <string>Our app requires access to the camera to allow you to take and upload photos directly within the app.</string>
+
     <key>NSContactsUsageDescription</key>
-    <string>Contacts</string>
+    <string>We need access to your contacts to help you connect with friends and share content more easily.</string>
+
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Always and when in use</string>
+    <string>We need your location to provide location-based services, such as finding nearby places, both when the app is in use and in the background.</string>
+
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>Can I have location always?</string>
+    <string>Our app requires your location even when the app is not in use to provide continuous location-based services.</string>
+
     <key>NSLocationUsageDescription</key>
-    <string>Older devices need location</string>
+    <string>Access to your location is required to provide location-based services and improve app functionality.</string>
+
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Need location when in use</string>
+    <string>We need your location to provide services while you are using the app, such as finding nearby places or navigation.</string>
+
     <key>NSMicrophoneUsageDescription</key>
-    <string>Need to use microphone</string>
+    <string>We need access to your microphone for features that require audio input, such as voice messages or video recording.</string>
+
     <key>NSMotionUsageDescription</key>
-    <string>Motion</string>
+    <string>We require access to motion data to enhance user experiences, such as fitness tracking or motion-based controls.</string>
+
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Our application needs permission to save photos</string>
+    <string>Our app needs permission to save photos to your library to store images you create or edit within the app.</string>
+
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Need to upload image</string>
+    <string>We need access to your photo library to allow you to upload and share photos from your device within the app.</string>
+
     <key>NSUserTrackingUsageDescription</key>
-    <string>App tracking transparency</string>
-    
+    <string>We request permission to track your activity across other companies' apps and websites to provide a better personalized experience.</string>
+
     <!-- URL Schemes -->
     <key>CFBundleURLTypes</key>
     <array>

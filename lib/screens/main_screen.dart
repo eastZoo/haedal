@@ -1,3 +1,4 @@
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,13 +38,36 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late CalendarController controller;
   bool _hideBottomNavBar = false;
 
+  String _authStatus = 'Unknown';
   // 앨범 토글 인덱스 값
   int currentToggleIdx = 0;
 
   @override
   void initState() {
+    // 앱 추적 권한 허용 모달 띄우기 ( 앱 최초 한번 )
+    WidgetsBinding.instance.addPostFrameCallback((_) => initPlugin());
     controller = CalendarController();
     super.initState();
+  }
+
+  // 앱 추적 권한 허용 모달
+  Future<void> initPlugin() async {
+    try {
+      final TrackingStatus status =
+          await AppTrackingTransparency.trackingAuthorizationStatus;
+      setState(() => _authStatus = '$status');
+
+      if (status == TrackingStatus.notDetermined) {
+        final TrackingStatus status =
+            await AppTrackingTransparency.requestTrackingAuthorization();
+        setState(() => _authStatus = '$status');
+      }
+    } on PlatformException {
+      setState(() => _authStatus = 'Failed to get tracking status');
+    }
+
+    final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
+    print("UUID : $uuid");
   }
 
   final iconList = [
