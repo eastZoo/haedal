@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -223,12 +224,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
-        init: HomeController(),
-        builder: (homeCon) {
-          return GetBuilder<AuthController>(
-              init: AuthController(),
-              builder: (authCon) {
+    return GetBuilder<AuthController>(
+        init: AuthController(),
+        builder: (authCon) {
+          return GetBuilder<HomeController>(
+              init: HomeController(),
+              builder: (homeCon) {
                 return Scaffold(
                   body: Stack(
                     children: [
@@ -236,13 +237,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(
+                            image: CachedNetworkImageProvider(
                                 "${Endpoints.hostUrl}/${authCon.coupleInfo?.coupleData?.homeProfileUrl}"),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      // 왼쪽 아래 프로필 사진
+
+                      // 왼쪽 아래 프로필 사진 ( 나 )
                       Positioned(
                         bottom: 100,
                         left: 20,
@@ -272,11 +274,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: CircleAvatar(
                                 radius: 32, // 프로필 사진의 크기
                                 foregroundImage: authCon
-                                            .coupleInfo?.partner?.profileUrl !=
+                                            .coupleInfo?.me?.profileUrl !=
                                         null
-                                    ? NetworkImage(
-                                        "${authCon.coupleInfo?.partner?.profileUrl}")
-                                    : null, // 조건에 따라 프로필 사진 경로 설정
+                                    ? CachedNetworkImageProvider(
+                                        "${authCon.coupleInfo?.me?.profileUrl}")
+                                    : null,
                                 backgroundImage: const AssetImage(
                                     "assets/icons/profile.png"),
                               ),
@@ -299,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      // 오른쪽 아래 프로필 사진
+                      // 오른쪽 아래 프로필 사진 ( 상대 )
                       Positioned(
                         bottom: 100,
                         right: 20,
@@ -328,13 +330,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: _toggleEmotion2,
                               child: CircleAvatar(
                                 radius: 32, // 프로필 사진의 크기
+
+                                // 오른쪽 아래 프로필 사진
                                 foregroundImage: authCon
                                             .coupleInfo?.partner?.profileUrl !=
                                         null
-                                    ? NetworkImage(
+                                    ? CachedNetworkImageProvider(
                                         "${authCon.coupleInfo?.partner?.profileUrl}")
-                                    : null, // 조건에 따라 프로필 사진 경로 설정
-
+                                    : null,
                                 backgroundImage: const AssetImage(
                                     "assets/icons/profile.png"),
                               ),
@@ -395,13 +398,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onTap: _toggleEmotion2,
                                     child: CircleAvatar(
                                       radius: 32, // 프로필 사진의 크기
-                                      foregroundImage: authCon.coupleInfo
-                                                  ?.partner?.profileUrl !=
+                                      // 오른쪽 아래 프로필 사진
+                                      foregroundImage: authCon
+                                                  .coupleInfo?.me?.profileUrl !=
                                               null
-                                          ? NetworkImage(
-                                              "${authCon.coupleInfo?.partner?.profileUrl}")
-                                          : null, // 조건에 따라 프로필 사진 경로 설정
-
+                                          ? CachedNetworkImageProvider(
+                                              "${authCon.coupleInfo?.me?.profileUrl}")
+                                          : null,
                                       backgroundImage: const AssetImage(
                                           "assets/icons/profile.png"),
                                     ),

@@ -8,7 +8,6 @@ import 'package:haedal/screens/register_screen/code_screen.dart';
 import 'package:haedal/screens/register_screen/info_screen.dart';
 import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
-import 'package:haedal/test.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -29,35 +28,31 @@ class _SplashScreenState extends State<SplashScreen> {
     return FutureBuilder<String?>(
       future: storage.read(key: 'accessToken'),
       builder: (context, snapshot) {
-        return GetBuilder<AlarmController>(
-            init: AlarmController(),
-            builder: (context) {
-              return GetBuilder<AuthController>(
-                  init: AuthController(),
-                  builder: (authCon) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Scaffold(
-                        body: Center(
-                          child: Image.asset("assets/icons/logo.png"),
-                        ),
-                      );
-                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      if (authCon.connectState == RxInt(0)) {
-                        return LoadingScreen(
-                            token: snapshot.data,
-                            connectState: authCon.connectState);
-                      } else if (authCon.connectState == RxInt(1)) {
-                        return const CodeScreen();
-                      } else if (authCon.connectState == RxInt(2)) {
-                        return const InfoScreen();
-                      } else if (authCon.connectState == RxInt(3)) {
-                        return const MainScreen();
-                      }
-                    }
+        return GetBuilder<AuthController>(
+            init: AuthController(),
+            builder: (authCon) {
+              print(
+                  "_SplashScreenState connectState : ${authCon.connectState}");
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Scaffold(
+                  body: Center(
+                    child: Image.asset("assets/icons/logo.png"),
+                  ),
+                );
+              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                if (authCon.connectState.value == 0) {
+                  return LoadingScreen(
+                      token: snapshot.data, connectState: authCon.connectState);
+                } else if (authCon.connectState.value == 1) {
+                  return const CodeScreen();
+                } else if (authCon.connectState.value == 2) {
+                  return const InfoScreen();
+                } else if (authCon.connectState.value == 3) {
+                  return const MainScreen();
+                }
+              }
 
-                    return const LoginScreen();
-                    // return TestScheduleScreen();
-                  });
+              return const LoginScreen();
             });
       },
     );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
@@ -82,14 +84,16 @@ class _LoginScreenState extends State<LoginScreen> {
           // 사용자 정보를 서버에 저장하는 함수 호출
           var result = await authCon.onSocialNaverSignUp(user.account, "naver");
           if (result) {
-            setState(() {
-              isLoading = false;
+            Timer(const Duration(milliseconds: 500), () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/splash',
+                (route) => false,
+              );
+              setState(() {
+                isLoading = false;
+              });
             });
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/splash',
-              (route) => false,
-            );
           }
           break;
         case NaverLoginStatus.cancelledByUser:
@@ -101,13 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       CustomToast().alert('네이버 로그인 실패: $e');
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
     }
   }
 
+  // 카카오 로그인 정보 가져오기
   void _kakaoLogin() async {
     try {
       // 카카오톡 앱을 통한 로그인 시도
@@ -131,11 +132,16 @@ class _LoginScreenState extends State<LoginScreen> {
       var result = await authCon.onSocialKaKaoSignUp(user, "kakao");
 
       if (result) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/splash',
-          (route) => false,
-        );
+        Timer(const Duration(milliseconds: 500), () {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/splash',
+            (route) => false,
+          );
+          setState(() {
+            isLoading = false;
+          });
+        });
       } else {
         CustomToast().alert('카카오톡 회원가입 실패');
       }
@@ -201,11 +207,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             var result = await authCon.onSignIn(
                                 emailController.text, passwordController.text);
                             if (result["success"]) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                '/splash',
-                                (route) => false,
-                              );
+                              Timer(const Duration(milliseconds: 500), () {
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/splash',
+                                  (route) => false,
+                                );
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              });
                             } else {
                               setState(() {
                                 errorMsg = result["msg"];

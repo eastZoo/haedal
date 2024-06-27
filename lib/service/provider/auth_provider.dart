@@ -72,4 +72,8 @@ class AuthProvider extends GetxController {
     return await ApiRequest(url: '${Endpoints.authUrl}/background', data: data)
         .formPost();
   }
+
+  deleteUser() async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/destroy').asyncGet();
+  }
 }

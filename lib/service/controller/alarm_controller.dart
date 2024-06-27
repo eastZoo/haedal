@@ -7,6 +7,7 @@ class AlarmController extends GetxController {
   late var alarmList = <AlarmHistory>[].obs;
   // Noti? currentNoti;
   final isLoading = false.obs;
+  String? token;
 
   int unreadAlarmCount = 0.obs.value;
 
@@ -17,7 +18,7 @@ class AlarmController extends GetxController {
   void onInit() async {
     super.onInit();
     const storage = FlutterSecureStorage();
-    var token = await storage.read(key: 'accessToken');
+    token = await storage.read(key: 'accessToken');
 
     if (token != null) {
       _getNotiData();
@@ -68,6 +69,14 @@ class AlarmController extends GetxController {
       update();
     } catch (e) {
       print(e);
+    }
+  }
+
+  AlarmRefresh() async {
+    print('AlarmRefresh');
+    if (token != null) {
+      _getNotiData();
+      getUnreadAlarmCount();
     }
   }
 }

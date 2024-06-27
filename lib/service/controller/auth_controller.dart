@@ -189,6 +189,7 @@ class AuthController extends GetxController {
       storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
       connectState = RxInt(res["data"]["connectState"]);
       update();
+
       return res["data"];
     }
     return res["data"];
@@ -346,6 +347,20 @@ class AuthController extends GetxController {
       } else {
         print('Image upload failed');
         CustomToast().alert("이미지 업로드에 실패했습니다.");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  deleteUser() async {
+    try {
+      var res = await AuthProvider().deleteUser();
+      if (res["data"]["success"]) {
+        logOut();
+        return res["data"]["success"];
+      } else {
+        CustomToast().alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (e) {
       print(e);
