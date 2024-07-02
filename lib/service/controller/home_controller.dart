@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/service/provider/auth_provider.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RxOffset {
@@ -27,8 +31,12 @@ class RxOffset {
 }
 
 class HomeController extends GetxController {
-  RxBool isEditMode01 = false.obs;
-  RxBool isEditMode02 = false.obs;
+  final AuthController authCon = Get.find<AuthController>();
+
+  RxString isEditMode01 = "".obs;
+
+  //선택한 이모지 담아두는 함수
+  RxString selectedEmoji = "".obs;
 
   RxOffset initialOffset = RxOffset(0, 0); // 초기 위치 저장용 변수
   RxOffset elementOffset01 = RxOffset(100, 100);
@@ -36,7 +44,9 @@ class HomeController extends GetxController {
 
 // 처음만난날 위젯의 가시성을 제어하기 위한 변수
   RxBool first01Visible = false.obs;
-  RxBool first02Visible = false.obs;
+
+  // 이모티콘 피커 visible 관련 변수
+  RxBool isEmojiPickerVisible = false.obs;
 
   // 드래그 위치 보정용 변수
   Offset startDragOffset = Offset.zero;
@@ -106,6 +116,38 @@ class HomeController extends GetxController {
     if (newDy > 450) newDy = 450;
 
     elementOffset01.setOffset(newDx, newDy);
+    update();
+  }
+
+// 이모션 업데이트 함수
+  updateEmotion() async {
+    try {
+      Map<String, dynamic> dataSource = {
+        "emotion": selectedEmoji.value,
+      };
+      var res = await AuthProvider().updateEmotion(dataSource);
+      if (res["data"]["success"]) {
+        await authCon.getUserInfo();
+        return res["data"]["success"];
+      } else {
+        CustomToast().alert('이모션 업데이트 실패');
+        return res["data"]["success"];
+      }
+    } catch (e) {
+      CustomToast().alert('이모션 업데이트 실패 : 서버 오류');
+      print(e);
+    }
+  }
+
+// 이모티콘 피커 visible 업데이트
+  void updateEmojiPickerVisible(bool data) {
+    isEmojiPickerVisible.value = data;
+    update();
+  }
+
+// 현재 선택한 이모지 업데이트 함수 ( 저장 전 )
+  void updateSelectedEmoji(String emoji) {
+    selectedEmoji.value = emoji;
     update();
   }
 }

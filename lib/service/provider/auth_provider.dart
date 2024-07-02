@@ -76,4 +76,10 @@ class AuthProvider extends GetxController {
   deleteUser() async {
     return await ApiRequest(url: '${Endpoints.authUrl}/destroy').asyncGet();
   }
+
+// 홈화면 이모션 업데이트
+  updateEmotion(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/emotion', data: data)
+        .asyncPost();
+  }
 }

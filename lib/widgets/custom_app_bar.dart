@@ -113,11 +113,20 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                     leadingWidth: 130,
                     leading: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      child: Obx(() => homeCon.isEditMode01.value
+                      child: Obx(() => homeCon.isEditMode01.value == "home" ||
+                              homeCon.isEditMode01.value == "emotion"
                           ? GestureDetector(
                               onTap: () {
-                                homeCon.onCancelButtonPressed();
-                                homeCon.isEditMode01.value = false;
+                                // 현재 홈 화면 편집상태가 emotion일때 취소누르면 이모션 피커 닫기
+                                if (homeCon.isEditMode01.value == "emotion") {
+                                  homeCon.updateEmojiPickerVisible(false);
+                                }
+
+                                // 현재 홈화면 편집 상태가 home 일때 취소 누르면 상태 취소 함수 실행
+                                if (homeCon.isEditMode01.value == "home") {
+                                  homeCon.onCancelButtonPressed();
+                                }
+                                homeCon.isEditMode01.value = "";
                               },
                               child: Padding(
                                 padding:
@@ -141,11 +150,24 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                         AppColors().white, // 화면에서 스크롤로 변경되더 상단바 색상 고정
                     centerTitle: true,
                     actions: [
-                      Obx(() => homeCon.isEditMode01.value
+                      Obx(() => homeCon.isEditMode01.value == "home" ||
+                              homeCon.isEditMode01.value == "emotion"
                           ? GestureDetector(
                               onTap: () {
-                                homeCon.isEditMode01.value = false;
-                                homeCon.update();
+                                if (homeCon.isEditMode01.value == "home") {
+                                  homeCon.update();
+                                }
+                                if (homeCon.isEditMode01.value == "emotion") {
+                                  // 이모션 상태 업데이트 함수
+                                  var res = homeCon.updateEmotion();
+
+                                  if (res == false) {
+                                    return;
+                                  }
+                                  // 이모션 피커 닫기
+                                  homeCon.updateEmojiPickerVisible(false);
+                                }
+                                homeCon.isEditMode01.value = "";
                               },
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),

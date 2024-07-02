@@ -7,6 +7,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
+import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/service/controller/home_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -23,7 +25,8 @@ void main() async {
       onAuthFailed: (error) {
         print("NAVER AUTH ERROR :  $error");
       });
-
+  Get.put(AuthController());
+  Get.put(HomeController());
   initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
 

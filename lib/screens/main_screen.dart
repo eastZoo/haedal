@@ -189,7 +189,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                           duration:
                                               const Duration(milliseconds: 300),
                                           height: _hideBottomNavBar ||
-                                                  homeCon.isEditMode01.value
+                                                  homeCon.isEditMode01.value ==
+                                                      "emotion" ||
+                                                  homeCon.isEditMode01.value ==
+                                                      "home"
                                               ? 0
                                               : 100,
                                           child: SnakeNavigationBar.color(

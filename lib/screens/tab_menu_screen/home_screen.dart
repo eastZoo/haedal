@@ -31,16 +31,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final authCon = Get.put(AuthController());
+  final AuthController authCon = Get.find<AuthController>();
+  final HomeController homeCon = Get.find<HomeController>();
+
   bool _showEmotion1 = false;
   bool _showEmotion2 = false;
   File? _backgroundImage;
 
   bool isClick = false;
-
-  // 이모티콘 피커 관련 변수
-  bool isEmojiPickerVisible = false;
-  String selectedEmoji = '';
 
   // GlobalKey to track the position of the draggable widget
   final GlobalKey _dragKey = GlobalKey();
@@ -59,23 +57,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 // 이모지 피커 온오프 함수
-  void _toggleEmojiPicker() {
-    setState(() {
-      isEmojiPickerVisible = !isEmojiPickerVisible;
-    });
-
+  void _toggleEmojiPicker() async {
+    homeCon.updateEmojiPickerVisible(true);
     try {
-      if (isEmojiPickerVisible) {
+      if (homeCon.isEmojiPickerVisible.value) {
         // Adjust the position based on the Positioned widget
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          RenderBox? renderBox =
-              _dragKey.currentContext?.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
-          final size = renderBox.size;
+          final context = _dragKey.currentContext;
+          if (context != null) {
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
+            final position = renderBox.localToGlobal(Offset.zero);
+            final size = renderBox.size;
 
-          // Example calculation for speech balloon position above the widget
-          final balloonPosition =
-              Offset(position.dx + size.width / 2, position.dy - 20);
+            // Example calculation for speech balloon position above the widget
+            final balloonPosition =
+                Offset(position.dx + size.width / 2, position.dy - 20);
+          }
         });
       }
     } catch (e) {
@@ -85,10 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // 선택한 이모지 담는 함수
   void _onEmojiSelected(Emoji emoji) {
-    setState(() {
-      selectedEmoji = emoji.emoji;
-      // isEmojiPickerVisible = false; // 선택 후 이모티콘 피커 숨김
-    });
+    homeCon.updateSelectedEmoji(emoji.emoji);
+    // isEmojiPickerVisible = false; // 선택 후 이모티콘 피커 숨김
   }
 
 // 배경화면 설정 모달
@@ -253,17 +248,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             AnimatedOpacity(
                               opacity: _showEmotion1 ? 1.0 : 0.0,
                               duration: const Duration(milliseconds: 500),
-                              child: const SpeechBalloon(
+                              child: SpeechBalloon(
                                 nipLocation: NipLocation.bottom,
                                 borderColor: Colors.white,
                                 height: 60,
                                 width: 60,
                                 borderRadius: 40,
-                                offset: Offset(0, -1),
+                                offset: const Offset(0, -1),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('😜', style: TextStyle(fontSize: 25)),
+                                    Text("${authCon.coupleInfo?.me?.emotion}",
+                                        style: const TextStyle(fontSize: 25)),
                                   ],
                                 ),
                               ),
@@ -310,17 +306,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             AnimatedOpacity(
                               opacity: _showEmotion2 ? 1.0 : 0.0,
                               duration: const Duration(milliseconds: 500),
-                              child: const SpeechBalloon(
+                              child: SpeechBalloon(
                                 borderColor: Colors.white,
                                 nipLocation: NipLocation.bottom,
                                 height: 60,
                                 width: 60,
                                 borderRadius: 40,
-                                offset: Offset(0, -1),
+                                offset: const Offset(0, -1),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('😜', style: TextStyle(fontSize: 25)),
+                                    Text(
+                                        "${authCon.coupleInfo?.partner?.emotion}",
+                                        style: const TextStyle(fontSize: 25)),
                                   ],
                                 ),
                               ),
@@ -363,14 +361,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       // 홈화면 위젯 관리 위젯
                       const HomeWidget(),
                       // 이모지 선택 시 배경화면 블러처리
-                      isEmojiPickerVisible
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                            )
-                          : Container(),
-                      isEmojiPickerVisible
+                      Obx(
+                        () => homeCon.isEmojiPickerVisible.value
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5),
+                                ),
+                              )
+                            : Container(),
+                      ),
+                      Obx(() => homeCon.isEmojiPickerVisible.value
                           ? Positioned(
                               top: 100,
                               right: 175,
@@ -387,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text(selectedEmoji,
+                                        Text(homeCon.selectedEmoji.value,
                                             style:
                                                 const TextStyle(fontSize: 25)),
                                       ],
@@ -427,48 +427,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             )
-                          : Container(),
+                          : Container()),
                       // 이모지 선택 시 이모지 피커 온오프
-                      if (isEmojiPickerVisible)
-                        Positioned(
-                          key: _dragKey,
-                          bottom: 180,
-                          left: 30,
-                          child: SizedBox(
-                            // Adjust the height as per your need
-                            child: Align(
-                              alignment: Alignment.topCenter,
-                              child: SpeechBalloon(
-                                borderRadius: 15,
-                                height: 300,
-                                width: 350,
-                                child: EmojiPicker(
-                                  onEmojiSelected: (category, emoji) {
-                                    _onEmojiSelected(emoji);
-                                  },
-                                  config: const Config(
-                                    height: 100,
-                                    checkPlatformCompatibility: false,
-                                    emojiViewConfig: EmojiViewConfig(
-                                      // Issue: https://github.com/flutter/flutter/issues/28894
-                                      columns: 8,
-                                      emojiSizeMax: 30,
+                      Obx(() => homeCon.isEmojiPickerVisible.value
+                          ? Positioned(
+                              key: _dragKey,
+                              bottom: 180,
+                              left: 30,
+                              child: SizedBox(
+                                // Adjust the height as per your need
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: SpeechBalloon(
+                                    borderRadius: 15,
+                                    height: 300,
+                                    width: 350,
+                                    child: EmojiPicker(
+                                      onEmojiSelected: (category, emoji) {
+                                        _onEmojiSelected(emoji);
+                                      },
+                                      config: const Config(
+                                        height: 100,
+                                        checkPlatformCompatibility: false,
+                                        emojiViewConfig: EmojiViewConfig(
+                                          // Issue: https://github.com/flutter/flutter/issues/28894
+                                          columns: 8,
+                                          emojiSizeMax: 30,
+                                        ),
+                                        swapCategoryAndBottomBar: true,
+                                        skinToneConfig: SkinToneConfig(),
+                                        categoryViewConfig:
+                                            CategoryViewConfig(),
+                                        bottomActionBarConfig:
+                                            BottomActionBarConfig(
+                                                enabled: false),
+                                        searchViewConfig: SearchViewConfig(),
+                                      ),
                                     ),
-                                    swapCategoryAndBottomBar: true,
-                                    skinToneConfig: SkinToneConfig(),
-                                    categoryViewConfig: CategoryViewConfig(),
-                                    bottomActionBarConfig:
-                                        BottomActionBarConfig(enabled: false),
-                                    searchViewConfig: SearchViewConfig(),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
+                            )
+                          : Container()),
+
                       // # 1 배경 변경 아이콘
-                      !homeCon.isEditMode01.value
-                          ? Positioned(
+                      homeCon.isEditMode01.value == "emotion" ||
+                              homeCon.isEditMode01.value == "home"
+                          ? Container()
+                          : Positioned(
                               bottom: 110,
                               left: 125,
                               child: GestureDetector(
@@ -489,49 +495,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       width: 24),
                                 ),
                               ),
-                            )
-                          : Container(),
+                            ),
                       // #2 홈화면 편집 버튼
-                      !homeCon.isEditMode01.value
-                          ? Positioned(
-                              bottom: 110,
-                              left: 185,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  homeCon.onEditButtonPressed();
-                                  homeCon.isEditMode01.value = true;
-                                  await showModalBottomSheet(
-                                    context: context,
-                                    barrierColor: Colors.transparent,
-                                    backgroundColor:
-                                        Colors.black.withOpacity(0.5),
-                                    builder: (BuildContext context) {
-                                      return const HomeWidgetModal();
-                                    },
-                                  );
-                                },
-                                child: Container(
-                                  width: 40, // 원의 너비
-                                  height: 40, // 원의 높이
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color:
-                                        Colors.grey.withOpacity(0.4), // 투명도 40%
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Icon(Icons.edit,
-                                      color: Colors.white),
-                                ),
-                              ),
-                            )
+                      homeCon.isEditMode01.value == "home"
+                          ?
                           // 위젯 편집 모드일때 넓이 조절
-                          : Positioned(
+                          Positioned(
                               bottom: 110,
                               left: 145,
                               child: GestureDetector(
                                 onTap: () async {
-                                  homeCon.onEditButtonPressed();
-                                  homeCon.isEditMode01.value = true;
                                   await showModalBottomSheet(
                                     context: context,
                                     barrierColor: Colors.transparent,
@@ -559,21 +532,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: Colors.white),
                                 ),
                               ),
-                            ),
-                      //이모션 편집 버튼
-                      !homeCon.isEditMode01.value
+                            )
+                          : homeCon.isEditMode01.value == "emotion"
+                              ? Container()
+                              : Positioned(
+                                  bottom: 110,
+                                  left: 185,
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      // 편집 버튼을 눌렀을 때 초기 위치 저장
+                                      homeCon.onEditButtonPressed();
+                                      homeCon.isEditMode01.value = "home";
+                                      await showModalBottomSheet(
+                                        context: context,
+                                        barrierColor: Colors.transparent,
+                                        backgroundColor:
+                                            Colors.black.withOpacity(0.5),
+                                        builder: (BuildContext context) {
+                                          return const HomeWidgetModal();
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 40, // 원의 너비
+                                      height: 40, // 원의 높이
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey
+                                            .withOpacity(0.4), // 투명도 40%
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Icon(Icons.edit,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                      // # 3 이모션 편집 버튼
+                      homeCon.isEditMode01.value == "emotion"
                           ? Positioned(
                               bottom: 110,
-                              left: 245,
+                              left: 145,
                               child: GestureDetector(
-                                onTap: () {
-                                  _toggleEmojiPicker();
-                                },
+                                onTap: () async {},
                                 child: Container(
-                                  width: 40, // 원의 너비
+                                  width: 120, // 원의 너비
                                   height: 40, // 원의 높이
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
                                     color:
                                         Colors.grey.withOpacity(0.4), // 투명도 40%
                                   ),
@@ -583,7 +592,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             )
-                          : Container(),
+                          : homeCon.isEditMode01.value == "home"
+                              ? Container()
+                              : Positioned(
+                                  bottom: 110,
+                                  left: 245,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      homeCon.isEditMode01.value = "emotion";
+                                      _toggleEmojiPicker();
+                                    },
+                                    child: Container(
+                                      width: 40, // 원의 너비
+                                      height: 40, // 원의 높이
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey
+                                            .withOpacity(0.4), // 투명도 40%
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Image.asset(
+                                          "assets/icons/emotion.png",
+                                          width: 24),
+                                    ),
+                                  ),
+                                )
                     ],
                   ),
                 );
