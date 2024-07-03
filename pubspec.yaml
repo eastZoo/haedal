@@ -62,6 +62,10 @@ dependencies:
   emoji_picker_flutter: ^2.2.0
   app_tracking_transparency: ^2.0.5
   sign_in_with_apple: ^6.1.1
+  dart_jsonwebtoken: ^2.14.0
+  dartz: ^0.10.1
+  pointycastle: ^3.9.1
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:

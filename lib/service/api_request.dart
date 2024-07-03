@@ -150,3 +150,38 @@ class ApiRequest {
     }
   }
 }
+
+/// 애플 탈퇴를 위한 세팅
+Future<Dio> _appleDio() async {
+  return Dio(
+    BaseOptions(
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    ),
+  );
+}
+
+Future<void> revokeAppleTokenAPI(
+  String clientId,
+  String clientSecret,
+  String token,
+  String tokenTypeHint,
+) async {
+  const url = 'https://appleid.apple.com/auth/revoke';
+  var dio = await _appleDio();
+  Response response = await dio.post(url, data: {
+    'client_id': clientId,
+    'client_secret': clientSecret,
+    'token': token,
+    'token_type_hint': tokenTypeHint,
+  });
+
+  if (response.statusCode == 200) {
+    // 토큰이 성공적으로 무효화됨
+    print('Token revoked successfully');
+  } else {
+    // 오류 발생
+    print('Failed to revoke token: ${response.statusCode}');
+  }
+}

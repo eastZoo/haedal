@@ -18,7 +18,7 @@ class CodeScreen extends StatefulWidget {
 }
 
 class _CodeScreenState extends State<CodeScreen> {
-  final authCon = Get.put(AuthController());
+  final authCon = Get.find<AuthController>();
 
   bool inviteCode = false;
   bool isLoading = false;
@@ -30,6 +30,8 @@ class _CodeScreenState extends State<CodeScreen> {
   @override
   void initState() {
     super.initState();
+    authCon.onInit();
+
     codeController.text = "${authCon.coupleConnectInfo?.code}" ?? "Loading..";
 
     inviteCodeController.addListener(() {

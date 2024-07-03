@@ -31,6 +31,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+  final authCon = GET.Get.find<AuthController>();
   final mapCon = (MapController());
 
   int _selectedIndex = 0; // 앨범 초기 메인
@@ -45,9 +46,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    print("MainScreen initState");
+    authCon.onInit();
     // 앱 추적 권한 허용 모달 띄우기 ( 앱 최초 한번 )
     WidgetsBinding.instance.addPostFrameCallback((_) => initPlugin());
     controller = CalendarController();
+
     super.initState();
   }
 
@@ -283,16 +287,31 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                                       size: 25),
                                                 ),
                                               ),
-                                              const BottomNavigationBarItem(
+                                              BottomNavigationBarItem(
                                                 icon: Padding(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 8.0),
                                                   child: CircleAvatar(
                                                     radius: 20, // 프로필 사진의 크기
-                                                    // foregroundImage: NetworkImage(
-                                                    //     "${authCon.coupleInfo?.me?.profileUrl}"), // 프로필 사진 경로
-                                                    backgroundImage: AssetImage(
-                                                        "assets/icons/profile.png"),
+                                                    backgroundImage: authCon
+                                                                    .coupleInfo
+                                                                    ?.me
+                                                                    ?.profileUrl !=
+                                                                null &&
+                                                            authCon
+                                                                    .coupleInfo
+                                                                    ?.me
+                                                                    ?.profileUrl
+                                                                    ?.isNotEmpty ==
+                                                                true
+                                                        ? NetworkImage(authCon
+                                                            .coupleInfo!
+                                                            .me!
+                                                            .profileUrl!) // 프로필 사진 경로
+                                                        : const AssetImage(
+                                                                "assets/icons/profile.png")
+                                                            as ImageProvider, // 기본 이미지 경로
                                                   ),
                                                 ),
                                               ),

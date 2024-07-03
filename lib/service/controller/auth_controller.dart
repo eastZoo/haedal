@@ -10,6 +10,7 @@ import 'package:haedal/models/couple_info.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthController extends GetxController {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
@@ -149,7 +150,7 @@ class AuthController extends GetxController {
               ? "1"
               : "0"
           : "",
-      "birth": birthDate ?? "",
+      "birth": birthDate,
       "profileUrl": user.profileImage ?? "",
     };
     try {
@@ -167,6 +168,43 @@ class AuthController extends GetxController {
         return res["data"]["success"];
       } else {
         CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (e) {
+      CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      print("error $e");
+    }
+  }
+
+  /// 네이버 회원가입 , 로그인 함수
+  onSocialAppleSignUp(
+      AuthorizationCredentialAppleID user, String provider) async {
+    // 데이터 없을 때 빈 값 처리
+    Map<String, dynamic> dataSource = {
+      "userEmail": user.email ?? "",
+      "provider": provider,
+      "providerUserId": user.userIdentifier,
+      "name": "${user.familyName}${user.givenName}" ?? "",
+      "sex": "",
+      "birth": null,
+      "profileUrl": "",
+    };
+
+    try {
+      // 회원가입(로그인) API
+      var res = await AuthProvider().socialLoginRegister(dataSource);
+      if (res["data"]["success"]) {
+        // 로그인 후 응답으로 부터 토큰 저장
+        storage.write(key: "accessToken", value: res["data"]["accessToken"]);
+        storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
+
+        connectState = RxInt(res["data"]["connectState"]);
+
+        update();
+
+        return res["data"]["success"];
+      } else {
+        CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+        return res["data"]["success"];
       }
     } catch (e) {
       CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");

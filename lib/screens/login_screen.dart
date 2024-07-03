@@ -9,6 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/styles/colors.dart';
+import 'package:haedal/utils/createJwt.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/label_textfield.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
@@ -159,50 +160,41 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // 애플 로그인 정보 가져오기
   void _appleLogin() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      SignInWithApple.getAppleIDCredential(scopes: [
-        AppleIDAuthorizationScopes.email, // 이메일 정보 범위
-        AppleIDAuthorizationScopes.fullName,
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
 
-        // 사용할 사용자 정보 범위
-      ]).then((AuthorizationCredentialAppleID user) async {
-        print(user);
-        print("user.email : ${user.email}");
-        print("user.familyName : ${user.familyName}");
-        print("user.identityToken : ${user.identityToken}");
-        print("user.authorizationCode : ${user.authorizationCode}");
-        print("user.userIdentifier : ${user.userIdentifier}");
-        // 로그인 후 로직
-        // 서버로 유저 정보 전송하여 데이터베이스에 저장하기
-        // var result = await authCon.onSocialKaKaoSignUp(user, "kakao");
+      print("credential: $credential");
 
-        // if (result) {
-        //   Timer(const Duration(milliseconds: 500), () {
-        //     Navigator.pushNamedAndRemoveUntil(
-        //       context,
-        //       '/splash',
-        //       (route) => false,
-        //     );
-        //     setState(() {
-        //       isLoading = false;
-        //     });
-        //   });
-        // } else {
-        //   CustomToast().alert('카카오톡 회원가입 실패');
-        // }
-        // loading overlay start
-        setState(() {
-          isLoading = true;
+      // 이후에 credential을 사용하여 서버로 전송하고 로그인 처리를 완료합니다.
+      var result = await authCon.onSocialAppleSignUp(credential, "apple");
+
+      if (result) {
+        Timer(const Duration(milliseconds: 500), () {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/splash',
+            (route) => false,
+          );
+          setState(() {
+            isLoading = false;
+          });
         });
-      }).onError((error, stackTrace) {
-        if (error is PlatformException) return;
-        print(error);
-      });
+      } else {
+        CustomToast().alert('애플 회원가입 실패');
+      }
     } catch (e) {
-      print('카카오톡 회원가입 실패: $e');
-      CustomToast().alert('카카오톡 회원가입 실패');
+      print('애플 로그인 실패: $e');
+      CustomToast().alert('애플 로그인 실패');
     } finally {
-      // loading overlay end
       setState(() {
         isLoading = false;
       });
@@ -357,7 +349,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             )
                           ],
-                        )
+                        ),
+                        //임시 버튼 !!!!!!!
+                        const Gap(30),
+                        MyButton(
+                          title: "애플 회원 탈퇴",
+                          onTap: () {
+                            print('애플 회원 탈퇴');
+                            revokeSignInWithApple();
+                          },
+                          available: true, // 탭 가능 여부
+                        ),
                       ],
                     ),
                   ),
