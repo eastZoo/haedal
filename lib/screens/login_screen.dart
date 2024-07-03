@@ -15,6 +15,7 @@ import 'package:haedal/widgets/loading_overlay.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -156,6 +157,58 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // 애플 로그인 정보 가져오기
+  void _appleLogin() async {
+    try {
+      SignInWithApple.getAppleIDCredential(scopes: [
+        AppleIDAuthorizationScopes.email, // 이메일 정보 범위
+        AppleIDAuthorizationScopes.fullName,
+
+        // 사용할 사용자 정보 범위
+      ]).then((AuthorizationCredentialAppleID user) async {
+        print(user);
+        print("user.email : ${user.email}");
+        print("user.familyName : ${user.familyName}");
+        print("user.identityToken : ${user.identityToken}");
+        print("user.authorizationCode : ${user.authorizationCode}");
+        print("user.userIdentifier : ${user.userIdentifier}");
+        // 로그인 후 로직
+        // 서버로 유저 정보 전송하여 데이터베이스에 저장하기
+        // var result = await authCon.onSocialKaKaoSignUp(user, "kakao");
+
+        // if (result) {
+        //   Timer(const Duration(milliseconds: 500), () {
+        //     Navigator.pushNamedAndRemoveUntil(
+        //       context,
+        //       '/splash',
+        //       (route) => false,
+        //     );
+        //     setState(() {
+        //       isLoading = false;
+        //     });
+        //   });
+        // } else {
+        //   CustomToast().alert('카카오톡 회원가입 실패');
+        // }
+        // loading overlay start
+        setState(() {
+          isLoading = true;
+        });
+      }).onError((error, stackTrace) {
+        if (error is PlatformException) return;
+        print(error);
+      });
+    } catch (e) {
+      print('카카오톡 회원가입 실패: $e');
+      CustomToast().alert('카카오톡 회원가입 실패');
+    } finally {
+      // loading overlay end
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
@@ -271,12 +324,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 () async {
                               _naverLogin();
                             }),
-                            // _buildSocialButton('assets/icons/svg/apple.svg',
-                            //     () {
-                            //   FlutterNaverLogin.logOutAndDeleteToken();
-                            //   // Handle Apple login
-                            //   CustomToast().alert('애플 로그인 준비중입니다.');
-                            // }),
+                            _buildSocialButton('assets/icons/svg/apple.svg',
+                                () {
+                              // FlutterNaverLogin.logOutAndDeleteToken();
+                              // // Handle Apple login
+                              // CustomToast().alert('애플 로그인 준비중입니다.');
+                              _appleLogin();
+                            }),
                           ],
                         ),
                         const Gap(10),
