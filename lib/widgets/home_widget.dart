@@ -74,7 +74,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                                           children: [
                                             Text(
                                               DateFormat('yyyy-MM-dd').format(
-                                                authCon.coupleInfo?.coupleData
+                                                authCon
+                                                        .coupleInfo
+                                                        .value
+                                                        ?.coupleData
                                                         ?.firstDay ??
                                                     DateTime.now(),
                                               ),
@@ -93,7 +96,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                             ),
                                             const SizedBox(height: 8),
                                             Text(
-                                              "${(currentDate.difference(authCon.coupleInfo?.coupleData?.firstDay ?? DateTime.now()).inDays + 1).toString()}일",
+                                              "${(currentDate.difference(authCon.coupleInfo.value?.coupleData?.firstDay ?? DateTime.now()).inDays + 1).toString()}일",
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
@@ -111,7 +114,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  authCon.coupleInfo?.me
+                                                  authCon.coupleInfo.value?.me
                                                           ?.name ??
                                                       "",
                                                   style: const TextStyle(
@@ -134,8 +137,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                                                     size: 18),
                                                 const SizedBox(width: 4),
                                                 Text(
-                                                  authCon.coupleInfo?.partner
-                                                          ?.name ??
+                                                  authCon.coupleInfo.value
+                                                          ?.partner?.name ??
                                                       "",
                                                   style: const TextStyle(
                                                     color: Colors.white,
@@ -190,7 +193,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                     children: [
                                       Text(
                                         DateFormat('yyyy-MM-dd').format(
-                                          authCon.coupleInfo?.coupleData
+                                          authCon.coupleInfo.value?.coupleData
                                                   ?.firstDay ??
                                               DateTime.now(),
                                         ),
@@ -209,7 +212,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        "${(currentDate.difference(authCon.coupleInfo?.coupleData?.firstDay ?? DateTime.now()).inDays + 1).toString()}일",
+                                        "${(currentDate.difference(authCon.coupleInfo.value?.coupleData?.firstDay ?? DateTime.now()).inDays + 1).toString()}일",
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -227,7 +230,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                                       Row(
                                         children: [
                                           Text(
-                                            authCon.coupleInfo?.me?.name ?? "",
+                                            authCon.coupleInfo.value?.me
+                                                    ?.name ??
+                                                "",
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w500,
@@ -246,7 +251,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                                               color: Colors.white, size: 18),
                                           const SizedBox(width: 4),
                                           Text(
-                                            authCon.coupleInfo?.partner?.name ??
+                                            authCon.coupleInfo.value?.partner
+                                                    ?.name ??
                                                 "",
                                             style: const TextStyle(
                                               color: Colors.white,

@@ -45,15 +45,15 @@ class Partner {
   // Add a factory method to create a Partner object from a Map
   factory Partner.fromJson(Map<String, dynamic> json) {
     return Partner(
-      id: json['id'] as String?,
-      name: json['name'] as String?,
-      userEmail: json['userEmail'] as String?,
+      id: json['id'] != null ? json["id"] as String : null,
+      name: json['name'] != null ? json["name"] as String : null,
+      userEmail: json['userEmail'] != null ? json["userEmail"] as String : null,
       birth: json['birth'] != null ? DateTime.parse(json['birth']) : null,
       age: json['age'] != null ? json['age'] as int : null,
-      sex: json['sex'] as String?,
+      sex: json['sex'] != null ? json["userEmail"] as String : null,
       profileUrl:
           json['profileUrl'] != null ? json["profileUrl"] as String : null,
-      emotion: json['emotion'] as String?,
+      emotion: json['emotion'] != null ? json["emotion"] as String : null,
       connectState:
           json['connectState'] != null ? json['connectState'] as int : null,
     );
@@ -86,15 +86,15 @@ class Me {
   // Add a factory method to create a User object from a Map
   factory Me.fromJson(Map<String, dynamic> json) {
     return Me(
-      id: json['id'] as String?,
-      name: json['name'] as String?,
-      userEmail: json['userEmail'] as String?,
+      id: json['id'] != null ? json["id"] as String : null,
+      name: json['name'] != null ? json["name"] as String : null,
+      userEmail: json['userEmail'] != null ? json["userEmail"] as String : null,
       birth: json['birth'] != null ? DateTime.parse(json['birth']) : null,
       age: json['age'] != null ? json['age'] as int : null,
-      sex: json['sex'] as String?,
+      sex: json['sex'] != null ? json["sex"] as String : null,
       profileUrl:
           json['profileUrl'] != null ? json["profileUrl"] as String : null,
-      emotion: json['emotion'] as String?,
+      emotion: json['emotion'] != null ? json["emotion"] as String : null,
       connectState:
           json['connectState'] != null ? json['connectState'] as int : null,
     );
@@ -114,9 +114,12 @@ class CoupleData {
   // Add a factory method to create a CoupleData object from a Map
   factory CoupleData.fromJson(Map<String, dynamic> json) {
     return CoupleData(
-      id: json['id'],
-      firstDay: DateTime.parse(json['firstDay']),
-      homeProfileUrl: json['homeProfileUrl'],
+      id: json['id'] != null ? json["id"] as String : null,
+      firstDay:
+          json['firstDay'] != null ? DateTime.parse(json['firstDay']) : null,
+      homeProfileUrl: json['homeProfileUrl'] != null
+          ? json["homeProfileUrl"] as String
+          : null,
     );
   }
 

@@ -25,7 +25,8 @@ class AuthController extends GetxController {
   int accessCodeTimer = 86400;
 
 // user profile info
-  CoupleInfo? coupleInfo;
+  // user profile info
+  var coupleInfo = Rx<CoupleInfo?>(null);
   bool isLoading = true;
 
   @override
@@ -349,14 +350,14 @@ class AuthController extends GetxController {
       print("USERINFO   : : $res");
 
       if (res["success"]) {
-        coupleInfo = CoupleInfo.fromJson(res["data"]);
+        coupleInfo.value = CoupleInfo.fromJson(res["data"]);
         print("coupleInfo : $coupleInfo");
       }
 
       print("coupleInfo : $coupleInfo");
       isLoading = false;
     } catch (error) {
-      print("getUserInfo $error");
+      print("getUserInfo??? $error");
       // error 캐치해도 일단 아바타 로딩 잡기 위해서 강제 false 처리
       isLoading = false;
     } finally {

@@ -296,19 +296,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                                     radius: 20, // 프로필 사진의 크기
                                                     backgroundImage: authCon
                                                                     .coupleInfo
+                                                                    .value
                                                                     ?.me
                                                                     ?.profileUrl !=
                                                                 null &&
                                                             authCon
                                                                     .coupleInfo
+                                                                    .value
                                                                     ?.me
                                                                     ?.profileUrl
                                                                     ?.isNotEmpty ==
                                                                 true
-                                                        ? NetworkImage(authCon
-                                                            .coupleInfo!
-                                                            .me!
-                                                            .profileUrl!) // 프로필 사진 경로
+                                                        ? NetworkImage(
+                                                            "${authCon.coupleInfo.value?.me?.profileUrl}") // 프로필 사진 경로
                                                         : const AssetImage(
                                                                 "assets/icons/profile.png")
                                                             as ImageProvider, // 기본 이미지 경로

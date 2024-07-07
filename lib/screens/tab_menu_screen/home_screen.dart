@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: CachedNetworkImageProvider(
-                                "${Endpoints.hostUrl}/${authCon.coupleInfo?.coupleData?.homeProfileUrl}"),
+                                "${Endpoints.hostUrl}/${authCon.coupleInfo.value?.coupleData?.homeProfileUrl}"),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -258,7 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("${authCon.coupleInfo?.me?.emotion}",
+                                    Text(
+                                        "${authCon.coupleInfo.value?.me?.emotion}",
                                         style: const TextStyle(fontSize: 25)),
                                   ],
                                 ),
@@ -270,17 +271,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: CircleAvatar(
                                 radius: 32, // 프로필 사진의 크기
                                 foregroundImage: authCon
-                                            .coupleInfo?.me?.profileUrl !=
+                                            .coupleInfo.value?.me?.profileUrl !=
                                         null
                                     ? CachedNetworkImageProvider(
-                                        "${authCon.coupleInfo?.me?.profileUrl}")
+                                        "${authCon.coupleInfo.value?.me?.profileUrl}")
                                     : null,
                                 backgroundImage: const AssetImage(
                                     "assets/icons/profile.png"),
                               ),
                             ),
                             Text(
-                              authCon.coupleInfo?.me?.name ?? "",
+                              authCon.coupleInfo.value?.me?.name ?? "",
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -317,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                        "${authCon.coupleInfo?.partner?.emotion}",
+                                        "${authCon.coupleInfo.value?.partner?.emotion}",
                                         style: const TextStyle(fontSize: 25)),
                                   ],
                                 ),
@@ -330,18 +331,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 radius: 32, // 프로필 사진의 크기
 
                                 // 오른쪽 아래 프로필 사진
-                                foregroundImage: authCon
-                                            .coupleInfo?.partner?.profileUrl !=
+                                foregroundImage: authCon.coupleInfo.value
+                                            ?.partner?.profileUrl !=
                                         null
                                     ? CachedNetworkImageProvider(
-                                        "${authCon.coupleInfo?.partner?.profileUrl}")
+                                        "${authCon.coupleInfo.value?.partner?.profileUrl}")
                                     : null,
                                 backgroundImage: const AssetImage(
                                     "assets/icons/profile.png"),
                               ),
                             ),
                             Text(
-                              authCon.coupleInfo?.partner?.name ?? "",
+                              authCon.coupleInfo.value?.partner?.name ?? "",
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -399,18 +400,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: CircleAvatar(
                                       radius: 32, // 프로필 사진의 크기
                                       // 오른쪽 아래 프로필 사진
-                                      foregroundImage: authCon
-                                                  .coupleInfo?.me?.profileUrl !=
+                                      foregroundImage: authCon.coupleInfo.value
+                                                  ?.me?.profileUrl !=
                                               null
                                           ? CachedNetworkImageProvider(
-                                              "${authCon.coupleInfo?.me?.profileUrl}")
+                                              "${authCon.coupleInfo.value?.me?.profileUrl}")
                                           : null,
                                       backgroundImage: const AssetImage(
                                           "assets/icons/profile.png"),
                                     ),
                                   ),
                                   Text(
-                                    authCon.coupleInfo?.partner?.name ?? "",
+                                    authCon.coupleInfo.value?.partner?.name ??
+                                        "",
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500,
