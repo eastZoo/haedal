@@ -7,6 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:haedal/screens/find_id_screen.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/createJwt.dart';
@@ -100,13 +101,22 @@ class _LoginScreenState extends State<LoginScreen> {
           break;
         case NaverLoginStatus.cancelledByUser:
           CustomToast().alert('사용자가 로그인을 취소했습니다.');
+          setState(() {
+            isLoading = false;
+          });
           break;
         case NaverLoginStatus.error:
           CustomToast().alert('로그인 오류: ${user.errorMessage}');
+          setState(() {
+            isLoading = false;
+          });
           break;
       }
     } catch (e) {
       CustomToast().alert('네이버 로그인 실패: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -379,13 +389,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          '아이디 찾기',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppColors().darkGreyText,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) {
+                                  return const FindIdScreen();
+                                },
+                              ),
+                            );
+                          },
+                          child: Text(
+                            '아이디 찾기',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: AppColors().darkGreyText,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                         VerticalDivider(
                           color: AppColors().lightGrey,

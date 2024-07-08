@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:haedal/screens/show_find_id_screen.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
@@ -12,17 +13,16 @@ import 'package:haedal/widgets/loading_overlay.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 
-class InfoScreen extends StatefulWidget {
-  const InfoScreen({super.key});
+class FindIdScreen extends StatefulWidget {
+  const FindIdScreen({super.key});
 
   @override
-  State<InfoScreen> createState() => _InfoScreenState();
+  State<FindIdScreen> createState() => _FindIdScreenState();
 }
 
-class _InfoScreenState extends State<InfoScreen> {
+class _FindIdScreenState extends State<FindIdScreen> {
   final nameController = TextEditingController();
   final birthController = TextEditingController();
-  final firstDayController = TextEditingController();
 
   bool isLoading = false;
 
@@ -53,57 +53,46 @@ class _InfoScreenState extends State<InfoScreen> {
     });
   }
 
-// 시작하기 버튼 클릭 시
-  void onStart() async {
-    setState(() {
-      isLoading = true;
-    });
-    if (selectedValue == null) {
-      CustomToast().alert("성별을 선택해주세요");
+  // 아이디
+  void onFindId() async {
+    try {
       setState(() {
-        isLoading = false;
+        isLoading = true;
       });
-      return;
-    }
-    if (nameController.text.isEmpty || birthController.text.length < 0) {
-      CustomToast().alert("이름을 입력해주세요");
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
-    if (birthController.text.isEmpty || birthController.text.length < 0) {
-      CustomToast().alert("생일을 입력해주세요");
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
-    if (firstDayController.text.isEmpty || firstDayController.text.length < 0) {
-      CustomToast().alert("처음 만난 날을 입력해주세요");
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
-    Map<String, dynamic> dataSource = {
-      "sex": selectedValue,
-      "name": nameController.text,
-      "birth": birthController.text,
-      "firstDay": firstDayController.text
-    };
-    var result = await authCon.onStartConnect(dataSource);
 
-    if (result) {
-      Timer(const Duration(milliseconds: 500), () {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/splash',
-          (route) => false,
-        );
+      if (nameController.text.isEmpty || birthController.text.isEmpty) {
+        CustomToast().alert("이름과 생일을 입력해주세요");
         setState(() {
           isLoading = false;
         });
+        return;
+      }
+
+      Map<String, dynamic> dataSource = {
+        "name": nameController.text,
+        "birth": birthController.text,
+      };
+      print(dataSource);
+      var result = await authCon.onFindId(dataSource);
+
+      print("SDadsas $result");
+
+      if (result["data"]["success"]) {
+        final userEmail = result["data"]["userEmail"];
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ShowFindIdScreen(userEmail: userEmail),
+          ),
+        );
+      } else {
+        CustomToast().alert("아이디를 찾을 수 없습니다.");
+      }
+    } catch (e) {
+      CustomToast().alert("서버에러 : $e.");
+    } finally {
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -166,13 +155,13 @@ class _InfoScreenState extends State<InfoScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
-                      "assets/icons/Step3.png",
-                      width: 100,
+                      "assets/icons/logo.png",
+                      width: 140,
                     ),
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    '연결성공!',
+                    '해달 가입 정보로',
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontSize: 16,
@@ -180,41 +169,13 @@ class _InfoScreenState extends State<InfoScreen> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '프로필을 입력해주세요',
+                    '아이디를 확인하세요',
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RadioListTile<String>(
-                          title: const Text('남자'),
-                          value: '1',
-                          groupValue: selectedValue,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedValue = value;
-                            });
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        child: RadioListTile<String>(
-                          title: const Text('여자'),
-                          value: '0',
-                          groupValue: selectedValue,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedValue = value;
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
                   MyTextField(
                     controller: nameController,
                     hintText: '이름',
@@ -231,35 +192,10 @@ class _InfoScreenState extends State<InfoScreen> {
                     },
                   ),
                   const SizedBox(height: 10),
-                  MyTextField(
-                    controller: firstDayController,
-                    hintText: '처음 만난 날 (선택입력)',
-                    readOnly: true,
-                    obscureText: false,
-                    onTap: () {
-                      _showDatePicker(context, firstDayController);
-                    },
-                  ),
-                  const SizedBox(height: 10),
                   MyButton(
-                    title: "시작하기",
+                    title: "아이디 찾기",
                     onTap: () async {
-                      onStart();
-                    },
-                    available: true,
-                  ),
-                  const SizedBox(height: 10),
-                  MyButton(
-                    title: "로그아웃",
-                    onTap: () {
-                      const storage = FlutterSecureStorage();
-                      storage.delete(key: "accessToken");
-
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/login',
-                        (route) => false,
-                      );
+                      onFindId();
                     },
                     available: true,
                   ),

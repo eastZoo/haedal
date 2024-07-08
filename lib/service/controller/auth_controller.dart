@@ -343,6 +343,22 @@ class AuthController extends GetxController {
     }
   }
 
+  // 아이디 찾기 버튼
+  onFindId(dataSource) async {
+    try {
+      print(dataSource);
+      var res = await AuthProvider().onFindId(dataSource);
+
+      if (res["data"]["success"]) {
+        print(res["data"]);
+        return true;
+      }
+    } catch (e) {
+      CustomToast().alert("아이디 찾기에 실패했습니다. 다시 시도해주세요.");
+      print(e);
+    }
+  }
+
   // 유저 프로필 가져오기
   getUserInfo() async {
     try {

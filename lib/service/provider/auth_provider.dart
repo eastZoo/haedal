@@ -64,15 +64,18 @@ class AuthProvider extends GetxController {
         .asyncPost();
   }
 
+// 커플 정보 ( 나, 상대방 정보 ) 얻기
   getUserInfoProvider() async {
     return await ApiRequest(url: '${Endpoints.authUrl}/profile').asyncGet();
   }
 
+// 홈 배경화면 이미지 업로드
   uploadHomeImage(data) async {
     return await ApiRequest(url: '${Endpoints.authUrl}/background', data: data)
         .formPost();
   }
 
+// 회원탈퇴
   deleteUser() async {
     return await ApiRequest(url: '${Endpoints.authUrl}/destroy').asyncGet();
   }
@@ -80,6 +83,11 @@ class AuthProvider extends GetxController {
 // 홈화면 이모션 업데이트
   updateEmotion(data) async {
     return await ApiRequest(url: '${Endpoints.authUrl}/emotion', data: data)
+        .asyncPost();
+  }
+
+  onFindId(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/find-id', data: data)
         .asyncPost();
   }
 }
