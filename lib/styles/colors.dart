@@ -17,7 +17,7 @@ class AppColors {
   Color white = const Color(0xFFFFFFFF);
   Color grey = const Color.fromARGB(255, 251, 252, 255);
   Color darkGrey = const Color(0xFF858585);
-  Color lightGrey = const Color(0xFFDCDCDC);
+  Color lightGrey = const Color(0xFFD9D9D9);
 
   Color toDoGrey = const Color(0xFFF5F6FB);
 
@@ -27,6 +27,7 @@ class AppColors {
 
   // original color text
   Color darkGreyText = const Color(0xFF858585);
+  Color lightGreyText = const Color(0xFFD9D9D9);
 
   Color subContainer = const Color(0xFF8085FF);
   Color mainDisabledColor = const Color.fromARGB(255, 216, 206, 240);
@@ -39,4 +40,7 @@ class AppColors {
   Color pickerBlue = const Color(0xFF6AADE1);
   Color pickerPurple = const Color(0xFFAC9CF3);
   Color pickerblack = const Color(0xFF000000);
+
+  //kakao
+  Color kakaoYellow = const Color(0xFFFFE600);
 }

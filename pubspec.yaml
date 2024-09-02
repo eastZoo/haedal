@@ -66,6 +66,7 @@ dependencies:
   dartz: ^0.10.1
   pointycastle: ^3.9.1
   crypto: ^3.0.3
+  awesome_dialog: ^3.2.1
 
 dev_dependencies:
   flutter_test:
@@ -128,5 +129,17 @@ flutter:
       fonts:
         - asset: assets/fonts/Cafe24Meongi-W-v1.0.ttf
           weight: 100
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka-Light.ttf
+          weight: 100
+        - asset: assets/fonts/Fredoka-Regular.ttf
+          weight: 200
+        - asset: assets/fonts/Fredoka-Medium.ttf
+          weight: 300
+        - asset: assets/fonts/Fredoka-SemiBold.ttf
+          weight: 400
+        - asset: assets/fonts/Fredoka-Bold.ttf
+          weight: 500
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -108,72 +109,94 @@ class _CodeScreenState extends State<CodeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Gap(100),
+                      const Gap(120),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          "assets/icons/step-2.png",
+                          width: 60,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(
                           "assets/icons/Step2.png",
-                          width: 100,
+                          width: 95,
                         ),
                       ),
                       const SizedBox(height: 15),
                       Text(
                         '서로의 초대코드를 입력하여 연결해 주세요',
                         style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 16,
+                          color: Colors.black,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 30),
-                      LabelTextField(
-                        label: "나의 초대코드",
-                        controller: TextEditingController(
-                            text:
-                                '${authCon.coupleConnectInfo?.code ?? "Loading.."}'),
-                        textStyle: TextStyle(color: AppColors().mainColor),
-                        obscureText: false,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            Icons.content_copy,
-                            color: AppColors().mainColor,
-                          ),
-                          onPressed: () {
-                            Clipboard.setData(
-                              ClipboardData(
-                                  text: '${authCon.coupleConnectInfo?.code}'),
-                            );
-                            CustomToast().alert("복사되었습니다.", type: "success");
-                          },
+                      Text(
+                        '나의 초대코드',
+                        style: TextStyle(
+                          color: AppColors().darkGreyText,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${format(authCon.accessCodeTimer)} 남음",
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                          MyButton(title: "재전송", onTap: () {}, available: true),
-                        ],
+                      Text(
+                        '${authCon.coupleConnectInfo?.code ?? "Loading.."}',
+                        style: TextStyle(
+                          fontFamily: 'Fredoka',
+                          color: AppColors().mainColor,
+                          fontSize: 35.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const SizedBox(height: 10),
+                      Text(
+                        "${format(authCon.accessCodeTimer)} 남음",
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      const SizedBox(height: 45),
+                      MyButton(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(
+                              text: '${authCon.coupleConnectInfo?.code}'));
+                          CustomToast().alert("클립보드에 복사되었습니다.");
+                        },
+                        title: "초대코드 복사하기",
+                        available: true,
+                        backgroundColor: AppColors().lightGrey,
+                        textColor: AppColors().darkGreyText,
+                      ),
+                      const Gap(10),
+                      MyButton(
+                        onTap: () {
+                          CustomToast().alert("카카오톡 공유하기 준비중입니다...");
+                        },
+                        icon: Image.asset(
+                          "assets/icons/kakao.png",
+                          width: 18,
+                        ),
+                        title: "카카오톡 공유하기",
+                        available: true,
+                        backgroundColor: AppColors().kakaoYellow,
+                        textColor: Colors.black,
+                      ),
+                      const Gap(20),
                       LabelTextField(
                         controller: inviteCodeController,
                         hintText: '전달받은 초대코드 입력',
                         obscureText: false,
                       ),
                       const SizedBox(height: 25),
-                      MyButton(
-                        title: "연결하기",
-                        onTap: onConnect,
-                        available: inviteCode && !isLoading,
-                      ),
                       const SizedBox(height: 10),
-                      MyButton(title: "로그아웃", onTap: logOut, available: true),
                     ],
                   ),
                 ),
               ),
+            ),
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.fromLTRB(35, 0, 35, 35),
+              child: MyButton(title: "로그아웃", onTap: logOut, available: true),
             ),
           );
         });
