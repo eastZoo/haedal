@@ -360,16 +360,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             )
                           ],
                         ),
+                        Text(
+                          'This app made by Component Co.',
+                          style: TextStyle(
+                              color: AppColors().darkGreyText, fontSize: 14),
+                        )
                         //임시 버튼 !!!!!!!
-                        const Gap(30),
-                        MyButton(
-                          title: "애플 회원 탈퇴",
-                          onTap: () {
-                            print('애플 회원 탈퇴');
-                            revokeSignInWithApple();
-                          },
-                          available: true, // 탭 가능 여부
-                        ),
+                        // const Gap(30),
+                        // MyButton(
+                        //   title: "애플 회원 탈퇴",
+                        //   onTap: () {
+                        //     print('애플 회원 탈퇴');
+                        //     revokeSignInWithApple();
+                        //   },
+                        //   available: true, // 탭 가능 여부
+                        // ),
                       ],
                     ),
                   ),
