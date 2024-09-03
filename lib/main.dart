@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:haedal/routes/app_pages.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/controller/home_controller.dart';
 import 'package:haedal/styles/colors.dart';
@@ -52,7 +53,6 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: AppColors().white,
             radioTheme: RadioThemeData(
                 fillColor: WidgetStateProperty.all(AppColors().mainColor)),
-            // 기본 텍스트 스타일 설정
             textTheme: TextTheme(
               bodyLarge: TextStyle(color: AppColors().mainColor),
               bodyMedium: TextStyle(color: AppColors().mainColor),
@@ -74,9 +74,14 @@ class MyApp extends StatelessWidget {
           },
           initialRoute: "/splash",
           getPages: AppPages.routes,
+          navigatorObservers: [MyNavigatorObserver()], // 여기 추가
           builder: (context, child) {
-            // EasyLoading 적용
+            // EasyLoading 적용 및 전역 로깅 추가
             child = EasyLoading.init()(context, child);
+
+            // 전역 로깅을 위한 코드 추가
+            print("App state changed or screen transitioned");
+
             return MediaQuery(
               data: MediaQuery.of(context)
                   .copyWith(textScaler: const TextScaler.linear(1.0)),
@@ -86,5 +91,39 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class MyNavigatorObserver extends NavigatorObserver {
+  final AlarmController alarmCon = Get.find<AlarmController>();
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    super.didPush(route, previousRoute);
+    // 페이지가 푸시될 때마다 실행될 코드
+    print("Navigator: Pushed ${route.settings.name}");
+    alarmCon.getNotiData();
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+    // 페이지가 팝될 때마다 실행될 코드
+    print("Navigator: Popped ${route.settings.name}");
+    alarmCon.getNotiData();
+  }
+
+  @override
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    // 페이지가 교체될 때마다 실행될 코드
+    print(
+        "Navigator: Replaced ${oldRoute?.settings.name} with ${newRoute?.settings.name}");
+  }
+
+  @override
+  void didRemove(Route route, Route? previousRoute) {
+    super.didRemove(route, previousRoute);
+    // 페이지가 제거될 때마다 실행될 코드
+    print("Navigator: Removed ${route.settings.name}");
   }
 }

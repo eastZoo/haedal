@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:haedal/models/alarm_history.dart';
 import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/alarmCategoryTranslate.dart';
-import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/triangle_painter_widget.dart';
 
-class AlarmScreen extends StatelessWidget {
+class AlarmScreen extends StatefulWidget {
   const AlarmScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AlarmScreen> createState() => _AlarmScreenState();
+}
+
+class _AlarmScreenState extends State<AlarmScreen> {
+  final AlarmController alarmCon = Get.find<AlarmController>();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    alarmCon.readAlarm();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +58,6 @@ class AlarmScreen extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               print("알람 읽음!!!!!!!!");
-              alarmCon.readAlarm(alarmCon.alarmList[index].id);
             },
             child: Stack(children: [
               Container(

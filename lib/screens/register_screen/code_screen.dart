@@ -196,8 +196,12 @@ class _CodeScreenState extends State<CodeScreen> {
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.fromLTRB(35, 0, 35, 35),
-              child: MyButton(title: "로그아웃", onTap: logOut, available: true),
+              child: MyButton(title: "다음", onTap: onConnect, available: true),
             ),
+            // bottomNavigationBar: Padding(
+            //   padding: const EdgeInsets.fromLTRB(35, 0, 35, 35),
+            //   child: MyButton(title: "로그아웃", onTap: logOut, available: true),
+            // ),
           );
         });
   }

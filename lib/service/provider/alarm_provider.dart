@@ -8,9 +8,8 @@ class AlarmProvider {
   }
 
   // 알람 읽음 처리
-  readAlarm(String alarmId) async {
-    return await ApiRequest(url: "${Endpoints.alarmUrl}/read/$alarmId")
-        .asyncGet();
+  readAlarm() async {
+    return await ApiRequest(url: "${Endpoints.alarmUrl}/read").asyncGet();
   }
 
 // 읽지 않은 알람 갯수 가져오기

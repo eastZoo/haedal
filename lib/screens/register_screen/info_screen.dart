@@ -1,16 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
 import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' hide context;
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
@@ -51,6 +57,77 @@ class _InfoScreenState extends State<InfoScreen> {
         });
       }
     });
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      File? croppedImage = await _cropImage(File(image.path));
+      if (croppedImage != null) {
+        Map<String, dynamic> requestData = {};
+        var images = [];
+        images.add(await MultipartFile.fromFile(
+          croppedImage.path,
+          filename: basename(croppedImage.path),
+        ));
+
+        requestData["images"] = images;
+        // 이미지를 nestjs에 전송
+        var res = await authCon.uploadProfileImage(requestData);
+
+        if (res) {
+          await authCon.getUserInfo();
+        }
+      }
+    } else {
+      CustomToast().alert("이미지를 선택해주세요.");
+    }
+  }
+
+  // 이미지 자르기
+  Future<File?> _cropImage(File imageFile) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 100,
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: '배경 이미지 설정',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: '배경 이미지 설정',
+        ),
+        WebUiSettings(
+          context: context,
+          presentStyle: CropperPresentStyle.dialog,
+          boundary: const CroppieBoundary(
+            width: 520,
+            height: 520,
+          ),
+          viewPort:
+              const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+          enableExif: true,
+          enableZoom: true,
+          showZoomer: true,
+        ),
+      ],
+    );
+    if (croppedFile != null) {
+      return File(croppedFile.path);
+    }
+    return null;
   }
 
 // 시작하기 버튼 클릭 시
@@ -132,8 +209,7 @@ class _InfoScreenState extends State<InfoScreen> {
                   ),
                 ),
                 CupertinoButton(
-                  color: AppColors().mainColor,
-                  padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  padding: const EdgeInsets.fromLTRB(50, 0, 50, 15),
                   child: const Text('확인'),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -162,36 +238,67 @@ class _InfoScreenState extends State<InfoScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Gap(100),
+                  const Gap(90),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      "assets/icons/step-3.png",
+                      width: 60,
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
                       "assets/icons/Step3.png",
-                      width: 100,
+                      width: 95,
                     ),
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    '연결성공!',
+                    '프로필 작성',
                     style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 16,
+                      fontFamily: 'Pretendard',
+                      color: Colors.black,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    '프로필을 입력해주세요',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 16,
-                    ),
+                  const Gap(15),
+                  // 프로필 이미지 임포트 부분
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 36.r,
+                        backgroundImage:
+                            const AssetImage('assets/icons/profile.png')
+                                as ImageProvider,
+                        backgroundColor: Colors.grey[200],
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 12,
+                            backgroundColor: AppColors().darkGrey,
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+
                   const SizedBox(height: 10),
                   Row(
                     children: [
                       Expanded(
                         child: RadioListTile<String>(
-                          title: const Text('남자'),
+                          title: const Text('남성'),
                           value: '1',
                           groupValue: selectedValue,
                           onChanged: (value) {
@@ -203,7 +310,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       ),
                       Expanded(
                         child: RadioListTile<String>(
-                          title: const Text('여자'),
+                          title: const Text('여성'),
                           value: '0',
                           groupValue: selectedValue,
                           onChanged: (value) {
@@ -241,14 +348,14 @@ class _InfoScreenState extends State<InfoScreen> {
                     },
                   ),
                   const SizedBox(height: 10),
-                  MyButton(
-                    title: "시작하기",
-                    onTap: () async {
-                      onStart();
-                    },
-                    available: true,
-                  ),
-                  const SizedBox(height: 10),
+                  // MyButton(
+                  //   title: "시작하기",
+                  //   onTap: () async {
+                  //     onStart();
+                  //   },
+                  //   available: true,
+                  // ),
+                  // const SizedBox(height: 10),
                   MyButton(
                     title: "로그아웃",
                     onTap: () {
@@ -267,6 +374,10 @@ class _InfoScreenState extends State<InfoScreen> {
               ),
             ),
           ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.fromLTRB(35, 0, 35, 35),
+          child: MyButton(title: "작성완료", onTap: onStart, available: true),
         ),
       ),
     );

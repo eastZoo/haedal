@@ -21,13 +21,13 @@ class AlarmController extends GetxController {
     token = await storage.read(key: 'accessToken');
 
     if (token != null) {
-      _getNotiData();
+      getNotiData();
       getUnreadAlarmCount();
     }
   }
 
   /// 알림 리스트 가져오기
-  _getNotiData() async {
+  getNotiData() async {
     // notis.clear();
     isLoading.value = true;
     try {
@@ -48,13 +48,13 @@ class AlarmController extends GetxController {
     }
   }
 
-  /// 알림 읽음 처리
-  /// [alarmId] 알림 아이디
-  readAlarm(String alarmId) async {
+  /// 알림 모두 읽음 처리
+  readAlarm() async {
     try {
-      var res = await AlarmProvider().readAlarm(alarmId);
+      print("알람 읽음 처리");
+      var res = await AlarmProvider().readAlarm();
       if (res["data"]["success"]) {
-        _getNotiData();
+        getNotiData();
       }
     } catch (e) {
       print(e);
@@ -75,7 +75,7 @@ class AlarmController extends GetxController {
   AlarmRefresh() async {
     print('AlarmRefresh');
     if (token != null) {
-      _getNotiData();
+      getNotiData();
       getUnreadAlarmCount();
     }
   }

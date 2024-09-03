@@ -75,6 +75,12 @@ class AuthProvider extends GetxController {
         .formPost();
   }
 
+// 프로필 사진 이미지 업로드
+  uploadProfileImage(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/profile', data: data)
+        .formPost();
+  }
+
 // 회원탈퇴
   deleteUser() async {
     return await ApiRequest(url: '${Endpoints.authUrl}/destroy').asyncGet();
