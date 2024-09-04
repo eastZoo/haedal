@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/provider/category_board_provider.dart';
 
 class CategoryBoardController extends GetxController {
+  final AlarmController alarmController = Get.find<AlarmController>();
   var scrollController = ScrollController().obs;
   var data = <dynamic>[].obs;
   var isLoading = false.obs;
@@ -33,6 +35,8 @@ class CategoryBoardController extends GetxController {
     data.addAll(albumData["data"]["appendData"]);
     isLoading.value = false;
     hasMore.value = data.length < albumData["data"]["total"];
+
+    await alarmController.AlarmRefresh();
   }
 
   setCategory(currentCategory) {

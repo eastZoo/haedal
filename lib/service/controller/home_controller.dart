@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
 import 'package:haedal/service/provider/auth_provider.dart';
 import 'package:haedal/utils/toast.dart';
@@ -31,6 +32,7 @@ class RxOffset {
 }
 
 class HomeController extends GetxController {
+  final AlarmController alarmController = Get.find<AlarmController>();
   final AuthController authCon = Get.find<AuthController>();
 
   RxString isEditMode01 = "".obs;
@@ -56,6 +58,7 @@ class HomeController extends GetxController {
   void onInit() async {
     super.onInit();
     await loadElementPosition();
+    alarmController.AlarmRefresh();
   }
 
   // 편집 버튼을 눌렀을 때 초기 위치 저장

@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:haedal/models/alarm_history.dart';
 import 'package:haedal/service/provider/alarm_provider.dart';
 
@@ -9,7 +10,7 @@ class AlarmController extends GetxController {
   final isLoading = false.obs;
   String? token;
 
-  int unreadAlarmCount = 0.obs.value;
+  RxInt unreadAlarmCount = 0.obs;
 
   // int pageNo = 0;
   // int currentIndex = 0;
@@ -65,8 +66,8 @@ class AlarmController extends GetxController {
   getUnreadAlarmCount() async {
     try {
       var res = await AlarmProvider().getUnreadAlarmCount();
-      unreadAlarmCount = res["data"]["unreadAlarmCount"];
-      update();
+      print("AlarmRefresh ${res["data"]["unreadAlarmCount"]}");
+      unreadAlarmCount.value = res["data"]["unreadAlarmCount"];
     } catch (e) {
       print(e);
     }

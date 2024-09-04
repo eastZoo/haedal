@@ -27,6 +27,7 @@ void main() async {
         print("NAVER AUTH ERROR :  $error");
       });
   Get.put(AuthController());
+  Get.put(AlarmController());
   Get.put(HomeController());
   initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
@@ -74,7 +75,6 @@ class MyApp extends StatelessWidget {
           },
           initialRoute: "/splash",
           getPages: AppPages.routes,
-          navigatorObservers: [MyNavigatorObserver()], // 여기 추가
           builder: (context, child) {
             // EasyLoading 적용 및 전역 로깅 추가
             child = EasyLoading.init()(context, child);
@@ -91,39 +91,5 @@ class MyApp extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class MyNavigatorObserver extends NavigatorObserver {
-  final AlarmController alarmCon = Get.find<AlarmController>();
-  @override
-  void didPush(Route route, Route? previousRoute) {
-    super.didPush(route, previousRoute);
-    // 페이지가 푸시될 때마다 실행될 코드
-    print("Navigator: Pushed ${route.settings.name}");
-    alarmCon.getNotiData();
-  }
-
-  @override
-  void didPop(Route route, Route? previousRoute) {
-    super.didPop(route, previousRoute);
-    // 페이지가 팝될 때마다 실행될 코드
-    print("Navigator: Popped ${route.settings.name}");
-    alarmCon.getNotiData();
-  }
-
-  @override
-  void didReplace({Route? newRoute, Route? oldRoute}) {
-    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    // 페이지가 교체될 때마다 실행될 코드
-    print(
-        "Navigator: Replaced ${oldRoute?.settings.name} with ${newRoute?.settings.name}");
-  }
-
-  @override
-  void didRemove(Route route, Route? previousRoute) {
-    super.didRemove(route, previousRoute);
-    // 페이지가 제거될 때마다 실행될 코드
-    print("Navigator: Removed ${route.settings.name}");
   }
 }

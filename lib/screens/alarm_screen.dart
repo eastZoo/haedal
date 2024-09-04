@@ -17,10 +17,16 @@ class _AlarmScreenState extends State<AlarmScreen> {
   final AlarmController alarmCon = Get.find<AlarmController>();
 
   @override
+  void initState() {
+    alarmCon.AlarmRefresh();
+    alarmCon.readAlarm();
+  }
+
+  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    alarmCon.readAlarm();
+    alarmCon.AlarmRefresh();
   }
 
   @override

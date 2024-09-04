@@ -48,13 +48,13 @@ class _InfoScreenState extends State<InfoScreen> {
       }
       if (coupleInfo?.me?.birth != null) {
         // WidgetsBinding.instance.addPostFrameCallback을 사용하여 렌더링이 완료된 후에 실행되도록 함
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          setState(() {
-            selectedDate = coupleInfo?.me?.birth ?? DateTime.now();
-            birthController.text =
-                "${coupleInfo?.me?.birth?.toLocal()}".split(' ')[0];
-          });
-        });
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   setState(() {
+        //     selectedDate = coupleInfo?.me?.birth ?? DateTime.now();
+        //     birthController.text =
+        //         "${coupleInfo?.me?.birth?.toLocal()}".split(' ')[0];
+        //   });
+        // });
       }
     });
   }
@@ -172,15 +172,13 @@ class _InfoScreenState extends State<InfoScreen> {
     var result = await authCon.onStartConnect(dataSource);
 
     if (result) {
-      Timer(const Duration(milliseconds: 500), () {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/splash',
-          (route) => false,
-        );
-        setState(() {
-          isLoading = false;
-        });
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/splash',
+        (route) => false,
+      );
+      setState(() {
+        isLoading = false;
       });
     }
   }

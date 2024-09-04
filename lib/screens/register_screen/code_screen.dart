@@ -189,6 +189,7 @@ class _CodeScreenState extends State<CodeScreen> {
                       ),
                       const SizedBox(height: 25),
                       const SizedBox(height: 10),
+                      MyButton(title: "로그아웃", onTap: logOut, available: true),
                     ],
                   ),
                 ),

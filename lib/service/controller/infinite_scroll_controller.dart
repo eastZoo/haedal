@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/provider/infinite_scroll_provider.dart';
 
 class InfiniteScrollController extends GetxController {
+  // GetX 컨트롤러 가져오기
+  final AlarmController alarmController = Get.find<AlarmController>();
   var scrollController = ScrollController().obs;
   var data = <dynamic>[].obs;
   var isLoading = false.obs;
@@ -30,6 +33,9 @@ class InfiniteScrollController extends GetxController {
     data.addAll(albumData["data"]["appendData"]);
     isLoading.value = false;
     hasMore.value = data.length < albumData["data"]["total"];
+
+    // 알림목록 리패칭
+    await alarmController.AlarmRefresh();
   }
 
   reload() async {

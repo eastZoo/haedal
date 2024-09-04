@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
 import 'package:haedal/models/memos.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/service/provider/memo_provider.dart';
 
 class MemoController extends GetxController {
+  final AlarmController alarmController = Get.find<AlarmController>();
+
   late var memos = <Memo>[].obs;
   Memo? currentMemo;
   final isLoading = false.obs;
@@ -11,10 +14,13 @@ class MemoController extends GetxController {
   int pageNo = 0;
   int currentIndex = 0;
 
+  // GetX 컨트롤러 가져오기
+
   @override
   void onInit() {
     super.onInit();
     _getMemoData();
+    alarmController.AlarmRefresh();
   }
 
   // Set the current index
@@ -33,6 +39,7 @@ class MemoController extends GetxController {
       List<dynamic> list = memoData["data"];
 
       memos.assignAll(list.map<Memo>((item) => Memo.fromJson(item)).toList());
+      await alarmController.AlarmRefresh();
     }
 
     update();

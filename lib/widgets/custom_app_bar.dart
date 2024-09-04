@@ -194,20 +194,22 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                                   ),
                                   Positioned(
                                     right: 15,
-                                    child: CircleAvatar(
-                                      radius: 8,
-                                      backgroundColor:
-                                          alarmCon.unreadAlarmCount == 0
-                                              ? AppColors().lightGrey
-                                              : AppColors().noticeRed,
-                                      child: Text(
-                                        alarmCon.unreadAlarmCount.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                        ),
-                                      ),
-                                    ),
+                                    child: Obx(() => CircleAvatar(
+                                          radius: 8,
+                                          backgroundColor:
+                                              alarmCon.unreadAlarmCount.value ==
+                                                      0
+                                                  ? AppColors().lightGrey
+                                                  : AppColors().noticeRed,
+                                          child: Text(
+                                            alarmCon.unreadAlarmCount.value
+                                                .toString(),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        )),
                                   ),
                                 ],
                               ),
