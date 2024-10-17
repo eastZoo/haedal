@@ -46,7 +46,7 @@ class LabelTextField extends StatelessWidget {
                   Text(
                     label,
                     style: TextStyle(
-                      fontSize: 12.0,
+                      fontSize: 14.0,
                       fontWeight: FontWeight.w500,
                       color: AppColors().darkGreyText,
                     ),

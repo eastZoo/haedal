@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/screens/add_schedule_screen.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
@@ -30,31 +32,35 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
     print("init : $appointments");
   }
 
+  // 현재 날짜에 일정 추가하는 모달창
   _showAddCurrentDaySchedule() {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent, // Modal의 배경을 투명하게 설정
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(10.0),
         ),
       ),
       builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.85,
-          minChildSize: 0.8,
-          expand: false,
-          snap: true,
-          builder: (context, scrollController) {
-            return GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: Scaffold(
-                body: AddScheduleScreen(selectedDay: selectedDay),
-              ),
-            );
-          }),
+        initialChildSize: 0.85,
+        maxChildSize: 0.85,
+        minChildSize: 0.8,
+        expand: false,
+        snap: true,
+        builder: (context, scrollController) {
+          return GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Scaffold(
+              backgroundColor: Colors.white, // 배경을 완전한 흰색으로 설정
+              body: AddScheduleScreen(selectedDay: selectedDay),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -68,6 +74,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
 
     return Container(
       padding: const EdgeInsets.all(16.0),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -130,12 +137,13 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
 
                       String endTime = DateFormat.Hm('ko_KR')
                           .format(appointments![index].to);
+                      //  투두 아이템 위젯
                       return Container(
                         margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                         width: double.infinity,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -162,7 +170,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                                     flex: 7,
                                     child: Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          15, 8, 8, 8),
+                                          20, 8, 8, 8),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -170,12 +178,19 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                                           Text(
                                             appointments![index].eventName,
                                             style: const TextStyle(
+                                                color: Colors.black,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold),
                                           ),
+                                          const Gap(2.5),
                                           appointments![index].isAllDay
                                               ? const Text(
                                                   "종일",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w600),
                                                 )
                                               : Text('$startTime - $endTime'),
                                         ],
@@ -211,11 +226,14 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                       );
                     },
                   )
-                : const Center(
+                : Center(
                     child: Center(
                       child: Text(
                         "등록된 일정이 없습니다.",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade500),
                       ),
                     ),
                   ),

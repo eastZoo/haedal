@@ -95,6 +95,7 @@ class _MapScreenState extends State<MapScreen> {
             builder: (mapCon) {
               return const LoadingOverlay(
                 child: SafeArea(
+                  maintainBottomViewPadding: true,
                   child: Stack(
                     children: [CustomNaverMap(), BottonSheet()],
                   ),

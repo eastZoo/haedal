@@ -1,22 +1,15 @@
 import 'dart:async';
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/memos.dart';
-import 'package:haedal/models/todo_task.dart';
 import 'package:haedal/screens/add_memo_category_screen.dart';
 import 'package:haedal/screens/show_add_memo_screen.dart';
 import 'package:haedal/service/controller/memo_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
-import 'package:haedal/widgets/memo_group_widget.dart';
-import 'package:flutter/cupertino.dart';
 
 class MemoScreen extends StatefulWidget {
   const MemoScreen({Key? key}) : super(key: key);
@@ -82,11 +75,16 @@ class _MemoScreenState extends State<MemoScreen> {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: AddMemoCategoryScreen(),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(10.0),
+                  ),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.47,
+                    child: const Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0), // 수정된 부분
+                      child: AddMemoCategoryScreen(),
+                    ),
                   ),
                 ),
               );
@@ -109,11 +107,16 @@ class _MemoScreenState extends State<MemoScreen> {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: ShowAddMemoScreen(),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(10.0),
+                  ),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: ShowAddMemoScreen(),
+                    ),
                   ),
                 ),
               );

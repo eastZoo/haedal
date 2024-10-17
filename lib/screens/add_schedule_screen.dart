@@ -194,7 +194,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                       Navigator.pop(context, true);
                     }
                   },
-                  child: const SizedBox(
+                  child: SizedBox(
                       width: 60,
                       height: 40,
                       child: Center(
@@ -203,6 +203,9 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                           style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
+                            color: Color(
+                              int.parse("0xFF$chosenColorCode"),
+                            ),
                           ),
                         ),
                       )),
@@ -233,6 +236,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                       controller: titleTextController,
                       maxLine: 1,
                       hintText: "Title",
+                      chosenColorCode: chosenColorCode,
                     ),
                     const Gap(15),
 

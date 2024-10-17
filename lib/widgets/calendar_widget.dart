@@ -65,6 +65,13 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             width: MediaQuery.of(context).size.width,
             child: SfCalendar(
               view: CalendarView.month,
+              todayHighlightColor: AppColors().mainColor,
+              // 선택한 일자 숫자 테두리 강조
+              selectionDecoration: BoxDecoration(
+                border: Border.all(
+                    color: AppColors().mainColor, width: 2), // 클릭한 일자의 테두리 색상
+                borderRadius: BorderRadius.circular(5),
+              ),
               dataSource: MeetingDataSource(ScheduleCon.meetings),
               controller: controller,
               // 달력 뷰 세팅

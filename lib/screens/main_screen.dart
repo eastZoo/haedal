@@ -1,10 +1,14 @@
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:get/get.dart' as GET;
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:haedal/routes/app_pages.dart';
+import 'package:haedal/screens/add_image_from_album_screen.dart';
 import 'package:haedal/screens/drawer_screen/custom_drawer.dart';
 import 'package:haedal/screens/alarm_screen.dart';
 import 'package:haedal/screens/select_photo_options_screen.dart';
@@ -16,11 +20,14 @@ import 'package:haedal/screens/tab_menu_screen/memo_screen.dart';
 import 'package:haedal/screens/tab_menu_screen/more_screen.dart';
 import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
+import 'package:haedal/service/controller/category_board_controller.dart';
 import 'package:haedal/service/controller/home_controller.dart';
+import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/service/controller/map_controller.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/custom_app_bar.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,6 +39,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   final authCon = GET.Get.find<AuthController>();
+  InfiniteScrollController infiniteCon =
+      GET.Get.put(InfiniteScrollController());
+  CategoryBoardController categoryBoardCon =
+      GET.Get.put(CategoryBoardController());
+
   final mapCon = (MapController());
 
   int _selectedIndex = 0; // 앨범 초기 메인
@@ -86,26 +98,111 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   // 이미지 등록시 ( 이미지 or 글만 등록 선택 모달 )
   _showSelectPhotoOptions() {
-    showModalBottomSheet(
+    showCupertinoModalPopup<void>(
       context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25.0),
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: SizedBox(
+          height: 15.h,
+          child: const Text(
+            '스토리 추가',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () async {
+              var result = await Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.bottomToTop,
+                  child: AddimageFromAlbumScreen(type: 'album'), // 앨범에서 이미지 추가
+                  isIos: true,
+                  duration: routingDuration,
+                ),
+              );
+              // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
+              await mapCon.setMapController(mapCon.prevMapController);
+              // 위치 리패칭을 통한 마커 새로고침
+              await infiniteCon.reload();
+              print(" await infiniteCon.reload();");
+              await mapCon.refetchLocation();
+              print("await mapCon.refetchLocation();");
+              // 메인 앨범 메뉴 리프래쉬(refetch)
+              // Future.delayed(
+              //   const Duration(milliseconds: 100),
+              //   () => {
+              //     infiniteCon.reload(),
+              //     mapCon.refetchLocation(),
+              //   },
+              // );
+              // 카테고리별 메뉴 리프래쉬
+              await categoryBoardCon.reload();
+
+              print("result: $result");
+              if (result == null) {
+              } else if (result == false) {
+              } else {
+                Navigator.pop(context);
+              }
+            },
+            child: const Text(
+              '앨범에서 추가',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () async {
+              var result = await Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.bottomToTop,
+                  child:
+                      AddimageFromAlbumScreen(type: 'camera'), // 카메라에서 이미지 추가
+                  isIos: true,
+                  duration: routingDuration,
+                ),
+              );
+              // add_naver_map dispose 시 클리어된 전역변수 컨트롤러에 다시 저장해놓은 현재 컨트롤러 부착
+              await mapCon.setMapController(mapCon.prevMapController);
+              // 위치 리패칭을 통한 마커 새로고침
+              await infiniteCon.reload();
+              print(" await infiniteCon.reload();");
+              await mapCon.refetchLocation();
+              print("await mapCon.refetchLocation();");
+              // 메인 앨범 메뉴 리프래쉬(refetch)
+              // Future.delayed(
+              //   const Duration(milliseconds: 100),
+              //   () => {
+              //     infiniteCon.reload(),
+              //     mapCon.refetchLocation(),
+              //   },
+              // );
+              // 카테고리별 메뉴 리프래쉬
+              await categoryBoardCon.reload();
+
+              print("result: $result");
+              if (result == null) {
+              } else if (result == false) {
+              } else {
+                Navigator.pop(context);
+              }
+            },
+            child: const Text(
+              '카메라에서 촬영',
+              style: TextStyle(fontSize: 21),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text(
+            '취소',
+            style: TextStyle(fontSize: 21),
+          ),
         ),
       ),
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.3,
-          maxChildSize: 0.3,
-          minChildSize: 0.28,
-          expand: false,
-          snap: true,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: const SelectPhotoOptionsScreen(),
-            );
-          }),
     );
   }
 
@@ -212,6 +309,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             showSelectedLabels: true,
                                             currentIndex: _selectedIndex,
                                             onTap: (index) {
+                                              // 하단 네비게이션바 클릭시 이벤트
                                               setState(() {
                                                 _prevSelectedIndex =
                                                     _selectedIndex;

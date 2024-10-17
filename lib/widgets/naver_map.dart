@@ -28,10 +28,8 @@ class _CustomNaverMapState extends State<CustomNaverMap> {
     final mapCon = Get.put(MapController());
 
     void onMapReady(NaverMapController nController) async {
-      print("READTY@@@@@@@@@@@@@@@");
       nController.setLocationTrackingMode(NLocationTrackingMode.follow);
       mapCon.setMapController(nController);
-      // mCtrl.changedStatus(mCtrl.status);
     }
 
     void onMapTapped(NPoint point, NLatLng latLng) {}
@@ -56,23 +54,6 @@ class _CustomNaverMapState extends State<CustomNaverMap> {
               onCameraIdle: onCameraIdle,
               onSelectedIndoorChanged: onSelectedIndoorChanged,
             ),
-            //   AddLocationBottonSheet(
-            //   panelController: mapCon.mainMapMarkerPanelController,
-            //   inputController: inputController,
-            //   address: mCtrl.newSelectMarkerAddress,
-            //   buttonTitle: "지점 등록 후 시작",
-            //   onSaveLocation: onSaveLocation,
-            //   onChangedText: (text) {
-            //     inputText = text;
-            //   },
-            //   onClosedBottomSheet: () {
-            //     mapController.deleteOverlay(
-            //       const NOverlayInfo(type: NOverlayType.marker, id: "mapPoint"),
-            //     );
-            //     inputController.clear();
-            //     cntl.newSelectMarkerAddressUpdate(null);
-            //   },
-            // ),
             Positioned(
               top: 40, // Set the distance from the top
               left: 20,
