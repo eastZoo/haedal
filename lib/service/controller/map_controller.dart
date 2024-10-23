@@ -146,7 +146,8 @@ class MapController extends GetxController {
     final marker = NMarker(
       size: const Size(43, 45),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/play.png'),
+      icon:
+          const NOverlayImage.fromAssetImage('assets/icons/marker/arcade.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -161,7 +162,7 @@ class MapController extends GetxController {
     final marker = NMarker(
       size: const Size(43, 45),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/place.png'),
+      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/trip.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -176,7 +177,7 @@ class MapController extends GetxController {
     final marker = NMarker(
       size: const Size(43, 45),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/store.png'),
+      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/shop.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -196,32 +197,32 @@ class MapController extends GetxController {
       if (location.category == "음식점") {
         marker = getRestaurantLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/restaurant-selected.png'));
+            'assets/icons/marker/restaurant-active.png'));
       }
       if (location.category == "숙소") {
         marker = getLodgingLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/lodging-selected.png'));
+            'assets/icons/marker/lodging-active.png'));
       }
       if (location.category == "카페") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/coffee-selected.png'));
+            'assets/icons/marker/cafe-active.png'));
       }
       if (location.category == "플레이") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/play-selected.png'));
+            'assets/icons/marker/arcade-active.png'));
       }
       if (location.category == "장소") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/place-selected.png'));
+            'assets/icons/marker/trip-active.png'));
       }
       if (location.category == "스토어") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/store-selected.png'));
+            'assets/icons/marker/shop-active.png'));
       }
       mapController?.addOverlay(marker);
       selectedMarker = location;

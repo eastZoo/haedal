@@ -52,7 +52,7 @@ class BottonSheet extends StatelessWidget {
       void openBottonSheet() {}
 
       return SlidingUpPanel(
-        minHeight: 0,
+        minHeight: 10,
         renderPanelSheet: false,
         panel: Container(
           alignment: Alignment.bottomCenter,

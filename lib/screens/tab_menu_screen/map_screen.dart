@@ -97,7 +97,15 @@ class _MapScreenState extends State<MapScreen> {
                 child: SafeArea(
                   maintainBottomViewPadding: true,
                   child: Stack(
-                    children: [CustomNaverMap(), BottonSheet()],
+                    children: [
+                      CustomNaverMap(),
+                      Positioned(
+                        bottom: 90, // Adjust the value to move it up
+                        left: 0,
+                        right: 0,
+                        child: BottonSheet(),
+                      ),
+                    ],
                   ),
                 ),
               );

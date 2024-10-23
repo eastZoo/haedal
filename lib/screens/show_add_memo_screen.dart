@@ -70,7 +70,7 @@ class _ShowAddMemoScreenState extends State<ShowAddMemoScreen> {
               const Center(
                 child: Text("럽킷 추가",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                     )),
               ),
@@ -79,8 +79,8 @@ class _ShowAddMemoScreenState extends State<ShowAddMemoScreen> {
                 child: ListView(
                   children: [
                     LabelTextField(
-                      label: '할일',
-                      hintText: "할일을 입력해주세요.",
+                      label: '제목',
+                      hintText: "함께하고자 하는 위시를 적어주세요",
                       controller: memoTextController,
                       fillColor: AppColors().toDoGrey,
                     ),

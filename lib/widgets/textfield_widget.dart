@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/styles/colors.dart';
 
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
@@ -24,6 +25,7 @@ class TextFieldWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextField(
+        cursorColor: AppColors().mainColor,
         controller: controller,
         style: TextStyle(
           fontSize: 18,

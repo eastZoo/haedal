@@ -16,6 +16,7 @@ class LabelTextField extends StatelessWidget {
   final double height;
   final Widget? suffixIcon;
   final TextStyle? textStyle;
+  final Color? customColor;
 
   const LabelTextField({
     Key? key,
@@ -29,9 +30,10 @@ class LabelTextField extends StatelessWidget {
     this.onTap,
     this.obscureText = false,
     this.isValid = true,
-    this.height = 40,
+    this.height = 45,
     this.suffixIcon,
     this.textStyle,
+    this.customColor,
   }) : super(key: key);
 
   @override
@@ -46,9 +48,10 @@ class LabelTextField extends StatelessWidget {
                   Text(
                     label,
                     style: TextStyle(
-                      fontSize: 14.0,
+                      fontSize: 15.0,
                       fontWeight: FontWeight.w500,
-                      color: AppColors().darkGreyText,
+                      color: customColor ??
+                          AppColors().darkGreyText, // customColor가 없으면 기본값 설정
                     ),
                   ),
                 ],
@@ -57,24 +60,41 @@ class LabelTextField extends StatelessWidget {
             ],
           ),
         multiLine
-            ? Container(
-                margin: const EdgeInsets.all(12),
-                height: 5 * 10.0,
+            ? SizedBox(
+                height: 8 * 14.0,
                 child: TextField(
+                  cursorColor: AppColors().mainColor,
                   controller: controller,
                   focusNode: focusNode,
                   readOnly: readOnly,
                   onTap: onTap,
                   obscureText: obscureText,
                   maxLines: multiLine ? 5 : 1,
+                  textDirection: TextDirection.ltr,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 15.0,
+                      vertical: 10.0,
                     ),
-                    fillColor: fillColor ?? AppColors().white,
                     filled: true,
+                    fillColor: fillColor ?? AppColors().white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors().lightGrey,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors().mainColor,
+                      ),
+                    ),
                     hintText: hintText,
-                    hintStyle: const TextStyle(color: Colors.grey),
+                    hintStyle:
+                        TextStyle(color: AppColors().lightGrey, fontSize: 14.0),
                     prefixIcon: isValid
                         ? null
                         : const Icon(Icons.error, color: Colors.red),
@@ -86,6 +106,7 @@ class LabelTextField extends StatelessWidget {
             : SizedBox(
                 height: height,
                 child: TextField(
+                  cursorColor: AppColors().mainColor,
                   controller: controller,
                   focusNode: focusNode,
                   readOnly: readOnly,
@@ -105,17 +126,17 @@ class LabelTextField extends StatelessWidget {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: AppColors().mainColor,
+                        color: AppColors().lightGrey,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: AppColors().mainYellowColor,
+                        color: AppColors().mainColor,
                       ),
                     ),
                     hintText: hintText,
                     hintStyle:
-                        TextStyle(color: AppColors().mainColor, fontSize: 14.0),
+                        TextStyle(color: AppColors().lightGrey, fontSize: 14.0),
                     prefixIcon: isValid
                         ? null
                         : const Icon(Icons.error, color: Colors.red),

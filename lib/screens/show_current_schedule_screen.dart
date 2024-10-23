@@ -44,21 +44,13 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
         ),
       ),
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.85,
-        maxChildSize: 0.85,
-        minChildSize: 0.8,
+        initialChildSize: 0.8,
+        maxChildSize: 0.8,
+        minChildSize: 0.75,
         expand: false,
         snap: true,
         builder: (context, scrollController) {
-          return GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Scaffold(
-              backgroundColor: Colors.white, // 배경을 완전한 흰색으로 설정
-              body: AddScheduleScreen(selectedDay: selectedDay),
-            ),
-          );
+          return AddScheduleScreen(selectedDay: selectedDay);
         },
       ),
     );

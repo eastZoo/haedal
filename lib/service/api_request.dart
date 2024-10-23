@@ -31,10 +31,11 @@ class ApiRequest {
 
   /// 카카오 리버스지오코당을 위한 Authorization 세팅
   Future<Dio> _kakaoDio() async {
+    print('KakaoAK ${dotenv.env['KAKAO_MAP_REST_API_KEY']}');
     return Dio(
       BaseOptions(
         headers: {
-          'Authorization': 'KakaoAK ${dotenv.env['KAKAO_NATIVE_API_KEY']}',
+          'Authorization': 'KakaoAK ${dotenv.env['KAKAO_MAP_REST_API_KEY']}',
         },
       ),
     );
@@ -75,7 +76,7 @@ class ApiRequest {
         "data": response.data,
       };
     } on Exception catch (e) {
-      print(e);
+      print("에러 $e,");
 
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
       if (e is DioException) {
