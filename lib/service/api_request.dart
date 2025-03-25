@@ -45,10 +45,7 @@ class ApiRequest {
     try {
       var dio = await _dio();
       Response response = await dio.get(url, queryParameters: data);
-      return {
-        "success": true,
-        "data": response.data,
-      };
+      return response.data;
     } on Exception catch (e) {
       print(e);
 
@@ -95,7 +92,7 @@ class ApiRequest {
       var dio = await _dio();
       Response response =
           await dio.post(url, data: data, queryParameters: data);
-      return {"success": true, "data": response.data};
+      return response.data;
     } catch (e) {
       print(e);
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
@@ -112,10 +109,7 @@ class ApiRequest {
     try {
       var dio = await _dio();
       Response response = await dio.delete(url, data: data);
-      return {
-        "success": true,
-        "data": response.data,
-      };
+      return response.data;
     } catch (e) {
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
       if (e is DioException) {
@@ -137,7 +131,7 @@ class ApiRequest {
             'Accept': 'application/json',
           }));
 
-      return {"success": true, "data": response.data};
+      return response.data;
     } catch (e) {
       String errorMsg = "오류발생 내용을 다시 확인해 주세요.";
       if (e is DioException) {

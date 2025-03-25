@@ -60,10 +60,10 @@ class AuthController extends GetxController {
     try {
       // 회원가입(로그인) API
       var res = await AuthProvider().onSignUp(dataSource);
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         // 로그인 후 응답으로 부터 토큰 저장
         storage.write(key: "accessToken", value: res["data"]["accessToken"]);
-        connectState = RxInt(res["data"]["connectState"]);
+        connectState.value = res["data"]["connectState"];
 
         update();
         return res["success"];
@@ -110,16 +110,16 @@ class AuthController extends GetxController {
     try {
       // 회원가입(로그인) API
       var res = await AuthProvider().socialLoginRegister(dataSource);
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         // 로그인 후 응답으로 부터 토큰 저장
         storage.write(key: "accessToken", value: res["data"]["accessToken"]);
         storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
 
-        connectState = RxInt(res["data"]["connectState"]);
+        connectState.value = res["data"]["connectState"];
 
         update();
 
-        return res["data"]["success"];
+        return res["success"];
       } else {
         CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
       }
@@ -157,7 +157,7 @@ class AuthController extends GetxController {
     try {
       // 회원가입(로그인) API
       var res = await AuthProvider().socialLoginRegister(dataSource);
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         // 로그인 후 응답으로 부터 토큰 저장
         storage.write(key: "accessToken", value: res["data"]["accessToken"]);
         storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
@@ -166,12 +166,13 @@ class AuthController extends GetxController {
 
         update();
 
-        return res["data"]["success"];
+        return res["success"];
       } else {
         CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+        return res["success"];
       }
     } catch (e) {
-      CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      CustomToast().alert("서버에러 회원가입에 실패했습니다. 다시 시도해주세요.");
       print("error $e");
     }
   }
@@ -193,22 +194,22 @@ class AuthController extends GetxController {
     try {
       // 회원가입(로그인) API
       var res = await AuthProvider().socialLoginRegister(dataSource);
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         // 로그인 후 응답으로 부터 토큰 저장
         storage.write(key: "accessToken", value: res["data"]["accessToken"]);
         storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
 
-        connectState = RxInt(res["data"]["connectState"]);
+        connectState.value = res["data"]["connectState"];
 
         update();
 
-        return res["data"]["success"];
+        return res["success"];
       } else {
         CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
-        return res["data"]["success"];
+        return res["success"];
       }
     } catch (e) {
-      CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      CustomToast().alert("서버에러회원가입에 실패했습니다. 다시 시도해주세요.");
       print("error $e");
     }
   }
@@ -222,16 +223,16 @@ class AuthController extends GetxController {
     // 회원가입(로그인) API
     var res = await AuthProvider().onSignIn(dataSource);
 
-    if (res["data"]["success"]) {
+    if (res["success"]) {
       // 로그인 후 응답으로 부터 토큰 저장
       storage.write(key: "accessToken", value: res["data"]["accessToken"]);
       storage.write(key: "refreshToken", value: res["data"]["refreshToken"]);
-      connectState = RxInt(res["data"]["connectState"]);
+      connectState.value = res["data"]["connectState"];
       update();
 
-      return res["data"];
+      return res;
     }
-    return res["data"];
+    return res;
   }
 
   // 초대코드 연결
@@ -240,21 +241,20 @@ class AuthController extends GetxController {
       "code": code,
     };
     var res = await AuthProvider().onConnect(dataSource);
-    if (res["data"]["success"]) {
+    if (res["success"]) {
       // 상태저장 => 2
-      print(res["data"]["connectState"].runtimeType);
-      print("onConnect");
-      connectState = RxInt(res["data"]["connectState"]);
+
+      connectState.value = res["data"]["connectState"];
       update();
-      return res["data"];
+      return res;
     }
-    return res["data"];
+    return res;
   }
 
   // 중복이메일 확인
   checkDuplicateEmail(String userEmail) async {
     var res = await AuthProvider().getDuplicateEmailState(userEmail);
-    isDuplicateEmail = res["data"] == "true" ? true : false;
+    isDuplicateEmail = res["data"] == true ? true : false;
     update();
   }
 
@@ -266,17 +266,16 @@ class AuthController extends GetxController {
       // 토큰이 있을때만 연결상태 GET API 실행
       if (token != null) {
         var res = await AuthProvider().getConnectState();
+        if (res["data"] == false) {
+          return await logOut();
+        }
         if (res["data"] == 3) {
           return Navigator.pushNamed(Get.context!, '/home');
         }
-        print(res);
-        print("getConnectState : ${res["data"]}");
-        if (res["data"] == "false") {
-          return await logOut();
-        }
-        connectState = RxInt(int.parse(res["data"]));
+
+        connectState.value = res["data"];
         update();
-        return int.parse(res["data"]);
+        return res["data"];
       }
     } catch (e) {
       print(e);
@@ -285,11 +284,12 @@ class AuthController extends GetxController {
 
   // 승인코드 얻기 ( 승인코드 처리 )
   getInviteCodeInfo() async {
-    print("getInviteCodeInfo : $connectState");
+    print("getInviteCodeInfo");
     if (connectState == 1) {
       var res = await AuthProvider().getInviteCodeInfo();
+      print("getInviteCodeInfo res : $res");
       if (res["success"]) {
-        print("getInviteCodeInfo res: ${res["data"]}");
+        print(res["data"]);
         coupleConnectInfo = CoupleConnectInfo.fromJson(res["data"]);
         int targetTimeStamp = coupleConnectInfo?.updatedAt
                 ?.add(const Duration(hours: 24))
@@ -333,24 +333,19 @@ class AuthController extends GetxController {
 // 개인정보 입력 최종 연결 요청
   onStartConnect(dataSource) async {
     var res = await AuthProvider().onStartConnect(dataSource);
-    print("onStartConnect  : ${res["data"]}");
-    if (res["data"]["success"]) {
-      print(res["data"]["connectState"].runtimeType);
-      connectState = RxInt(int.parse(res["data"]["connectState"]));
-
+    if (res["success"]) {
+      connectState.value = res["data"]["connectState"];
       update();
-      return res["data"]["success"];
+      return res["success"];
     }
   }
 
   // 아이디 찾기 버튼
   onFindId(dataSource) async {
     try {
-      print(dataSource);
       var res = await AuthProvider().onFindId(dataSource);
 
-      if (res["data"]["success"]) {
-        print(res["data"]);
+      if (res["success"]) {
         return true;
       }
     } catch (e) {
@@ -363,17 +358,11 @@ class AuthController extends GetxController {
   getUserInfo() async {
     try {
       var res = await AuthProvider().getUserInfoProvider();
-      print("USERINFO   : : $res");
-
       if (res["success"]) {
         coupleInfo.value = CoupleInfo.fromJson(res["data"]);
-        print("coupleInfo : $coupleInfo");
       }
-
-      print("coupleInfo : $coupleInfo");
       isLoading = false;
     } catch (error) {
-      print("getUserInfo??? $error");
       // error 캐치해도 일단 아바타 로딩 잡기 위해서 강제 false 처리
       isLoading = false;
     } finally {
@@ -386,7 +375,6 @@ class AuthController extends GetxController {
     print("로그아웃!!!!!!");
     const storage = FlutterSecureStorage();
     storage.delete(key: "accessToken");
-
     connectState.update(RxInt(0));
   }
 
@@ -395,12 +383,9 @@ class AuthController extends GetxController {
     try {
       // 회원가입(로그인) API
       var res = await AuthProvider().uploadHomeImage(requestData);
-      print(res);
-      print("uploadHomeImage");
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         return res["success"];
       } else {
-        print('Image upload failed');
         CustomToast().alert("이미지 업로드에 실패했습니다.");
       }
     } catch (e) {
@@ -413,12 +398,9 @@ class AuthController extends GetxController {
     try {
       // 회원가입(로그인) API
       var res = await AuthProvider().uploadProfileImage(requestData);
-      print(res);
-      print("uploadHomeImage");
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         return res["success"];
       } else {
-        print('Image upload failed');
         CustomToast().alert("이미지 업로드에 실패했습니다.");
       }
     } catch (e) {
@@ -429,9 +411,9 @@ class AuthController extends GetxController {
   deleteUser() async {
     try {
       var res = await AuthProvider().deleteUser();
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         logOut();
-        return res["data"]["success"];
+        return res["success"];
       } else {
         CustomToast().alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
       }

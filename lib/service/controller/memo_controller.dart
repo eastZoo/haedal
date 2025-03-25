@@ -3,6 +3,7 @@ import 'package:haedal/models/memos.dart';
 import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/service/provider/memo_provider.dart';
+import 'package:haedal/utils/toast.dart';
 
 class MemoController extends GetxController {
   final AlarmController alarmController = Get.find<AlarmController>();
@@ -34,10 +35,11 @@ class MemoController extends GetxController {
     memos.clear();
     isLoading.value = true;
     var memoData = await MemoProvider().getMemoList();
-
     if (memoData["data"].length != 0) {
       List<dynamic> list = memoData["data"];
+      print(list);
 
+      print("gg");
       memos.assignAll(list.map<Memo>((item) => Memo.fromJson(item)).toList());
       await alarmController.AlarmRefresh();
     }
@@ -51,17 +53,17 @@ class MemoController extends GetxController {
     try {
       isLoading.value = true;
       var res = await MemoProvider().createMemoCategory(requestData);
-      var isSuccess = res["success"];
-      if (isSuccess == true) {
+      print(res);
+      if (res["success"]) {
         await _getMemoData();
-        return isSuccess;
+        return res["success"];
       } else {
-        print(res["msg"]);
         return false;
       }
     } catch (e) {
       print(e);
-      throw Error();
+      CustomToast().alert("카테고리 생성에 실패했습니다.");
+      return false;
     } finally {
       isLoading.value = false;
       update();
@@ -73,11 +75,10 @@ class MemoController extends GetxController {
     try {
       isLoading.value = true;
       var res = await MemoProvider().updateMemoItem(data);
-      var isSuccess = res["data"]["success"];
 
-      if (isSuccess == true) {
+      if (res["success"]) {
         await _getMemoData();
-        return isSuccess;
+        return res["success"];
       } else {
         return false;
       }

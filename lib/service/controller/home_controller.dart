@@ -129,12 +129,12 @@ class HomeController extends GetxController {
         "emotion": selectedEmoji.value,
       };
       var res = await AuthProvider().updateEmotion(dataSource);
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         await authCon.getUserInfo();
-        return res["data"]["success"];
+        return res["success"];
       } else {
         CustomToast().alert('이모션 업데이트 실패');
-        return res["data"]["success"];
+        return res["success"];
       }
     } catch (e) {
       CustomToast().alert('이모션 업데이트 실패 : 서버 오류');

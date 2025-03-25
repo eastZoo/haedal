@@ -271,8 +271,8 @@ class MapController extends GetxController {
   fetchLocationMark() async {
     try {
       var res = await MapProvider().getLocation();
-      var isSuccess = res["success"];
-      if (isSuccess == true) {
+
+      if (res["success"]) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
@@ -280,8 +280,6 @@ class MapController extends GetxController {
           locations.assignAll(list
               .map<AlbumBoard>((item) => AlbumBoard.fromJson(item))
               .toList());
-
-          print("location@@ : $locations");
         }
       } else {
         return res["msg"];

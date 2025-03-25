@@ -29,13 +29,11 @@ class AlarmController extends GetxController {
 
   /// 알림 리스트 가져오기
   getNotiData() async {
-    // notis.clear();
     isLoading.value = true;
     try {
-      var notiData = await AlarmProvider().getAlarmList();
-
-      if (notiData["data"]["success"]) {
-        List<dynamic> list = notiData["data"]["alarmHistoryList"];
+      var res = await AlarmProvider().getAlarmList();
+      if (res["success"]) {
+        List<dynamic> list = res["data"];
 
         alarmList.assignAll(
             list.map((item) => AlarmHistory.fromJson(item)).toList());
@@ -43,8 +41,6 @@ class AlarmController extends GetxController {
       update();
       isLoading.value = false;
     } catch (e) {
-      print(e);
-
       isLoading.value = false;
     }
   }
@@ -54,7 +50,7 @@ class AlarmController extends GetxController {
     try {
       print("알람 읽음 처리");
       var res = await AlarmProvider().readAlarm();
-      if (res["data"]["success"]) {
+      if (res["success"]) {
         getNotiData();
       }
     } catch (e) {
@@ -66,8 +62,7 @@ class AlarmController extends GetxController {
   getUnreadAlarmCount() async {
     try {
       var res = await AlarmProvider().getUnreadAlarmCount();
-      print("AlarmRefresh ${res["data"]["unreadAlarmCount"]}");
-      unreadAlarmCount.value = res["data"]["unreadAlarmCount"];
+      unreadAlarmCount.value = res["data"];
     } catch (e) {
       print(e);
     }

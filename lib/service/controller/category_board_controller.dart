@@ -25,9 +25,7 @@ class CategoryBoardController extends GetxController {
   }
 
   _getData() async {
-    print("iscategory :  $category");
     isLoading.value = true;
-
     int offset = data.length;
 
     var albumData =
