@@ -12,7 +12,7 @@ class ScheduleController extends GetxController {
   final AlarmController alarmController = Get.find<AlarmController>();
   List<Meeting> meetings = <Meeting>[];
 
-  var colors = <dynamic>[].obs;
+  List<LabelColor> colors = [];
   WorkTable? currentWorkTableUrl;
 
   @override
@@ -63,22 +63,23 @@ class ScheduleController extends GetxController {
     try {
       var res = await ScheduleProvider().getLabelColor();
       var isSuccess = res["success"];
+      print("🚩 getCalendarLabelColor res : $res");
       if (isSuccess == true) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
-
-          colors.assignAll(list
+          print("🚩 getCalendarLabelColor list : $list");
+          colors = list
               .map<LabelColor>((item) => LabelColor.fromJson(item))
-              .toList());
-
-          print("colors   : $colors");
+              .toList();
+          print("🚩 getCalendarLabelColor colors : $colors");
+          update();
         }
       } else {
         return res["msg"];
       }
     } catch (e) {
-      print(e);
+      print("getCalendarLabelColor 에러: $e");
     }
   }
 

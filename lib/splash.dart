@@ -31,6 +31,9 @@ class _SplashScreenState extends State<SplashScreen> {
         return GetBuilder<AuthController>(
             init: AuthController(),
             builder: (authCon) {
+              print('snapshot.connectionState : ${snapshot.connectionState}');
+              print('snapshot.hasData : ${snapshot.hasData}');
+              print('snapshot.data : ${snapshot.data}');
               print(
                   "_SplashScreenState connectState : ${authCon.connectState}");
               if (snapshot.connectionState == ConnectionState.waiting) {

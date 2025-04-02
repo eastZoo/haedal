@@ -18,9 +18,9 @@ PODS:
   - flutter_naver_login (0.0.1):
     - Flutter
     - naveridlogin-sdk-ios (~> 4.1.0)
-  - flutter_naver_map (1.0.0):
+  - flutter_naver_map (1.3.0):
     - Flutter
-    - NMapsMap (= 3.17.0)
+    - NMapsMap (= 3.19.0)
   - flutter_secure_storage (6.0.0):
     - Flutter
   - fluttertoast (0.0.2):
@@ -30,6 +30,7 @@ PODS:
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
+    - FlutterMacOS
   - image_cropper (0.0.4):
     - Flutter
     - TOCropViewController (~> 2.6.1)
@@ -39,11 +40,11 @@ PODS:
     - Flutter
   - insta_assets_crop (0.0.1):
     - Flutter
-  - kakao_flutter_sdk_common (1.9.2):
+  - kakao_flutter_sdk_common (1.9.5):
     - Flutter
   - naveridlogin-sdk-ios (4.1.6)
   - NMapsGeometry (1.0.2)
-  - NMapsMap (3.17.0):
+  - NMapsMap (3.19.0):
     - NMapsGeometry
   - OrderedSet (5.0.0)
   - path_provider_foundation (0.0.1):
@@ -63,7 +64,7 @@ PODS:
     - FlutterMacOS
   - sign_in_with_apple (0.0.1):
     - Flutter
-  - sqflite (0.0.3):
+  - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
   - Toast (4.1.1)
@@ -73,6 +74,7 @@ PODS:
     - FlutterMacOS
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
@@ -86,7 +88,7 @@ DEPENDENCIES:
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
-  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -99,9 +101,9 @@ DEPENDENCIES:
   - sensors_plus (from `.symlinks/plugins/sensors_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
-  - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
-  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -136,7 +138,7 @@ EXTERNAL SOURCES:
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
-    :path: ".symlinks/plugins/geolocator_apple/ios"
+    :path: ".symlinks/plugins/geolocator_apple/darwin"
   image_cropper:
     :path: ".symlinks/plugins/image_cropper/ios"
   image_gallery_saver:
@@ -161,48 +163,48 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sign_in_with_apple:
     :path: ".symlinks/plugins/sign_in_with_apple/ios"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/darwin"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
   webview_flutter_wkwebview:
-    :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
   app_tracking_transparency: e169b653478da7bb15a6c61209015378ca73e375
-  camera_avfoundation: 8b8d780bcfb6a4a02b0fbe2b4bd17b5b71946e68
+  camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
   emoji_picker_flutter: fe2e6151c5b548e975d546e6eeb567daf0962a58
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
   flutter_naver_login: 1dbf6d21aae5235cdf76a28ac79cf6871899282f
-  flutter_naver_map: b18663bc83c2caaab484c58dccf239a87ebbed1b
+  flutter_naver_map: d31b1884517151e7b3121e3b24c18733ef4e4387
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
-  fluttertoast: 9f2f8e81bb5ce18facb9748d7855bf5a756fe3db
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
-  geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
+  geolocator_apple: 66b711889fd333205763b83c9dcf0a57a28c7afd
   image_cropper: a3291c624a953049bc6a02e1f8c8ceb162a24b25
   image_gallery_saver: cb43cc43141711190510e92c460eb1655cd343cb
-  image_picker_ios: 99dfe1854b4fa34d0364e74a78448a0151025425
+  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   insta_assets_crop: 46c0be4cbfe48cff466b6924ec93b77f656ebaa8
-  kakao_flutter_sdk_common: 049c9341e325da17ac75751a35646dbbcfa06891
+  kakao_flutter_sdk_common: 985c7085c29a2bd949972cadac8238845dc354db
   naveridlogin-sdk-ios: cdd34e3585a3d5aaf37c1d84c1f41faba4a25d1a
   NMapsGeometry: 4e02554fa9880ef02ed96b075dc84355d6352479
-  NMapsMap: a5b909a31b6f3d27a670f6eb2ddc913c38975474
+  NMapsMap: 99c10429d93340780b6f88d3fc7c0a3850b43664
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
-  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   photo_manager: ff695c7a1dd5bc379974953a2b5c0a293f7c4c8a
-  rive_common: cbbac3192af00d7341f19dae2f26298e9e37d99e
-  sensors_plus: 42b9de1b8237675fa8d8121e4bb93be0f79fa61d
-  shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
+  rive_common: 4743dbfd2911c99066547a3c6454681e0fa907df
+  sensors_plus: 7229095999f30740798f0eeef5cd120357a8f4f2
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
-  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
-  video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
-  webview_flutter_wkwebview: 4f3e50f7273d31e5500066ed267e3ae4309c5ae4
+  video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
+  webview_flutter_wkwebview: a4af96a051138e28e29f60101d094683b9f82188
 
 PODFILE CHECKSUM: 52f2f73638a2bcd4c0617019ac8b4834cf1effc4
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2

@@ -97,7 +97,7 @@ class MapController extends GetxController {
   // 음식점 marker
   NMarker getRestaurantLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage(
           'assets/icons/marker/restaurant.png'),
@@ -113,7 +113,7 @@ class MapController extends GetxController {
   //숙소 marker
   NMarker getLodgingLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon:
           const NOverlayImage.fromAssetImage('assets/icons/marker/lodging.png'),
@@ -129,7 +129,7 @@ class MapController extends GetxController {
   //카페 marker
   NMarker getCafeLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/cafe.png'),
       position: NLatLng(
@@ -144,7 +144,7 @@ class MapController extends GetxController {
 //플레이 marker
   NMarker getPlayLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon:
           const NOverlayImage.fromAssetImage('assets/icons/marker/arcade.png'),
@@ -160,7 +160,7 @@ class MapController extends GetxController {
   //장소 marker
   NMarker getPlaceLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/trip.png'),
       position: NLatLng(
@@ -175,7 +175,7 @@ class MapController extends GetxController {
   //스토어 marker
   NMarker getStoreLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/shop.png'),
       position: NLatLng(
@@ -271,12 +271,12 @@ class MapController extends GetxController {
   fetchLocationMark() async {
     try {
       var res = await MapProvider().getLocation();
-
+      print("🚩 fetchLocationMark res : $res");
       if (res["success"]) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
-
+          print("🚩 fetchLocationMark list : $list");
           locations.assignAll(list
               .map<AlbumBoard>((item) => AlbumBoard.fromJson(item))
               .toList());

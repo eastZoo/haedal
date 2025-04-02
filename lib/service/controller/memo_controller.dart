@@ -97,6 +97,7 @@ class MemoController extends GetxController {
       isLoading.value = true;
       var res = await MemoProvider().createMemo(data);
       var isSuccess = res["success"];
+      print("isSuccess: $isSuccess");
       if (isSuccess == true) {
         await _getMemoData(); // 리패칭
         return isSuccess;

@@ -26,6 +26,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
+    print("🚩 LoadingScreen initState");
+    authCon.getConnectState();
   }
 
   void checkAutoLogout(token, connectState) async {

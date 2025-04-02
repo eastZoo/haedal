@@ -24,9 +24,10 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getColor();
+    // 컨트롤러의 색상 데이터 로드
+    Get.find<ScheduleController>().getCalendarLabelColor();
   }
 
   // 초기 로딩시 로컬스토리지에 색데이터 있는지 확인후 있다면 디폴트 세팅
@@ -54,6 +55,13 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
     return GetBuilder<ScheduleController>(
         init: ScheduleController(),
         builder: (scheduleCon) {
+          // 로딩 상태 확인
+          if (scheduleCon.colors.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           return LoadingOverlay(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +151,7 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "${scheduleCon.colors[index].name}",
+                                                scheduleCon.colors[index].name,
                                                 style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight:

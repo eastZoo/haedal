@@ -261,17 +261,25 @@ class AuthController extends GetxController {
   // 현재 커플과 연결 상태 (1: 승인코드 미입력 , 2:개인정보 미입력, 3:모두입력)
   getConnectState() async {
     try {
+      print("🚩 getConnectState init");
       const storage = FlutterSecureStorage();
       var token = await storage.read(key: "accessToken");
+
+      print("🚩 getConnectState token : $token");
       // 토큰이 있을때만 연결상태 GET API 실행
       if (token != null) {
         var res = await AuthProvider().getConnectState();
+        print("🚩 getConnectState res : $res");
+        print("🚩 getConnectState res : ${res["data"]}");
+        print("🚩 getConnectState res : ${res["success"]}");
         if (res["data"] == false) {
           return await logOut();
         }
-        if (res["data"] == 3) {
-          return Navigator.pushNamed(Get.context!, '/home');
-        }
+        // if (res["data"] == 3) {
+        //   return Navigator.pushNamed(Get.context!, '/home');
+        // }
+
+        print("resConnectState : $res");
 
         connectState.value = res["data"];
         update();

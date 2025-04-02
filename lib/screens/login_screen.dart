@@ -18,6 +18,7 @@ import 'package:haedal/widgets/my_button.dart';
 import 'package:haedal/widgets/my_textfield.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -40,6 +41,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   final authCon = Get.put(AuthController());
+
+  bool isSaveId = false;
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
         cursorMovedOutOfEmailTextField();
       }
     });
+    // 저장된 이메일 불러오기
+    _loadSavedEmail();
   }
 
   @override
@@ -62,6 +68,28 @@ class _LoginScreenState extends State<LoginScreen> {
   void cursorMovedOutOfEmailTextField() async {
     // 커서 아웃됬을때 공백 전부 삭제
     emailController.text = emailController.text.replaceAll(" ", "");
+  }
+
+  // 이메일 저장 상태 불러오기
+  void _loadSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isSaveId = prefs.getBool('isSaveId') ?? false;
+      if (isSaveId) {
+        emailController.text = prefs.getString('savedEmail') ?? '';
+      }
+    });
+  }
+
+  // 이메일 저장하기
+  void _saveEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isSaveId', isSaveId);
+    if (isSaveId) {
+      await prefs.setString('savedEmail', emailController.text);
+    } else {
+      await prefs.remove('savedEmail');
+    }
   }
 
   Widget _buildSocialButton(String iconPath, VoidCallback onPressed) {
@@ -255,6 +283,51 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 10),
 
+                        // 아이디 저장 체크박스
+                        Container(
+                          margin: EdgeInsets.zero,
+                          padding: EdgeInsets.zero,
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: isSaveId,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isSaveId = value!;
+                                    _saveEmail();
+                                  });
+                                },
+                                side: BorderSide(
+                                  color: AppColors().mainColor,
+                                ),
+                                activeColor: AppColors().mainColor,
+                                visualDensity: const VisualDensity(
+                                    horizontal: -4.0, vertical: 0), // ✅ 여백 줄임
+                                materialTapTargetSize: MaterialTapTargetSize
+                                    .shrinkWrap, // ✅ 터치 영역 최소화 (선택)
+                              ),
+                              const Gap(5),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isSaveId = !isSaveId;
+                                    _saveEmail();
+                                  });
+                                },
+                                child: Text(
+                                  '아이디 저장',
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
                         // sign in button
                         MyButton(
                           title: "로그인",
@@ -262,6 +335,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             var result = await authCon.onSignIn(
                                 emailController.text, passwordController.text);
                             if (result["success"]) {
+                              if (isSaveId) {
+                                _saveEmail();
+                              }
                               Timer(const Duration(milliseconds: 500), () {
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,

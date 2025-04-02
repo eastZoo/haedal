@@ -55,8 +55,8 @@ class _CustomNaverMapState extends State<CustomNaverMap> {
               onSelectedIndoorChanged: onSelectedIndoorChanged,
             ),
             Positioned(
-              top: 20, // Set the distance from the top
-              left: 20,
+              top: 15, // Set the distance from the top
+              left: 10,
               child: Container(
                 width: 100,
                 height: 40,

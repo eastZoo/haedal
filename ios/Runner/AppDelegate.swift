@@ -3,7 +3,7 @@ import Flutter
 // 네이버 소셜 로그인 세팅 추가
 import NaverThirdPartyLogin
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
