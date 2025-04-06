@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/label-color.dart';
 import 'package:haedal/models/work_table.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/provider/board_provider.dart';
 import 'package:haedal/service/provider/schedule_provider.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/calendar_widget.dart';
 
 class ScheduleController extends GetxController {
+  final AlarmController alarmController = Get.find<AlarmController>();
   List<Meeting> meetings = <Meeting>[];
 
-  var colors = <dynamic>[].obs;
+  List<LabelColor> colors = [];
   WorkTable? currentWorkTableUrl;
 
   @override
@@ -18,6 +20,7 @@ class ScheduleController extends GetxController {
     super.onInit();
     _getDataSource();
     getCalendarLabelColor();
+    alarmController.AlarmRefresh();
   }
 
   scheduleSubmit(Map<String, dynamic> requestData) async {
@@ -60,22 +63,23 @@ class ScheduleController extends GetxController {
     try {
       var res = await ScheduleProvider().getLabelColor();
       var isSuccess = res["success"];
+      print("🚩 getCalendarLabelColor res : $res");
       if (isSuccess == true) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
-
-          colors.assignAll(list
+          print("🚩 getCalendarLabelColor list : $list");
+          colors = list
               .map<LabelColor>((item) => LabelColor.fromJson(item))
-              .toList());
-
-          print("colors   : $colors");
+              .toList();
+          print("🚩 getCalendarLabelColor colors : $colors");
+          update();
         }
       } else {
         return res["msg"];
       }
     } catch (e) {
-      print(e);
+      print("getCalendarLabelColor 에러: $e");
     }
   }
 
@@ -174,6 +178,8 @@ class ScheduleController extends GetxController {
                 item["allDay"],
                 item["id"]);
           }).toList());
+          // 알림목록 리패칭
+          await alarmController.AlarmRefresh();
           update();
         }
       } else {

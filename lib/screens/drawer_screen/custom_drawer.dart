@@ -19,7 +19,7 @@ class CustomDrawer extends StatelessWidget {
       Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
     }
 
-    return GetBuilder<AuthController>(builder: (AuthCon) {
+    return GetBuilder<AuthController>(builder: (authCon) {
       return Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -32,8 +32,8 @@ class CustomDrawer extends StatelessWidget {
                 backgroundImage: AssetImage('assets/icons/profile.png'),
                 backgroundColor: Colors.white,
               ),
-              accountName: Text(AuthCon.userInfo!.name),
-              accountEmail: Text(AuthCon.userInfo!.userEmail),
+              accountName: Text(authCon.coupleInfo.value?.me?.name ?? ""),
+              accountEmail: Text(authCon.coupleInfo.value?.me?.userEmail ?? ""),
               decoration: BoxDecoration(
                 color: AppColors().mainColor,
               ),

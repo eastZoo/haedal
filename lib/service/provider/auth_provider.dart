@@ -3,6 +3,12 @@ import 'package:haedal/service/api_request.dart';
 import 'package:haedal/service/endpoints.dart';
 
 class AuthProvider extends GetxController {
+// 소셜 로그인 회원가입
+  socialLoginRegister(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/social', data: data)
+        .asyncPost();
+  }
+
   // 회원가입
   onSignUp(data) async {
     return await ApiRequest(url: '${Endpoints.authUrl}/sign-up', data: data)
@@ -58,7 +64,36 @@ class AuthProvider extends GetxController {
         .asyncPost();
   }
 
+// 커플 정보 ( 나, 상대방 정보 ) 얻기
   getUserInfoProvider() async {
     return await ApiRequest(url: '${Endpoints.authUrl}/profile').asyncGet();
+  }
+
+// 홈 배경화면 이미지 업로드
+  uploadHomeImage(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/background', data: data)
+        .formPost();
+  }
+
+// 프로필 사진 이미지 업로드
+  uploadProfileImage(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/profile', data: data)
+        .formPost();
+  }
+
+// 회원탈퇴
+  deleteUser() async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/destroy').asyncGet();
+  }
+
+// 홈화면 이모션 업데이트
+  updateEmotion(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/emotion', data: data)
+        .asyncPost();
+  }
+
+  onFindId(data) async {
+    return await ApiRequest(url: '${Endpoints.authUrl}/find-id', data: data)
+        .asyncPost();
   }
 }

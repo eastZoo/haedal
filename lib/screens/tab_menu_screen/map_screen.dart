@@ -40,6 +40,7 @@ class _MapScreenState extends State<MapScreen> {
   void permissionHandler() async {
     if (await Permission.contacts.request().isGranted) {
       // Either the permission was already granted before or the user just granted it.
+      return;
     }
     // You can request multiple permissions at once.
     Map<Permission, PermissionStatus> statuses = await [
@@ -50,6 +51,8 @@ class _MapScreenState extends State<MapScreen> {
     ].request();
 
     var isit = statuses[Permission.location];
+
+    print("$isit isit");
     if (isit == PermissionStatus.granted) {
       setState(() {
         success = true;
@@ -92,8 +95,17 @@ class _MapScreenState extends State<MapScreen> {
             builder: (mapCon) {
               return const LoadingOverlay(
                 child: SafeArea(
+                  maintainBottomViewPadding: true,
                   child: Stack(
-                    children: [CustomNaverMap(), BottonSheet()],
+                    children: [
+                      CustomNaverMap(),
+                      Positioned(
+                        bottom: 90, // Adjust the value to move it up
+                        left: 0,
+                        right: 0,
+                        child: BottonSheet(),
+                      ),
+                    ],
                   ),
                 ),
               );

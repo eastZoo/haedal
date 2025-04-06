@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haedal/styles/colors.dart';
 
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
@@ -6,11 +7,13 @@ class TextFieldWidget extends StatelessWidget {
     required this.maxLine,
     required this.hintText,
     required this.controller,
+    this.chosenColorCode, // 선택적으로 전달받는 색상 코드
   });
 
   final String hintText;
   final int maxLine;
   final TextEditingController controller;
+  final String? chosenColorCode; // nullable String으로 설정
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +25,22 @@ class TextFieldWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextField(
+        cursorColor: AppColors().mainColor,
         controller: controller,
-        style: const TextStyle(fontSize: 18),
+        style: TextStyle(
+          fontSize: 18,
+          color: chosenColorCode != null
+              ? Color(
+                  int.parse("0xFF$chosenColorCode"), // 타이핑하는 텍스트의 색상
+                )
+              : null, // chosenColorCode가 null일 경우 기본 색상 사용
+        ),
         decoration: InputDecoration(
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            hintText: hintText,
-            hintStyle: const TextStyle(fontSize: 15)),
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          hintText: hintText,
+          hintStyle: const TextStyle(fontSize: 15),
+        ),
         maxLines: maxLine,
       ),
     );

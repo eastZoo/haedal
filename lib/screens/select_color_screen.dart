@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/models/label-color.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
+import 'package:haedal/styles/colors.dart';
 import 'package:haedal/widgets/loading_overlay.dart';
 
 class SelectColorScreen extends StatefulWidget {
@@ -24,9 +24,10 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getColor();
+    // 컨트롤러의 색상 데이터 로드
+    Get.find<ScheduleController>().getCalendarLabelColor();
   }
 
   // 초기 로딩시 로컬스토리지에 색데이터 있는지 확인후 있다면 디폴트 세팅
@@ -54,121 +55,112 @@ class _SelectColorScreenState extends State<SelectColorScreen> {
     return GetBuilder<ScheduleController>(
         init: ScheduleController(),
         builder: (scheduleCon) {
+          // 로딩 상태 확인
+          if (scheduleCon.colors.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           return LoadingOverlay(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Gap(5),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 6, 0, 5),
-                  child: Center(
-                    heightFactor: 0.7,
-                    child: Container(
-                      width: 50,
-                      height: 3,
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(2.5),
-                        color: Colors.grey.shade400,
-                      ),
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2),
+                      color: Colors.grey.shade300,
                     ),
                   ),
                 ),
-                const Center(
-                  child: Text("캘린더 라벨 색상 리스트"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "캘린더 라벨 색상",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors().mainColor,
+                    ),
+                  ),
                 ),
-                const Gap(12),
+                const Gap(16),
                 Expanded(
                   child: ListView.builder(
-                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: scheduleCon.colors.length,
                     itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          Map<String, dynamic> dataSource = {
-                            'code': scheduleCon.colors[index].code,
-                            'name': scheduleCon.colors[index].name,
-                            'id': scheduleCon.colors[index].id
-                          };
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              spreadRadius: 1,
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            Map<String, dynamic> dataSource = {
+                              'code': scheduleCon.colors[index].code,
+                              'name': scheduleCon.colors[index].name,
+                              'id': scheduleCon.colors[index].id
+                            };
 
-                          // json 형태로 인코딩해서 로컬스토리지에 저장
-                          final jsonString = jsonEncode(dataSource);
+                            // json 형태로 인코딩해서 로컬스토리지에 저장
+                            final jsonString = jsonEncode(dataSource);
 
-                          setState(() {
-                            chosenColor = scheduleCon.colors[index].code;
-                            chosenId = scheduleCon.colors[index].id;
-                          });
+                            setState(() {
+                              chosenColor = scheduleCon.colors[index].code;
+                              chosenId = scheduleCon.colors[index].id;
+                            });
 
-                          Navigator.pop(context, jsonString);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
-                          child: Container(
-                            margin: const EdgeInsets.fromLTRB(0, 2, 0, 2),
-                            width: double.infinity,
-                            height: 55,
+                            Navigator.pop(context, jsonString);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
                             child: Row(
                               children: [
-                                // 왼쪽 라벨 색깔
                                 Container(
+                                  width: 24,
+                                  height: 24,
                                   decoration: BoxDecoration(
                                     color: Color(int.parse(
                                         "0xFF${scheduleCon.colors[index].code}")),
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12),
-                                      topRight: Radius.circular(12),
-                                      bottomRight: Radius.circular(12),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                ),
+                                const Gap(16),
+                                Expanded(
+                                  child: Text(
+                                    scheduleCon.colors[index].name,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  width: 6,
-                                  height: 25,
                                 ),
-
-                                // 라벨을 제외한 컨텐츠 박스
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        flex: 7,
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              15, 2, 8, 2),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "${scheduleCon.colors[index].name}",
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Radio(
-                                          value: scheduleCon.colors[index].id,
-                                          groupValue: chosenId,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              chosenId =
-                                                  scheduleCon.colors[index].id;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
+                                Radio(
+                                  value: scheduleCon.colors[index].id,
+                                  groupValue: chosenId,
+                                  activeColor: AppColors().mainColor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      chosenId = scheduleCon.colors[index].id;
+                                    });
+                                  },
+                                ),
                               ],
                             ),
                           ),

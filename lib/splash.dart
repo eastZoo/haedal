@@ -6,8 +6,8 @@ import 'package:haedal/screens/login_screen.dart';
 import 'package:haedal/screens/main_screen.dart';
 import 'package:haedal/screens/register_screen/code_screen.dart';
 import 'package:haedal/screens/register_screen/info_screen.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
-import 'package:haedal/test.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -31,32 +31,31 @@ class _SplashScreenState extends State<SplashScreen> {
         return GetBuilder<AuthController>(
             init: AuthController(),
             builder: (authCon) {
-              // snapshot.data => accessToken
-              print(snapshot.data);
-              // snapshot.hasData => token 있으면 true
-              print("SPLASH@!!!!!!!!!!!!!!");
-              print(authCon.connectState);
+              print('snapshot.connectionState : ${snapshot.connectionState}');
+              print('snapshot.hasData : ${snapshot.hasData}');
+              print('snapshot.data : ${snapshot.data}');
+              print(
+                  "_SplashScreenState connectState : ${authCon.connectState}");
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Scaffold(
                   body: Center(
-                    child: Image.asset("assets/images/logo.png"),
+                    child: Image.asset("assets/icons/logo.png"),
                   ),
                 );
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                if (authCon.connectState == RxInt(0)) {
+                if (authCon.connectState.value == 0) {
                   return LoadingScreen(
                       token: snapshot.data, connectState: authCon.connectState);
-                } else if (authCon.connectState == RxInt(1)) {
+                } else if (authCon.connectState.value == 1) {
                   return const CodeScreen();
-                } else if (authCon.connectState == RxInt(2)) {
+                } else if (authCon.connectState.value == 2) {
                   return const InfoScreen();
-                } else if (authCon.connectState == RxInt(3)) {
+                } else if (authCon.connectState.value == 3) {
                   return const MainScreen();
                 }
               }
 
               return const LoginScreen();
-              // return TestScheduleScreen();
             });
       },
     );

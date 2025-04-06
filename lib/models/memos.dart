@@ -1,12 +1,14 @@
 import 'dart:ffi';
 
+import 'package:get/get.dart';
+
 class Memos {
   final String id;
   final String userId;
   final String coupleId;
   final String memoCategoryId;
   final String memo;
-  final bool isDone;
+  late final RxBool isDone;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   Memos({
@@ -15,10 +17,10 @@ class Memos {
     required this.coupleId,
     required this.memoCategoryId,
     required this.memo,
-    this.isDone = false,
+    required bool isDone,
     required this.createdAt,
     required this.updatedAt,
-  });
+  }) : isDone = RxBool(isDone);
 
   // Add a factory method to create a FileData object from a Map
   factory Memos.fromJson(Map<String, dynamic> json) {
@@ -40,20 +42,24 @@ class Memo {
   final String? userId;
   final String? coupleId;
   final String? category;
+  final String? title;
+  final String? color;
   final int? clear;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final List<Memos>? memos;
+  final List<Memos> memos;
 
   Memo({
     this.id,
     this.userId,
     this.coupleId,
     this.category,
+    this.title,
+    this.color,
     this.clear,
     this.createdAt,
     this.updatedAt,
-    this.memos,
+    required this.memos,
   });
 
   // Add a factory method to create an Memos object from a Map
@@ -63,6 +69,8 @@ class Memo {
       userId: json['userId'],
       coupleId: json['coupleId'],
       category: json['category'],
+      title: json['title'],
+      color: json['color'],
       clear: json['clear'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),

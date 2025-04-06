@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/service/controller/auth_controller.dart';
-import 'package:haedal/widgets/app_button.dart';
+import 'package:haedal/styles/colors.dart';
 
 class LoadingScreen extends StatefulWidget {
   String? token;
@@ -22,9 +22,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   String? token;
   RxInt? connectState;
+
   @override
   void initState() {
     super.initState();
+    print("🚩 LoadingScreen initState");
+    authCon.getConnectState();
   }
 
   void checkAutoLogout(token, connectState) async {
@@ -45,14 +48,26 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Stack(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+          crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
           children: [
-            const CircularProgressIndicator(),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors().mainColor),
+            ),
+            const Gap(20), // Gap for spacing
             InkWell(
               onTap: () {
                 checkAutoLogout(token, connectState);
               },
-            )
+              child: Text(
+                "로그아웃 하기",
+                style: TextStyle(
+                  color: AppColors().mainColor,
+                  fontSize: 20,
+                ),
+              ),
+            ),
           ],
         ),
       ),

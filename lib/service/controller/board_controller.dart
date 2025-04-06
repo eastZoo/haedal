@@ -5,12 +5,9 @@ class BoardController extends GetxController {
   postSubmit(requestData) async {
     try {
       var res = await BoardProvider().create(requestData);
-      var isSuccess = res["success"];
-      print(res);
-      print(isSuccess);
-      print("isSuccess");
-      if (isSuccess == true) {
-        return isSuccess;
+
+      if (res["success"]) {
+        return res["success"];
       } else {
         // res["msg"]
         return false;
@@ -24,12 +21,9 @@ class BoardController extends GetxController {
   deleteBoard(boardId) async {
     try {
       var res = await BoardProvider().delete(boardId);
-      var isSuccess = res["success"];
-      print(res);
-      print(isSuccess);
-      print("isSuccess");
-      if (isSuccess == true) {
-        return isSuccess;
+
+      if (res["success"]) {
+        return res["success"];
       } else {
         // res["msg"]
         return false;

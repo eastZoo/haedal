@@ -5,7 +5,7 @@ class User {
   final String? userEmail;
   final String? password;
   final DateTime? birth;
-  final String? age;
+  final int? age;
   final String? sex;
   final String? phoneNumber;
   final DateTime? firstDay;
@@ -38,10 +38,9 @@ class User {
       userEmail: json['userEmail'],
       password: json['password'],
       birth: DateTime.parse(json['birth']),
-      age: json['age'],
+      age: json['age'] as int,
       sex: json['sex'],
       phoneNumber: json['phoneNumber'],
-      firstDay: DateTime.parse(json['firstDay']),
       connectState: json['connectState'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),

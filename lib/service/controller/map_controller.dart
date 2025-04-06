@@ -81,7 +81,7 @@ class MapController extends GetxController {
     options = options.copyWith(
       indoorLevelPickerEnable: false,
       logoAlign: NLogoAlign.leftTop,
-      minZoom: 10,
+      minZoom: 7,
       extent: const NLatLngBounds(
         southWest: NLatLng(31.43, 122.37),
         northEast: NLatLng(44.35, 132.0),
@@ -97,7 +97,7 @@ class MapController extends GetxController {
   // 음식점 marker
   NMarker getRestaurantLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage(
           'assets/icons/marker/restaurant.png'),
@@ -113,7 +113,7 @@ class MapController extends GetxController {
   //숙소 marker
   NMarker getLodgingLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon:
           const NOverlayImage.fromAssetImage('assets/icons/marker/lodging.png'),
@@ -129,7 +129,7 @@ class MapController extends GetxController {
   //카페 marker
   NMarker getCafeLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
       icon: const NOverlayImage.fromAssetImage('assets/icons/marker/cafe.png'),
       position: NLatLng(
@@ -144,9 +144,10 @@ class MapController extends GetxController {
 //플레이 marker
   NMarker getPlayLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/play.png'),
+      icon:
+          const NOverlayImage.fromAssetImage('assets/icons/marker/arcade.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -159,9 +160,9 @@ class MapController extends GetxController {
   //장소 marker
   NMarker getPlaceLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/place.png'),
+      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/trip.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -174,9 +175,9 @@ class MapController extends GetxController {
   //스토어 marker
   NMarker getStoreLocationMarker(AlbumBoard location) {
     final marker = NMarker(
-      size: const Size(43, 45),
+      size: const Size(38, 40),
       id: "maker_${location.id}",
-      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/store.png'),
+      icon: const NOverlayImage.fromAssetImage('assets/icons/marker/shop.png'),
       position: NLatLng(
           double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
     );
@@ -196,36 +197,43 @@ class MapController extends GetxController {
       if (location.category == "음식점") {
         marker = getRestaurantLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/restaurant-selected.png'));
+            'assets/icons/marker/restaurant-active.png'));
       }
       if (location.category == "숙소") {
         marker = getLodgingLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/lodging-selected.png'));
+            'assets/icons/marker/lodging-active.png'));
       }
       if (location.category == "카페") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/coffee-selected.png'));
+            'assets/icons/marker/cafe-active.png'));
       }
       if (location.category == "플레이") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/play-selected.png'));
+            'assets/icons/marker/arcade-active.png'));
       }
       if (location.category == "장소") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/place-selected.png'));
+            'assets/icons/marker/trip-active.png'));
       }
       if (location.category == "스토어") {
         marker = getCafeLocationMarker(location);
         marker.setIcon(const NOverlayImage.fromAssetImage(
-            'assets/icons/marker/store-selected.png'));
+            'assets/icons/marker/shop-active.png'));
       }
       mapController?.addOverlay(marker);
       selectedMarker = location;
-      print(location);
+
+      // 선택된 마커 위치로 카메라 이동
+      await mapController?.updateCamera(NCameraUpdate.withParams(
+        target: NLatLng(
+            double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
+        zoom: 17,
+      ));
+
       update();
       panelController.open();
     });
@@ -270,17 +278,15 @@ class MapController extends GetxController {
   fetchLocationMark() async {
     try {
       var res = await MapProvider().getLocation();
-      var isSuccess = res["success"];
-      if (isSuccess == true) {
+      print("🚩 fetchLocationMark res : $res");
+      if (res["success"]) {
         var responseData = res["data"];
         if (responseData != null && responseData != "") {
           List<dynamic> list = responseData;
-
+          print("🚩 fetchLocationMark list : $list");
           locations.assignAll(list
               .map<AlbumBoard>((item) => AlbumBoard.fromJson(item))
               .toList());
-
-          print("location@@ : $locations");
         }
       } else {
         return res["msg"];

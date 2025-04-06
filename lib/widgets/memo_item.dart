@@ -21,7 +21,7 @@ class MemoItem extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         tileColor: Colors.white,
         leading: Icon(
-          memo.isDone ? Icons.check_box : Icons.check_box_outline_blank,
+          memo.isDone.value ? Icons.check_box : Icons.check_box_outline_blank,
           color: AppColors().mainColor,
         ),
         title: Text(
@@ -29,7 +29,7 @@ class MemoItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             color: Colors.black,
-            decoration: memo.isDone ? TextDecoration.lineThrough : null,
+            decoration: memo.isDone.value ? TextDecoration.lineThrough : null,
           ),
         ),
         trailing: Container(

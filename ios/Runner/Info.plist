@@ -2,91 +2,154 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Haedal</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>haedal</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>com.apple.security.files.user-selected.read-only</key>
-	<true/>
+  
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleDisplayName</key>
+    <string>Haedal</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>haedal</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>kakaokompassauth</string>
+        <string>kakaolink</string>
+        <string>kakaotalk</string>
+        <string>naversearchapp</string>
+        <string>naversearchthirdlogin</string>
+        <string>nlogin</string>
+    </array>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
+    <key>com.apple.security.files.user-selected.read-only</key>
+    <true/>
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+    
+    <!-- Permission Descriptions -->
 
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Need to upload image</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Our app requires access to the camera to allow you to take and upload photos directly within the app.</string>
 
-	<key>NSCameraUsageDescription</key>
-	<string>Need to upload image</string>
-
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Need to upload image</string>
-
-	<!-- Permission options for the `location` group -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Need location when in use</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Always and when in use!</string>
-    <key>NSLocationUsageDescription</key>
-    <string>Older devices need location.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Can I have location always?</string>
-    <!-- Permission options for the `contacts` group -->
     <key>NSContactsUsageDescription</key>
-    <string>contacts</string>
-    <!-- Permission options for the `sensors` group -->
+    <string>We need access to your contacts to help you connect with friends and share content more easily.</string>
+
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We need your location to provide location-based services, such as finding nearby places, both when the app is in use and in the background.</string>
+
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Our app requires your location even when the app is not in use to provide continuous location-based services.</string>
+
+    <key>NSLocationUsageDescription</key>
+    <string>Access to your location is required to provide location-based services and improve app functionality.</string>
+
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to provide services while you are using the app, such as finding nearby places or navigation.</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need access to your microphone for features that require audio input, such as voice messages or video recording.</string>
+
     <key>NSMotionUsageDescription</key>
-    <string>motion</string>
+    <string>We require access to motion data to enhance user experiences, such as fitness tracking or motion-based controls.</string>
 
-    <!-- Permission options for the `appTrackingTransparency` -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Our app needs permission to save photos to your library to store images you create or edit within the app.</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to allow you to upload and share photos from your device within the app.</string>
+
     <key>NSUserTrackingUsageDescription</key>
-    <string>appTrackingTransparency</string>
+    <string>We request permission to track your activity across other companies' apps and websites to provide a better personalized experience.</string>
 
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Our application needs Permission to save photos</string>
+    <!-- URL Schemes -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>haedalScheme</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>kakaoe328e398b5297ab57d81161144651db9</string>
+                <string>haedalScheme</string>
+                <string>naverAQgp6F2PyQ7pZHvWbuI2</string>
+            </array>
+        </dict>
+    </array>
 
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
+    <!-- App Transport Security Settings -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>naver.com</key>
+            <dict>
+                <key>NSExceptionRequiresForwardSecrecy</key>
+                <false/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+            <key>naver.net</key>
+            <dict>
+                <key>NSExceptionRequiresForwardSecrecy</key>
+                <false/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+        </dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
 
+    <!-- Naver Service Settings -->
+    <key>naverServiceAppUrlScheme</key>
+    <string>haedalScheme</string>
+    <key>naverConsumerKey</key>
+    <string>AQgp6F2PyQ7pZHvWbuI2</string>
+    <key>naverConsumerSecret</key>
+    <string>srDMneLjbUsecret</string>
+    <key>naverServiceAppName</key>
+    <string>haedal</string>
+
+    <!-- Kakao Settings -->
+    <key>KAKAO_APP_KEY</key>
+    <string>e328e398b5297ab57d81161144651db9</string>
 </dict>
 </plist>

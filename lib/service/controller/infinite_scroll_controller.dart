@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haedal/service/controller/alarm_controller.dart';
 import 'package:haedal/service/provider/infinite_scroll_provider.dart';
 
 class InfiniteScrollController extends GetxController {
+  // GetX 컨트롤러 가져오기
+  final AlarmController alarmController = Get.find<AlarmController>();
   var scrollController = ScrollController().obs;
   var data = <dynamic>[].obs;
   var isLoading = false.obs;
@@ -22,19 +25,33 @@ class InfiniteScrollController extends GetxController {
   }
 
   _getData() async {
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    int offset = data.length;
+      int offset = data.length;
 
-    var albumData = await InfiniteScrollProvider().albumListGenerate(offset);
-    data.addAll(albumData["data"]["appendData"]);
-    isLoading.value = false;
-    hasMore.value = data.length < albumData["data"]["total"];
+      var result = await InfiniteScrollProvider().albumListGenerate(offset);
+
+      data.addAll(result["data"]["appendData"]);
+      isLoading.value = false;
+      hasMore.value = data.length < result["data"]["total"];
+
+      // 알림목록 리패칭
+      await alarmController.AlarmRefresh();
+    } catch (e) {
+      print(e);
+    }
   }
 
   reload() async {
-    isLoading.value = true;
-    data.clear();
-    _getData();
+    try {
+      isLoading.value = true;
+      data.clear();
+      await _getData();
+    } catch (e) {
+      print('Error reloading data: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

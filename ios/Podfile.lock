@@ -1,5 +1,9 @@
 PODS:
+  - app_tracking_transparency (0.0.1):
+    - Flutter
   - camera_avfoundation (0.0.1):
+    - Flutter
+  - emoji_picker_flutter (0.0.1):
     - Flutter
   - Flutter (1.0.0)
   - flutter_compass (0.0.1):
@@ -11,85 +15,120 @@ PODS:
   - flutter_inappwebview/Core (0.0.1):
     - Flutter
     - OrderedSet (~> 5.0)
-  - flutter_naver_map (1.0.0):
+  - flutter_naver_login (0.0.1):
     - Flutter
-    - NMapsMap (= 3.16.2)
+    - naveridlogin-sdk-ios (~> 4.1.0)
+  - flutter_naver_map (1.3.0):
+    - Flutter
+    - NMapsMap (= 3.19.0)
   - flutter_secure_storage (6.0.0):
     - Flutter
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
-  - FMDB (2.7.5):
-    - FMDB/standard (= 2.7.5)
-  - FMDB/standard (2.7.5)
   - geocoding_ios (1.0.5):
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
+    - FlutterMacOS
+  - image_cropper (0.0.4):
+    - Flutter
+    - TOCropViewController (~> 2.6.1)
   - image_gallery_saver (2.0.2):
     - Flutter
   - image_picker_ios (0.0.1):
     - Flutter
   - insta_assets_crop (0.0.1):
     - Flutter
-  - NMapsGeometry (1.0.1)
-  - NMapsMap (3.16.2):
+  - kakao_flutter_sdk_common (1.9.5):
+    - Flutter
+  - naveridlogin-sdk-ios (4.1.6)
+  - NMapsGeometry (1.0.2)
+  - NMapsMap (3.19.0):
     - NMapsGeometry
   - OrderedSet (5.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - permission_handler_apple (9.1.1):
+  - permission_handler_apple (9.3.0):
     - Flutter
   - photo_manager (2.0.0):
     - Flutter
     - FlutterMacOS
+  - rive_common (0.0.1):
+    - Flutter
   - sensors_plus (0.0.1):
     - Flutter
-  - sqflite (0.0.3):
+  - shared_preferences_foundation (0.0.1):
     - Flutter
-    - FMDB (>= 2.7.5)
-  - Toast (4.0.0)
+    - FlutterMacOS
+  - sign_in_with_apple (0.0.1):
+    - Flutter
+  - sqflite_darwin (0.0.4):
+    - Flutter
+    - FlutterMacOS
+  - Toast (4.1.1)
+  - TOCropViewController (2.6.1)
   - video_player_avfoundation (0.0.1):
     - Flutter
+    - FlutterMacOS
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
+  - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - Flutter (from `Flutter`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
+  - flutter_naver_login (from `.symlinks/plugins/flutter_naver_login/ios`)
   - flutter_naver_map (from `.symlinks/plugins/flutter_naver_map/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
-  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
+  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - insta_assets_crop (from `.symlinks/plugins/insta_assets_crop/ios`)
+  - kakao_flutter_sdk_common (from `.symlinks/plugins/kakao_flutter_sdk_common/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
+  - rive_common (from `.symlinks/plugins/rive_common/ios`)
   - sensors_plus (from `.symlinks/plugins/sensors_plus/ios`)
-  - sqflite (from `.symlinks/plugins/sqflite/ios`)
-  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
 
 SPEC REPOS:
   trunk:
-    - FMDB
+    - naveridlogin-sdk-ios
     - NMapsGeometry
     - NMapsMap
     - OrderedSet
     - Toast
+    - TOCropViewController
 
 EXTERNAL SOURCES:
+  app_tracking_transparency:
+    :path: ".symlinks/plugins/app_tracking_transparency/ios"
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
+  emoji_picker_flutter:
+    :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   Flutter:
     :path: Flutter
   flutter_compass:
     :path: ".symlinks/plugins/flutter_compass/ios"
   flutter_inappwebview:
     :path: ".symlinks/plugins/flutter_inappwebview/ios"
+  flutter_naver_login:
+    :path: ".symlinks/plugins/flutter_naver_login/ios"
   flutter_naver_map:
     :path: ".symlinks/plugins/flutter_naver_map/ios"
   flutter_secure_storage:
@@ -99,51 +138,73 @@ EXTERNAL SOURCES:
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
-    :path: ".symlinks/plugins/geolocator_apple/ios"
+    :path: ".symlinks/plugins/geolocator_apple/darwin"
+  image_cropper:
+    :path: ".symlinks/plugins/image_cropper/ios"
   image_gallery_saver:
     :path: ".symlinks/plugins/image_gallery_saver/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   insta_assets_crop:
     :path: ".symlinks/plugins/insta_assets_crop/ios"
+  kakao_flutter_sdk_common:
+    :path: ".symlinks/plugins/kakao_flutter_sdk_common/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   photo_manager:
     :path: ".symlinks/plugins/photo_manager/ios"
+  rive_common:
+    :path: ".symlinks/plugins/rive_common/ios"
   sensors_plus:
     :path: ".symlinks/plugins/sensors_plus/ios"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  sign_in_with_apple:
+    :path: ".symlinks/plugins/sign_in_with_apple/ios"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   video_player_avfoundation:
-    :path: ".symlinks/plugins/video_player_avfoundation/ios"
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
-  camera_avfoundation: 3125e8cd1a4387f6f31c6c63abb8a55892a9eeeb
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  app_tracking_transparency: e169b653478da7bb15a6c61209015378ca73e375
+  camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
+  emoji_picker_flutter: fe2e6151c5b548e975d546e6eeb567daf0962a58
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
-  flutter_naver_map: d1ee15e7a2fe5360a19640648ceed5abf79d82aa
-  flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
-  fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
-  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  flutter_naver_login: 1dbf6d21aae5235cdf76a28ac79cf6871899282f
+  flutter_naver_map: d31b1884517151e7b3121e3b24c18733ef4e4387
+  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
-  geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
+  geolocator_apple: 66b711889fd333205763b83c9dcf0a57a28c7afd
+  image_cropper: a3291c624a953049bc6a02e1f8c8ceb162a24b25
   image_gallery_saver: cb43cc43141711190510e92c460eb1655cd343cb
-  image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
+  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   insta_assets_crop: 46c0be4cbfe48cff466b6924ec93b77f656ebaa8
-  NMapsGeometry: 53c573ead66466681cf123f99f698dc8071a4b83
-  NMapsMap: aaa64717249b06ae82c3a3addb3a01f0e33100ab
+  kakao_flutter_sdk_common: 985c7085c29a2bd949972cadac8238845dc354db
+  naveridlogin-sdk-ios: cdd34e3585a3d5aaf37c1d84c1f41faba4a25d1a
+  NMapsGeometry: 4e02554fa9880ef02ed96b075dc84355d6352479
+  NMapsMap: 99c10429d93340780b6f88d3fc7c0a3850b43664
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
-  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
-  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
-  photo_manager: 4f6810b7dfc4feb03b461ac1a70dacf91fba7604
-  sensors_plus: 4ee32bc7d61a055f27f88d3215ad6b6fb96a2b8e
-  sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
-  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
-  video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
+  photo_manager: ff695c7a1dd5bc379974953a2b5c0a293f7c4c8a
+  rive_common: 4743dbfd2911c99066547a3c6454681e0fa907df
+  sensors_plus: 7229095999f30740798f0eeef5cd120357a8f4f2
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
+  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
+  video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
+  webview_flutter_wkwebview: a4af96a051138e28e29f60101d094683b9f82188
 
-PODFILE CHECKSUM: b4eed422657717e00a87804fc1ac8635904c0af3
+PODFILE CHECKSUM: 52f2f73638a2bcd4c0617019ac8b4834cf1effc4
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2
