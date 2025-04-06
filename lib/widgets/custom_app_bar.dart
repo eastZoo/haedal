@@ -48,6 +48,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           totalSwitches: 2,
           labels: const ['카드', '지도'],
           activeBgColor: [AppColors().mainColor],
+          activeFgColor: Colors.white,
           inactiveBgColor: Colors.grey[100],
           radiusStyle: true,
           onToggle: (index) {

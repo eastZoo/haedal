@@ -226,7 +226,14 @@ class MapController extends GetxController {
       }
       mapController?.addOverlay(marker);
       selectedMarker = location;
-      print(location);
+
+      // 선택된 마커 위치로 카메라 이동
+      await mapController?.updateCamera(NCameraUpdate.withParams(
+        target: NLatLng(
+            double.parse(location.lat!) ?? 0, double.parse(location.lng!) ?? 0),
+        zoom: 17,
+      ));
+
       update();
       panelController.open();
     });

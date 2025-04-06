@@ -104,47 +104,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // 네이버 로그인 정보 가져오기
   void _naverLogin() async {
+    if (isLoading) return; // 이미 로딩 중이면 중복 실행 방지
+
     try {
       setState(() {
         isLoading = true;
       });
       final NaverLoginResult user = await FlutterNaverLogin.logIn();
+
+      // 로그인이 취소되었거나 이미 종료된 경우 early return
+      if (!mounted) {
+        return;
+      }
+
       switch (user.status) {
         case NaverLoginStatus.loggedIn:
-
-          // 사용자 정보를 서버에 저장하는 함수 호출
           var result = await authCon.onSocialNaverSignUp(user.account, "naver");
-          if (result) {
+          if (result && mounted) {
             Timer(const Duration(milliseconds: 500), () {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 '/splash',
                 (route) => false,
               );
-              setState(() {
-                isLoading = false;
-              });
             });
           }
           break;
         case NaverLoginStatus.cancelledByUser:
           CustomToast().alert('사용자가 로그인을 취소했습니다.');
-          setState(() {
-            isLoading = false;
-          });
           break;
         case NaverLoginStatus.error:
           CustomToast().alert('로그인 오류: ${user.errorMessage}');
-          setState(() {
-            isLoading = false;
-          });
           break;
       }
     } catch (e) {
-      CustomToast().alert('네이버 로그인 실패: $e');
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        CustomToast().alert('네이버 로그인 실패: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 

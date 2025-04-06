@@ -18,14 +18,29 @@ class MemoScreen extends StatefulWidget {
   State<MemoScreen> createState() => _MemoScreenState();
 }
 
-class _MemoScreenState extends State<MemoScreen> {
+class _MemoScreenState extends State<MemoScreen>
+    with SingleTickerProviderStateMixin {
   late final PageController pageController;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   String errorMsg = "";
 
   @override
   void initState() {
     pageController = PageController(initialPage: 0, viewportFraction: 0.85);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
 
     super.initState();
   }
@@ -33,6 +48,7 @@ class _MemoScreenState extends State<MemoScreen> {
   @override
   void dispose() {
     pageController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -48,16 +64,14 @@ class _MemoScreenState extends State<MemoScreen> {
       init: MemoController(),
       builder: (memoCon) {
         void toggleExpanded() {
-          if (isExpanded == false) {
-            setState(() {
-              isExpanded = !isExpanded;
-              delayedChange = !delayedChange;
-            });
-          } else {
-            setState(() {
-              isExpanded = !isExpanded;
-            });
-          }
+          setState(() {
+            isExpanded = !isExpanded;
+            if (isExpanded) {
+              _animationController.forward();
+            } else {
+              _animationController.reverse();
+            }
+          });
         }
 
         /** MEMO  카테고리 추가 모달 */
@@ -244,17 +258,23 @@ class _MemoScreenState extends State<MemoScreen> {
         // 할일 타일
         Widget buildTaskTile(MemoController memoCon, int index) {
           return Slidable(
-            endActionPane: const ActionPane(
-              motion: ScrollMotion(),
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
               extentRatio: 0.25,
               openThreshold: 0.2,
               children: [
-                SlidableAction(
-                  onPressed: null,
-                  backgroundColor: Color(0xFFFE4A49),
-                  foregroundColor: Colors.white,
-                  icon: Icons.delete,
-                  label: 'Delete',
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: SlidableAction(
+                    onPressed: null,
+                    backgroundColor: AppColors().mainColor.withOpacity(0.9),
+                    foregroundColor: AppColors().white,
+                    borderRadius: const BorderRadius.horizontal(
+                        right: Radius.circular(10)),
+                    icon: Icons.delete_outline_rounded,
+                    label: '삭제',
+                    spacing: 5,
+                  ),
                 ),
               ],
             ),
@@ -333,119 +353,125 @@ class _MemoScreenState extends State<MemoScreen> {
           child: Scaffold(
             body: Column(
               children: [
-                // 위의 Flex
-                Flexible(
-                  flex: isExpanded ? 0 : 4,
-                  child: SingleChildScrollView(
-                    // 스크롤 추가했더니 overflow 문제 해결
-                    child: Center(
-                      child: isExpanded
-                          ? Container()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Luvket List",
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors().darkGrey,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          var result =
-                                              await showAddGroupModal();
-
-                                          // AddMemoCategoryScreen 에서 true 반환시 페이지 이동
-                                          if (result != null &&
-                                              result == true) {
-                                            pageController.jumpToPage(0);
-                                          }
-                                        },
-                                        child: Text(
-                                          "카테고리 추가 >",
+                FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    height: isExpanded
+                        ? 0
+                        : MediaQuery.of(context).size.height * 0.29,
+                    child: SingleChildScrollView(
+                      // 스크롤 추가했더니 overflow 문제 해결
+                      child: Center(
+                        child: isExpanded
+                            ? Container()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Luvket List",
                                           style: TextStyle(
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors().darkGreyText,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors().darkGrey,
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        GestureDetector(
+                                          onTap: () async {
+                                            var result =
+                                                await showAddGroupModal();
+
+                                            // AddMemoCategoryScreen 에서 true 반환시 페이지 이동
+                                            if (result != null &&
+                                                result == true) {
+                                              pageController.jumpToPage(0);
+                                            }
+                                          },
+                                          child: Text(
+                                            "카테고리 추가 >",
+                                            style: TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors().darkGreyText,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                const Gap(10),
-                                SizedBox(
-                                  height: 160,
-                                  width: 120,
-                                  child: PageView.builder(
-                                    controller: pageController,
-                                    onPageChanged: (index) {
-                                      print(index);
-                                      if (index != memoCon.memos.length) {
-                                        memoCon.currentIndex = index;
+                                  const Gap(10),
+                                  SizedBox(
+                                    height: 160,
+                                    width: 120,
+                                    child: PageView.builder(
+                                      controller: pageController,
+                                      onPageChanged: (index) {
+                                        print(index);
+                                        if (index != memoCon.memos.length) {
+                                          memoCon.currentIndex = index;
 
-                                        memoCon.currentMemo =
-                                            memoCon.memos[index];
-                                      }
+                                          memoCon.currentMemo =
+                                              memoCon.memos[index];
+                                        }
 
-                                      memoCon.pageNo = index;
+                                        memoCon.pageNo = index;
 
-                                      setState(() {});
-                                    },
-                                    itemCount: memoCon.memos.length + 1,
-                                    itemBuilder: (_, index) {
-                                      if (index == memoCon.memos.length) {
-                                        return buildAddButton();
-                                      }
-                                      Memo memoCard = memoCon.memos[index];
-                                      print("memoCard");
-                                      print(memoCard);
-                                      if (memoCard.id != null) {
-                                        return buildMemoCard(memoCard);
-                                      }
-                                      return null;
-                                    },
+                                        setState(() {});
+                                      },
+                                      itemCount: memoCon.memos.length + 1,
+                                      itemBuilder: (_, index) {
+                                        if (index == memoCon.memos.length) {
+                                          return buildAddButton();
+                                        }
+                                        Memo memoCard = memoCon.memos[index];
+                                        print("memoCard");
+                                        print(memoCard);
+                                        if (memoCard.id != null) {
+                                          return buildMemoCard(memoCard);
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                   ),
-                                ),
-                                const Gap(15),
-                                // 페이지 네이션
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(
-                                    memoCon.memos.length + 1,
-                                    (index) => GestureDetector(
-                                      child: Container(
-                                        margin: const EdgeInsets.all(2.0),
-                                        child: Icon(
-                                          Icons.circle,
-                                          size: 12.0,
-                                          color: memoCon.pageNo == index
-                                              ? AppColors().mainColor
-                                              : Colors.grey.shade300,
+                                  const Gap(23),
+                                  // 페이지 네이션
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(
+                                      memoCon.memos.length + 1,
+                                      (index) => GestureDetector(
+                                        child: Container(
+                                          margin: const EdgeInsets.all(2.0),
+                                          child: Icon(
+                                            Icons.circle,
+                                            size: 12.0,
+                                            color: memoCon.pageNo == index
+                                                ? AppColors().mainColor
+                                                : Colors.grey.shade300,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const Gap(20),
-                              ],
-                            ),
+                                  const Gap(20),
+                                ],
+                              ),
+                      ),
                     ),
                   ),
                 ),
-                // 아래의 Flex
-                Flexible(
-                  flex: isExpanded ? 1 : 6,
-                  child: Container(
+                Expanded(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                     decoration: BoxDecoration(
                       color: AppColors().toDoGrey,
                       borderRadius: const BorderRadius.only(

@@ -7,8 +7,11 @@ class CustomToast {
     Fluttertoast.showToast(
         msg: errorMsg,
         gravity: ToastGravity.TOP,
-        backgroundColor:
-            type == "error" ? Colors.redAccent.shade100 : AppColors().mainColor,
+        backgroundColor: type == "error"
+            ? Colors.redAccent.shade100
+            : type == "success"
+                ? AppColors().mainColor
+                : AppColors().mainColor,
         fontSize: 14,
         textColor: Colors.white,
         toastLength: Toast.LENGTH_SHORT);

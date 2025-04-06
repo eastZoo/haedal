@@ -8,10 +8,12 @@ import 'package:haedal/screens/photo_view_screen.dart';
 import 'package:haedal/service/controller/board_controller.dart';
 import 'package:haedal/service/controller/infinite_scroll_controller.dart';
 import 'package:haedal/styles/colors.dart';
+import 'package:haedal/utils/toast.dart';
 import '../../service/endpoints.dart';
 import 'package:haedal/styles/colors.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:haedal/widgets/confirm_modal.dart';
 
 class StoryDetailScreen extends StatefulWidget {
   const StoryDetailScreen({super.key, this.albumBoard});
@@ -138,7 +140,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
         ));
   }
 
-  // 카드 리스트
+  // 게시물 카드 위젯 (이미지 또는 텍스트)
   Widget postCard(data, index, {String type = "image"}) {
     return InkWell(
       onTap: () {},
@@ -147,25 +149,10 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
         color: Colors.white,
         child: Column(
           children: [
+            // 상단 여백
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Row(
-                //   children: [
-                //     Padding(
-                //       padding: const EdgeInsets.only(left: 8.0, top: 3),
-                //       child:
-                //           SizedBox(height: 55, width: 55, child: CircleStory()),
-                //     ),
-                //     const SizedBox(
-                //       width: 3,
-                //     ),
-                //     const Text(
-                //       'username123',
-                //       style: TextStyle(color: Colors.white, fontSize: 15),
-                //     )
-                //   ],
-                // ),
                 Padding(
                   padding: EdgeInsets.only(right: 10.0),
                   child: Icon(
@@ -175,7 +162,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                 )
               ],
             ),
-            ///////////////////////////////////////////////////////////////////////////
+            // 이미지 또는 텍스트 컨텐츠
             type == "image"
                 ? SizedBox(
                     width: MediaQuery.of(context).size.width,
@@ -216,7 +203,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                       ),
                     ),
                   ),
-            //////////////////////////////////////////////////////////////////////////
+            // 하단 액션 버튼
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -228,29 +215,25 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                         padding: const EdgeInsets.only(left: 2.0),
                         child: Icon(
                           Icons.favorite_outline_rounded,
-                          color: AppColors().mainDisabledColor,
+                          color: AppColors().mainColor,
                           size: 20,
                         ),
                       ),
-                      const SizedBox(
-                        width: 3,
-                      ),
+                      const SizedBox(width: 3),
                       Padding(
                         padding: const EdgeInsets.only(left: 13.0),
                         child: Icon(
                           Icons.chat_bubble_outline_rounded,
-                          color: AppColors().mainDisabledColor,
+                          color: AppColors().mainColor,
                           size: 20,
                         ),
                       ),
-                      const SizedBox(
-                        width: 3,
-                      ),
+                      const SizedBox(width: 3),
                       Padding(
                         padding: const EdgeInsets.only(left: 13.0),
                         child: Icon(
                           Icons.near_me_outlined,
-                          color: AppColors().mainDisabledColor,
+                          color: AppColors().mainColor,
                           size: 20,
                         ),
                       )
@@ -270,22 +253,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
     );
   }
 
-  Widget CircleStory() {
-    return const Padding(
-      padding: EdgeInsets.all(6.0),
-      child: ClipOval(
-        child: Image(
-          height: 68,
-          width: 68,
-          image: NetworkImage(
-              'https://cdn.pixabay.com/photo/2018/07/29/23/05/woman-3571298_960_720.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  // appbar 리드
+  // 게시물 추가 버튼
   Widget _addBtn(double position) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
@@ -300,7 +268,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
     );
   }
 
-//삭제버튼
+  // 게시물 삭제 버튼
   Widget _deleteBtn(double position) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -310,25 +278,29 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
           size: 25,
           color: position < 150 ? Colors.white : AppColors().mainColor,
         ),
-        onTap: () async {
-          print("@!@!@");
-          var res = await boardCon.deleteBoard(albumBoard.id);
-          print("DELETE BOARD :!!!!! $res");
-          if (res) {
-            // refetch
-            Future.delayed(
-              const Duration(milliseconds: 500),
-              () => infiniteCon.reload(),
-            );
-
-            Navigator.pop(context);
-          }
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => ConfirmModal(
+              title: '게시물 삭제',
+              content: '정말로 이 게시물을 삭제하시겠습니까?',
+              successMessage: '게시물이 삭제되었습니다',
+              onConfirm: () async {
+                var res = await boardCon.deleteBoard(albumBoard.id);
+                if (res) {
+                  Get.back();
+                  infiniteCon.reload();
+                  CustomToast().alert('게시물이 삭제되었습니다', type: 'success');
+                }
+              },
+            ),
+          );
         },
       ),
     );
   }
 
-  // 썸네일 이미지
+  // 썸네일 이미지 위젯
   Widget _thumbPhoto() {
     double width = MediaQuery.of(context).size.width;
     DateTime dateTime = DateTime.parse(albumBoard.storyDate.toString());

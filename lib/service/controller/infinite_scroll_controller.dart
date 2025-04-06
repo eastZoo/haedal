@@ -44,8 +44,14 @@ class InfiniteScrollController extends GetxController {
   }
 
   reload() async {
-    isLoading.value = true;
-    data.clear();
-    _getData();
+    try {
+      isLoading.value = true;
+      data.clear();
+      await _getData();
+    } catch (e) {
+      print('Error reloading data: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

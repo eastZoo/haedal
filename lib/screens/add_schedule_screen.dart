@@ -97,27 +97,29 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(10.0),
         ),
       ),
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.65,
-          maxChildSize: 0.65,
-          minChildSize: 0.6,
-          expand: false,
-          snap: true,
-          builder: (context, scrollController) {
-            return GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: const Scaffold(
-                body: SelectColorScreen(),
-              ),
-            );
-          }),
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10.0),
+          ),
+        ),
+        child: SafeArea(
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: const SelectColorScreen(),
+          ),
+        ),
+      ),
     );
   }
 
@@ -273,7 +275,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                             ),
                             CupertinoSwitch(
                               value: _isMemoChecked,
-                              activeColor: AppColors().mainColor,
+                              activeTrackColor: AppColors().mainColor,
                               onChanged: (bool? value) {
                                 setState(() {
                                   _isMemoChecked = value ?? false;
@@ -330,7 +332,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                             ),
                             CupertinoSwitch(
                               value: _isDateChecked,
-                              activeColor: AppColors().mainColor,
+                              activeTrackColor: AppColors().mainColor,
                               onChanged: (bool? value) {
                                 setState(() {
                                   _isDateChecked = value ?? false;

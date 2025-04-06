@@ -186,13 +186,14 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
         actions: [_addBtn()],
       ),
       body: isLoading
-          ? Center(
-              //로딩바 구현 부분
-              child: SpinKitFadingCube(
-                // FadingCube 모양 사용
-                color: AppColors().mainColor, // 색상 설정
-                size: 50.0, // 크기 설정
-                duration: const Duration(seconds: 2), //속도 설정
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 150.0),
+              child: Center(
+                child: SpinKitFadingCube(
+                  color: AppColors().mainColor,
+                  size: 50.0,
+                  duration: const Duration(seconds: 2),
+                ),
               ),
             )
           : SafeArea(
@@ -377,14 +378,36 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
           ? GridView.count(
               crossAxisCount: 4,
               childAspectRatio: 1,
-              children: _pickedImages.asMap().entries.map((entry) {
-                int idx = entry.key;
-                XFile? image = entry.value;
+              children: [
+                ..._pickedImages.asMap().entries.map((entry) {
+                  int idx = entry.key;
+                  XFile? image = entry.value;
 
-                return image != null
-                    ? _gridPhotoItem(XFile(image.path), idx)
-                    : const Text('No image');
-              }).toList(),
+                  return image != null
+                      ? _gridPhotoItem(XFile(image.path), idx)
+                      : const Text('No image');
+                }).toList(),
+                // 이미지 추가 버튼
+                InkWell(
+                  onTap: () {
+                    getMultiImage();
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(2.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.add_photo_alternate_outlined,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             )
           : const SizedBox(),
     );
@@ -394,15 +417,15 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
   Widget _FormWidget() {
     double width = MediaQuery.of(context).size.width;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: width * 0.65,
+                width: width * 0.6,
                 child: renderTextFormField(
                     label: '제목',
                     hintText: "음식점이름, 커스텀",
@@ -410,31 +433,44 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
                     focusNode: _focusNode),
               ),
               Container(
-                width: width * 0.3 - 10,
+                width: width * 0.3,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(10)),
-
-                // dropdown below..
-                child: DropdownButton<String>(
-                  value: category,
-                  onChanged: (dynamic value) {
-                    setState(() {
-                      category = value;
-                    });
-                  },
-                  items: dropdownList
-                      .map<DropdownMenuItem<String>>(
-                          (String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              ))
-                      .toList(),
-
-                  // add extra sugar..
-                  icon: const Icon(Icons.arrow_drop_down),
-                  iconSize: 42,
-                  underline: const SizedBox(),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: category,
+                    isExpanded: true,
+                    icon: Icon(Icons.arrow_drop_down_rounded,
+                        color: AppColors().mainColor),
+                    style: TextStyle(
+                      color: AppColors().mainColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onChanged: (dynamic value) {
+                      setState(() {
+                        category = value;
+                      });
+                    },
+                    items: dropdownList
+                        .map<DropdownMenuItem<String>>(
+                            (String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                ))
+                        .toList(),
+                  ),
                 ),
               ),
             ],
@@ -495,25 +531,35 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
                 ],
               ),
               onTap: () async {
-                Kpostal? result = await Navigator.push(
-                  context,
-                  PageTransition(
-                    type: PageTransitionType.bottomToTop,
-                    child: KpostalView(
-                      callback: (Kpostal result) {},
-                      useLocalServer: false,
-                      kakaoKey: '2313aec57928c855c20fa695fe0480d2',
+                try {
+                  Kpostal? result = await Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.bottomToTop,
+                      child: KpostalView(
+                        callback: (Kpostal result) {
+                          print("result: $result");
+                        },
+                        useLocalServer: false,
+                        kakaoKey: '2313aec57928c855c20fa695fe0480d2',
+                      ),
                     ),
-                  ),
-                );
-                print("!!! $result");
-
-                if (result != null) {
-                  _updateSearchAddress(
-                    result.address,
-                    result.latitude,
-                    result.longitude,
                   );
+
+                  print("result: $result");
+
+                  if (result != null &&
+                      result.latitude != null &&
+                      result.longitude != null) {
+                    _updateSearchAddress(
+                      result.address,
+                      result.latitude,
+                      result.longitude,
+                    );
+                  }
+                } catch (e) {
+                  print("주소 검색 중 오류 발생: $e");
+                  CustomToast().alert("주소 검색 중 오류가 발생했습니다.");
                 }
               },
             ),
@@ -541,15 +587,7 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
     );
   }
 
-// 주소 검색 업데이트 함수
-  void _updateSearchAddress(String address, latitude, longitude) {
-    setState(() {
-      currentLatLng = NLatLng(latitude, longitude);
-      locationTextController.text = address;
-    });
-  }
-
-// 스토리 작성 인풋 컨포넌트 위젯
+  // 스토리 작성 인풋 컨포넌트 위젯
   renderTextFormField(
       {final String label = "",
       final controller,
@@ -559,51 +597,88 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
       readOnly = false,
       Function()? onTap}) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            label.isNotEmpty
-                ? Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  )
-                : const SizedBox(),
-          ],
+        if (label.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 8),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w600,
+                color: AppColors().mainColor,
+              ),
+            ),
+          ),
+        ],
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: TextField(
+            controller: controller,
+            focusNode: focusNode,
+            readOnly: readOnly,
+            onTap: onTap,
+            maxLines: multiLine ? 5 : 1,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: multiLine ? 16 : 12,
+              ),
+              hintText: hintText,
+              hintStyle: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 14,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
         ),
-        multiLine
-            ? Container(
-                margin: const EdgeInsets.all(12),
-                height: 5 * 24.0,
-                child: TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  readOnly: readOnly,
-                  onTap: onTap,
-                  maxLines: multiLine ? 5 : 1,
-                  decoration: InputDecoration(
-                      fillColor: Colors.transparent,
-                      filled: true,
-                      hintText: hintText,
-                      hintStyle: TextStyle(color: Colors.grey[500])),
-                ),
-              )
-            : TextField(
-                controller: controller,
-                focusNode: focusNode,
-                readOnly: readOnly,
-                onTap: onTap,
-                maxLines: multiLine ? null : 1,
-                decoration: InputDecoration(
-                    fillColor: Colors.transparent,
-                    filled: true,
-                    hintText: hintText,
-                    hintStyle: TextStyle(color: Colors.grey[500])),
-              )
+        const SizedBox(height: 16),
       ],
     );
+  }
+
+// 버튼, 폼 박스 등에 공통으로 쓰일 BoxDecoration
+  BoxDecoration appBoxDecoration = BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.04),
+        spreadRadius: 1,
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
+
+// 주소 검색 업데이트 함수
+  void _updateSearchAddress(String address, latitude, longitude) {
+    setState(() {
+      currentLatLng = NLatLng(latitude, longitude);
+      locationTextController.text = address;
+    });
   }
 
   // gridView 이미지 박스 아이템 컴포넌트
