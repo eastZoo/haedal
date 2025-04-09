@@ -123,11 +123,81 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     );
   }
 
+  Future<void> _submitSchedule() async {
+    print("submitSchedule");
+
+    if (titleTextController.text.isEmpty) {
+      setState(() {
+        errorMsg = "제목을 입력해주세요.";
+      });
+      return CustomToast().alert(errorMsg);
+    }
+    if (DateTime.parse(endTodoDayController.text)
+        .isBefore(DateTime.parse(startTodoDayController.text))) {
+      setState(() {
+        errorMsg = "시작 날짜가 종료날짜보다 이전 날짜일 수 없습니다.";
+      });
+      return CustomToast().alert(errorMsg);
+    }
+
+    // 데이터 통신 전 로딩 상태 변경
+    setState(() {
+      isLoading = true;
+    });
+
+    // 등록 데이터 모델
+    // 종일 체크 시 시작 && 끝 날자 선택 오늘 날짜로 디폴트 들어감
+    Map<String, dynamic> dataSource = {
+      "title": titleTextController.text,
+      "content": contentTextController.text.isEmpty
+          ? null
+          : contentTextController.text,
+      "allDay": _isDateChecked,
+      "startDate": _isDateChecked
+          ? "${startTodoDayController.text.split(' ')[0]} "
+          : "${startTodoDayController.text.split(' ')[0]} ${startTodoTimeController.text.substring(10, 15)}:00",
+      "endDate": _isDateChecked
+          ? endTodoDayController.text.split(' ')[0]
+          : "${endTodoDayController.text.split(' ')[0]} ${endTodoTimeController.text.substring(10, 15)}:00",
+      "color": chosenColorCode
+    };
+
+    var res = await scheduleCon.scheduleSubmit(dataSource);
+    setState(() {
+      isLoading = false;
+    });
+    if (res) {
+      scheduleCon.refetchDataSource();
+      Navigator.pop(context, true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: GestureDetector(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => _submitSchedule(),
+            child: Text(
+              '저장',
+              style: TextStyle(
+                color: Color(int.parse("0xFF$chosenColorCode")),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
         },
@@ -139,90 +209,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Gap(12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: const SizedBox(
-                        width: 40,
-                        child: Icon(
-                          Icons.close,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () async {
-                        if (titleTextController.text.isEmpty) {
-                          setState(() {
-                            errorMsg = "제목을 입력해주세요.";
-                          });
-                          return CustomToast().alert(errorMsg);
-                        }
-                        if (DateTime.parse(endTodoDayController.text).isBefore(
-                            DateTime.parse(startTodoDayController.text))) {
-                          setState(() {
-                            errorMsg = "시작 날짜가 종료날짜보다 이전 날짜일 수 없습니다.";
-                          });
-                          return CustomToast().alert(errorMsg);
-                        }
-
-                        // 데이터 통신 전 로딩 상태 변경
-                        setState(() {
-                          isLoading = true;
-                        });
-
-                        // 등록 데이터 모델
-                        // 종일 체크 시 시작 && 끝 날자 선택 오늘 날짜로 디폴트 들어감
-                        Map<String, dynamic> dataSource = {
-                          "title": titleTextController.text,
-                          "content": contentTextController.text.isEmpty
-                              ? null
-                              : contentTextController.text,
-                          "allDay": _isDateChecked,
-                          "startDate": _isDateChecked
-                              ? "${startTodoDayController.text.split(' ')[0]} "
-                              : "${startTodoDayController.text.split(' ')[0]} ${startTodoTimeController.text.substring(10, 15)}:00",
-                          "endDate": _isDateChecked
-                              ? endTodoDayController.text.split(' ')[0]
-                              : "${endTodoDayController.text.split(' ')[0]} ${endTodoTimeController.text.substring(10, 15)}:00",
-                          "color": chosenColorCode
-                        };
-
-                        var res = await scheduleCon.scheduleSubmit(dataSource);
-                        setState(() {
-                          isLoading = false;
-                        });
-                        if (res) {
-                          scheduleCon.refetchDataSource();
-                          Navigator.pop(context, true);
-                        }
-                      },
-                      child: SizedBox(
-                          width: 60,
-                          height: 40,
-                          child: Center(
-                            child: Text(
-                              "저장",
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                color: Color(
-                                  int.parse("0xFF$chosenColorCode"),
-                                ),
-                              ),
-                            ),
-                          )),
-                    )
-                  ],
-                ),
-
                 const Gap(12),
 
                 Expanded(

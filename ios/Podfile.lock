@@ -17,7 +17,7 @@ PODS:
     - OrderedSet (~> 5.0)
   - flutter_naver_login (0.0.1):
     - Flutter
-    - naveridlogin-sdk-ios (~> 4.1.0)
+    - naveridlogin-sdk-ios (~> 4.2.3)
   - flutter_naver_map (1.3.0):
     - Flutter
     - NMapsMap (= 3.19.0)
@@ -42,7 +42,7 @@ PODS:
     - Flutter
   - kakao_flutter_sdk_common (1.9.5):
     - Flutter
-  - naveridlogin-sdk-ios (4.1.6)
+  - naveridlogin-sdk-ios (4.2.3)
   - NMapsGeometry (1.0.2)
   - NMapsMap (3.19.0):
     - NMapsGeometry
@@ -177,7 +177,7 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
-  flutter_naver_login: 1dbf6d21aae5235cdf76a28ac79cf6871899282f
+  flutter_naver_login: 7e0f992a5f9c39345e9602b42fd2400e95355651
   flutter_naver_map: d31b1884517151e7b3121e3b24c18733ef4e4387
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
@@ -188,7 +188,7 @@ SPEC CHECKSUMS:
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   insta_assets_crop: 46c0be4cbfe48cff466b6924ec93b77f656ebaa8
   kakao_flutter_sdk_common: 985c7085c29a2bd949972cadac8238845dc354db
-  naveridlogin-sdk-ios: cdd34e3585a3d5aaf37c1d84c1f41faba4a25d1a
+  naveridlogin-sdk-ios: d9d46d02119d303023d7000cd5963864d5bb89e5
   NMapsGeometry: 4e02554fa9880ef02ed96b075dc84355d6352479
   NMapsMap: 99c10429d93340780b6f88d3fc7c0a3850b43664
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c

@@ -22,7 +22,11 @@ class AuthController extends GetxController {
   late RxInt connectState = 0.obs;
 
   // 24시간 초단위 환산
-  int accessCodeTimer = 86400;
+  // timer 관련 변수들을 별도의 observable로 관리
+  final _accessCodeTimer = 86400.obs;
+
+  int get accessCodeTimer => _accessCodeTimer.value;
+  set accessCodeTimer(int value) => _accessCodeTimer.value = value;
 
 // user profile info
   // user profile info
@@ -320,22 +324,41 @@ class AuthController extends GetxController {
   }
 
   void onTick(Timer timer, int targetTimeStamp) {
-    if (accessCodeTimer == 0) {
-      refreshInviteCode();
-      timer.cancel();
+    if (_accessCodeTimer.value <= 0) {
+      timer.cancel(); // 현재 타이머 중지
+      refreshInviteCode(); // 새로운 초대코드 요청
     } else {
-      accessCodeTimer =
+      _accessCodeTimer.value =
           (targetTimeStamp - DateTime.now().millisecondsSinceEpoch) ~/ 1000;
-      update();
     }
   }
 
   // 초대코드 리프레쉬
   refreshInviteCode() async {
-    timer.cancel();
-    await AuthProvider().refreshInviteCode();
-    accessCodeTimer = 86400;
-    update();
+    try {
+      var res = await AuthProvider().refreshInviteCode();
+      if (res["success"]) {
+        // 새로운 초대코드 정보로 업데이트
+        coupleConnectInfo = CoupleConnectInfo.fromJson(res["data"]);
+
+        // 새로운 타임스탬프 계산
+        int newTargetTimeStamp = coupleConnectInfo?.updatedAt
+                ?.add(const Duration(hours: 24))
+                .millisecondsSinceEpoch ??
+            0;
+
+        // 타이머 초기화 및 재시작
+        _accessCodeTimer.value = 86400;
+        onStartTimer(newTargetTimeStamp);
+
+        update();
+      } else {
+        CustomToast().alert("초대코드 갱신에 실패했습니다.");
+      }
+    } catch (e) {
+      print("refreshInviteCode error: $e");
+      CustomToast().alert("초대코드 갱신 중 오류가 발생했습니다.");
+    }
   }
 
 // 개인정보 입력 최종 연결 요청
@@ -381,9 +404,28 @@ class AuthController extends GetxController {
   // 로그아웃
   logOut() async {
     print("로그아웃!!!!!!");
+
+    // 1. 타이머 정리
+    if (timer.isActive) {
+      timer.cancel();
+    }
+
+    // 2. 타이머 관련 상태 초기화
+    _accessCodeTimer.value = 86400;
+    coupleConnectInfo = null;
+
+    // 3. 저장소 및 상태 초기화
     const storage = FlutterSecureStorage();
-    storage.delete(key: "accessToken");
-    connectState.update(RxInt(0));
+    await storage.delete(key: "accessToken");
+    await storage.delete(key: "refreshToken"); // refresh 토큰도 삭제
+
+    // 4. 상태 초기화
+    connectState.value = 0;
+    coupleInfo.value = null;
+    isLoading = false;
+
+    // 5. GetX 상태 업데이트
+    update();
   }
 
 // 배경화면 이미지 업로드

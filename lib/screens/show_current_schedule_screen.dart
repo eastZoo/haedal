@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:haedal/screens/add_schedule_screen.dart';
 import 'package:haedal/service/controller/schedule_controller.dart';
+import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/calendar_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -33,27 +34,28 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
   }
 
   // 현재 날짜에 일정 추가하는 모달창
-  _showAddCurrentDaySchedule() {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent, // Modal의 배경을 투명하게 설정
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(10.0),
-        ),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        maxChildSize: 0.8,
-        minChildSize: 0.75,
-        expand: false,
-        snap: true,
-        builder: (context, scrollController) {
-          return AddScheduleScreen(selectedDay: selectedDay);
-        },
+  Future<void> _navigateToAddSchedulePage() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: false,
+        builder: (context) => AddScheduleScreen(selectedDay: selectedDay),
       ),
     );
+
+    if (result != null && result == true) {
+      await scheduleCon.refetchDataSource(); // 데이터 리패칭
+
+      // 현재 선택된 날짜의 일정만 필터링
+      appointments = scheduleCon.meetings.where((meeting) {
+        return meeting.from.year == selectedDay!.year &&
+            meeting.from.month == selectedDay!.month &&
+            meeting.from.day == selectedDay!.day;
+      }).toList();
+
+      setState(() {}); // UI 업데이트
+      CustomToast().alert("일정이 추가되었습니다.", type: 'success');
+    }
   }
 
   @override
@@ -96,13 +98,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
               InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () async {
-                  var res = await _showAddCurrentDaySchedule();
-                  // 추가버튼 눌렀다가 아무것도 안하고 뒤로오면 팝 말고 그냥 리턴
-                  if (res == Null || res == null) {
-                    return;
-                  } else {
-                    Navigator.pop(context);
-                  }
+                  await _navigateToAddSchedulePage();
                 },
                 child: const SizedBox(
                   width: 50,

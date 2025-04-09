@@ -92,13 +92,23 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Widget _buildSocialButton(String iconPath, VoidCallback onPressed) {
+  Widget _buildSocialButton(String iconPath, VoidCallback onPressed,
+      {bool isDisabled = false}) {
     return IconButton(
-      icon: SvgPicture.asset(iconPath,
-          width: 35, // SVG 크기 설정
-          height: 35,
-          fit: BoxFit.contain),
-      onPressed: onPressed,
+      icon: SvgPicture.asset(
+        iconPath,
+        width: 35,
+        height: 35,
+        fit: BoxFit.contain,
+        colorFilter: isDisabled
+            ? ColorFilter.mode(Colors.grey.withOpacity(0.2), BlendMode.srcIn)
+            : null,
+      ),
+      onPressed: isDisabled
+          ? () {
+              CustomToast().alert('소셜로그인 준비중입니다. 애플 로그인을 이용해주세요.');
+            }
+          : onPressed,
     );
   }
 
@@ -396,21 +406,26 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            _buildSocialButton('assets/icons/svg/kakao.svg',
-                                () async {
-                              _kakaoLogin();
-                            }),
-                            _buildSocialButton('assets/icons/svg/naver.svg',
-                                () async {
-                              _naverLogin();
-                            }),
-                            _buildSocialButton('assets/icons/svg/apple.svg',
-                                () {
-                              // FlutterNaverLogin.logOutAndDeleteToken();
-                              // // Handle Apple login
-                              // CustomToast().alert('애플 로그인 준비중입니다.');
-                              _appleLogin();
-                            }),
+                            // _buildSocialButton(
+                            //   'assets/icons/svg/kakao.svg',
+                            //   () async {
+                            //     _kakaoLogin();
+                            //   },
+                            //   isDisabled: true, // 카카오 로그인 비활성화
+                            // ),
+                            // _buildSocialButton(
+                            //   'assets/icons/svg/naver.svg',
+                            //   () async {
+                            //     _naverLogin();
+                            //   },
+                            //   isDisabled: true, // 네이버 로그인 비활성화
+                            // ),
+                            _buildSocialButton(
+                              'assets/icons/svg/apple.svg',
+                              () {
+                                _appleLogin();
+                              },
+                            ),
                           ],
                         ),
                         const Gap(10),

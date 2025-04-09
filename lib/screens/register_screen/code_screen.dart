@@ -65,12 +65,8 @@ class _CodeScreenState extends State<CodeScreen> {
     return GetBuilder<AuthController>(
         init: AuthController(),
         builder: (authCon) {
-          void logOut() {
-            authCon.timer.cancel();
-            authCon.update();
-
-            const storage = FlutterSecureStorage();
-            storage.delete(key: "accessToken");
+          void logOut() async {
+            await authCon.logOut();
 
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -83,7 +79,12 @@ class _CodeScreenState extends State<CodeScreen> {
             setState(() {
               isLoading = true;
             });
+            if (inviteCodeController.text.isEmpty) {
+              CustomToast().alert("초대코드를 입력해주세요.");
+              return;
+            }
             var result = await authCon.onConnect(inviteCodeController.text);
+            CustomToast().alert(result);
             if (result["success"]) {
               Navigator.pushNamedAndRemoveUntil(
                 context,
@@ -151,16 +152,17 @@ class _CodeScreenState extends State<CodeScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        "${format(authCon.accessCodeTimer)} 남음",
-                        style: const TextStyle(color: Colors.red),
-                      ),
+                      Obx(() => Text(
+                            "${format(authCon.accessCodeTimer)} 남음",
+                            style: const TextStyle(color: Colors.red),
+                          )),
                       const SizedBox(height: 45),
                       MyButton(
                         onTap: () {
                           Clipboard.setData(ClipboardData(
                               text: '${authCon.coupleConnectInfo?.code}'));
-                          CustomToast().alert("클립보드에 복사되었습니다.");
+                          CustomToast()
+                              .alert("클립보드에 복사되었습니다.", type: "success");
                         },
                         title: "초대코드 복사하기",
                         available: true,
@@ -168,19 +170,19 @@ class _CodeScreenState extends State<CodeScreen> {
                         textColor: AppColors().darkGreyText,
                       ),
                       const Gap(10),
-                      MyButton(
-                        onTap: () {
-                          CustomToast().alert("카카오톡 공유하기 준비중입니다...");
-                        },
-                        icon: Image.asset(
-                          "assets/icons/kakao.png",
-                          width: 18,
-                        ),
-                        title: "카카오톡 공유하기",
-                        available: true,
-                        backgroundColor: AppColors().kakaoYellow,
-                        textColor: Colors.black,
-                      ),
+                      // MyButton(
+                      //   onTap: () {
+                      //     CustomToast().alert("카카오톡 공유하기 준비중입니다...");
+                      //   },
+                      //   icon: Image.asset(
+                      //     "assets/icons/kakao.png",
+                      //     width: 18,
+                      //   ),
+                      //   title: "카카오톡 공유하기",
+                      //   available: true,
+                      //   backgroundColor: AppColors().kakaoYellow,
+                      //   textColor: Colors.black,
+                      // ),
                       const Gap(20),
                       LabelTextField(
                         controller: inviteCodeController,
@@ -188,7 +190,7 @@ class _CodeScreenState extends State<CodeScreen> {
                         obscureText: false,
                       ),
                       const SizedBox(height: 25),
-                      const SizedBox(height: 10),
+
                       MyButton(title: "로그아웃", onTap: logOut, available: true),
                     ],
                   ),

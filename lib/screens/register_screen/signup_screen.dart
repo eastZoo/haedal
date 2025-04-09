@@ -9,6 +9,7 @@ import 'package:haedal/utils/toast.dart';
 import 'package:haedal/widgets/label_textfield.dart';
 import 'package:get/get.dart';
 import 'package:haedal/widgets/my_button.dart';
+import 'package:haedal/widgets/confirm_modal.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -97,36 +98,6 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  // 모달창에서 로그인 승인 ( 예 클릭 시 ) 이미 회원가입된 상태 ( 아니오 누르면 회원가입 취소 로직 탐 )
-  void onSignup() async {
-    if (passwordController.text != passwordCheckController.text) {
-      CustomToast().alert("비밀번호가 일치하지 않습니다.");
-      Navigator.of(context).pop();
-      return;
-    }
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      var result = await authCon.onSignUp(
-          emailController.text, passwordController.text, "email");
-
-      if (result) {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/code',
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
-      print(e);
-    }
-  }
-
   // 이메일 텍스트필드에서 커서 Out 됬을때 실행되는 함수
   void cursorMovedOutOfEmailTextField() async {
     // 이메일 필드가 <비어있으며> 커서 Out 됬을때
@@ -166,126 +137,46 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
-  //팝업창을 띄우는 전역함수
-  Future<dynamic> popWindow(BuildContext context, String title) {
-    return Get.dialog(
-      isLoading
-          ? Center(
-              //로딩바 구현 부분
-              child: SpinKitFadingCube(
-                // FadingCube 모양 사용
-                color: AppColors().mainColor, // 색상 설정
-                size: 50.0, // 크기 설정
-                duration: const Duration(seconds: 2), //속도 설정
-              ),
-            )
-          : AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.dg), // 원하는 반경으로 설정
-              ),
-              titlePadding: const EdgeInsets.fromLTRB(0, 15, 10, 10),
-              backgroundColor: Colors.white,
-              title: SizedBox(
-                  width: 560,
-                  height: 45,
-                  child: Stack(children: [
-                    //제목
-                    Positioned(
-                        top: 5,
-                        left: 0,
-                        right: 0,
-                        child: Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.grey[800],
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w600),
-                        )),
-                    //닫기 버튼
-                    Positioned(
-                        width: 45,
-                        height: 45,
-                        right: 0,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); //창 닫기
-                          },
-                          child: const Icon(Icons.close, color: Colors.black),
-                        ))
-                  ])),
-              //화면에 표시될 영역
-              content: Text(
-                '잘못된 메일 주소로 가입 시 서비스 이용에 제한 및\n 불이익이 발생할 수 있습니다.\n입력하신 아이디로 가입을 진행할까요?',
-                style: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 13.sp,
-                ),
-              ),
-              actions: [
-                ButtonBar(
-                  alignment: MainAxisAlignment.center, // 중앙 정렬
+  // email(local) 회원가입 버튼 클릭시 모달창 pop
+  onSignUpModal() {
+    Get.dialog(
+      ConfirmModal(
+        title: emailController.text,
+        content:
+            '잘못된 메일 주소로 가입 시 서비스 이용에 제한 및\n불이익이 발생할 수 있습니다.\n입력하신 아이디로 가입을 진행할까요?',
+        contentTextSize: 14,
+        successMessage: '회원가입이 완료되었습니다',
+        onConfirm: () async {
+          if (passwordController.text != passwordCheckController.text) {
+            CustomToast().alert("비밀번호가 일치하지 않습니다.");
+            Get.back();
+            return;
+          }
+          setState(() {
+            isLoading = true;
+          });
+          try {
+            var result = await authCon.onSignUp(
+                emailController.text, passwordController.text, "email");
 
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 125,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // 뒤로가기
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.grey, // 버튼 텍스트 색상
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ), // 버튼 패딩
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(10), // 버튼 모서리 둥글게
-                              ),
-                            ),
-                            child: const Text('아니오'),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        SizedBox(
-                          width: 125,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // 뒤로가기
-                              onSignup();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor:
-                                  AppColors().mainColor, // 버튼 텍스트 색상
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ), // 버튼 패딩
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(10), // 버튼 모서리 둥글게
-                              ),
-                            ),
-                            child: const Text('예'),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
+            if (result) {
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/code',
+                (route) => false,
+              );
+            }
+          } catch (e) {
+            CustomToast().alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+            print(e);
+          }
+        },
+      ),
       barrierDismissible: false,
     );
-  }
-
-  // email(local) 회원가입 버튼 클릭시 모달창 pop
-  onSignUpModal() async {
-    popWindow(context, emailController.text);
   }
 
   @override

@@ -8,6 +8,7 @@ class ConfirmModal extends StatelessWidget {
   final String cancelText;
   final Function() onConfirm;
   final String? successMessage;
+  final double contentTextSize;
 
   const ConfirmModal({
     super.key,
@@ -17,6 +18,7 @@ class ConfirmModal extends StatelessWidget {
     this.cancelText = '취소',
     required this.onConfirm,
     this.successMessage,
+    this.contentTextSize = 16,
   });
 
   @override
@@ -36,9 +38,10 @@ class ConfirmModal extends StatelessWidget {
       ),
       content: Text(
         content,
-        style: const TextStyle(
-          fontSize: 16,
+        style: TextStyle(
+          fontSize: contentTextSize,
           height: 1.5,
+          color: Colors.black,
         ),
         textAlign: TextAlign.center,
       ),

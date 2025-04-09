@@ -17,6 +17,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final authCon = Get.put(AuthController());
+
   @override
   void initState() {
     super.initState();
@@ -25,38 +27,41 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     const storage = FlutterSecureStorage();
+
     return FutureBuilder<String?>(
       future: storage.read(key: 'accessToken'),
       builder: (context, snapshot) {
-        return GetBuilder<AuthController>(
-            init: AuthController(),
-            builder: (authCon) {
-              print('snapshot.connectionState : ${snapshot.connectionState}');
-              print('snapshot.hasData : ${snapshot.hasData}');
-              print('snapshot.data : ${snapshot.data}');
-              print(
-                  "_SplashScreenState connectState : ${authCon.connectState}");
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Scaffold(
-                  body: Center(
-                    child: Image.asset("assets/icons/logo.png"),
-                  ),
-                );
-              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                if (authCon.connectState.value == 0) {
-                  return LoadingScreen(
-                      token: snapshot.data, connectState: authCon.connectState);
-                } else if (authCon.connectState.value == 1) {
-                  return const CodeScreen();
-                } else if (authCon.connectState.value == 2) {
-                  return const InfoScreen();
-                } else if (authCon.connectState.value == 3) {
-                  return const MainScreen();
-                }
-              }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: Image.asset("assets/icons/logo.png"),
+            ),
+          );
+        }
 
-              return const LoginScreen();
-            });
+        final token = snapshot.data;
+
+        // snapshot에 토큰이 있고 connectState가 옵저버블이므로 Obx로 감싸줍니다
+        if (token != null && token.isNotEmpty) {
+          return Obx(() {
+            switch (authCon.connectState.value) {
+              case 0:
+                return LoadingScreen(
+                    token: token, connectState: authCon.connectState);
+              case 1:
+                return const CodeScreen();
+              case 2:
+                return const InfoScreen();
+              case 3:
+                return const MainScreen();
+              default:
+                return const LoginScreen();
+            }
+          });
+        }
+
+        // token이 null이거나 빈 값이면 로그인 화면으로 이동
+        return const LoginScreen();
       },
     );
   }
