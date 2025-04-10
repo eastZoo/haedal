@@ -129,10 +129,14 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                       return Container(
                         margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                         width: double.infinity,
-                        height: 60,
+                        height: 65,
+                        alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
+                          ),
                         ),
                         child: Row(
                           children: [
@@ -146,7 +150,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                                 ),
                               ),
                               width: 6,
-                              height: 54,
+                              height: 65,
                             ),
                             // 라벨을 제외한 컨텐츠 박스
                             Expanded(
@@ -158,7 +162,7 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                                     flex: 7,
                                     child: Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          20, 8, 8, 8),
+                                          20, 10, 8, 8),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -176,11 +180,18 @@ class _ShowCurrentScheduleScreenState extends State<ShowCurrentScheduleScreen> {
                                                   "종일",
                                                   style: TextStyle(
                                                       color: Colors.black,
-                                                      fontSize: 12,
+                                                      fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w600),
                                                 )
-                                              : Text('$startTime - $endTime'),
+                                              : Text(
+                                                  '$startTime - $endTime',
+                                                  style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
                                         ],
                                       ),
                                     ),

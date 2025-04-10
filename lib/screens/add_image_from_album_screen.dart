@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -440,19 +441,32 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withOpacity(0.12),
+                      spreadRadius: 2,
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ],
+                  border: Border.all(
+                    color: AppColors().mainColor.withOpacity(0.1),
+                    width: 1,
+                  ),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: category,
                     isExpanded: true,
-                    icon: Icon(Icons.arrow_drop_down_rounded,
-                        color: AppColors().mainColor),
+                    icon: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: AppColors().mainColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Icon(
+                        Icons.arrow_drop_down_rounded,
+                        color: AppColors().mainColor,
+                      ),
+                    ),
                     style: TextStyle(
                       color: AppColors().mainColor,
                       fontSize: 14,
@@ -498,70 +512,96 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
           const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.gps_fixed_sharp,
-                        size: 15,
-                        color: Colors.black,
-                      ),
-                      const SizedBox(
-                        width: 6,
-                      ),
-                      Text(
-                        '주소 검색으로 위치 설정',
-                        style: TextStyle(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.normal,
-                            fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 15,
-                    color: Colors.grey[600],
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    spreadRadius: 1,
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              onTap: () async {
-                try {
-                  Kpostal? result = await Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.bottomToTop,
-                      child: KpostalView(
-                        callback: (Kpostal result) {
-                          print("result: $result");
-                        },
-                        useLocalServer: false,
-                        kakaoKey: '2313aec57928c855c20fa695fe0480d2',
-                      ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () async {
+                    try {
+                      Kpostal? result = await Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.bottomToTop,
+                          child: KpostalView(
+                            callback: (Kpostal result) {
+                              print("result: $result");
+                            },
+                            useLocalServer: false,
+                            kakaoKey: '2313aec57928c855c20fa695fe0480d2',
+                          ),
+                        ),
+                      );
+
+                      print("result: $result");
+
+                      if (result != null &&
+                          result.latitude != null &&
+                          result.longitude != null) {
+                        _updateSearchAddress(
+                          result.address,
+                          result.latitude,
+                          result.longitude,
+                        );
+                      }
+                    } catch (e) {
+                      print("주소 검색 중 오류 발생: $e");
+                      CustomToast().alert("주소 검색 중 오류가 발생했습니다.");
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors().mainColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.gps_fixed_sharp,
+                                size: 16,
+                                color: AppColors().mainColor,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              '주소 검색으로 위치 설정',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 14,
+                          color: AppColors().mainColor,
+                        ),
+                      ],
                     ),
-                  );
-
-                  print("result: $result");
-
-                  if (result != null &&
-                      result.latitude != null &&
-                      result.longitude != null) {
-                    _updateSearchAddress(
-                      result.address,
-                      result.latitude,
-                      result.longitude,
-                    );
-                  }
-                } catch (e) {
-                  print("주소 검색 중 오류 발생: $e");
-                  CustomToast().alert("주소 검색 중 오류가 발생했습니다.");
-                }
-              },
+                  ),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -573,12 +613,23 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
           ),
           const SizedBox(height: 12),
           renderTextFormField(
-            label: '스토리 날짜 (미선택 시 현재 날짜 자동 저장)',
-            hintText: "선택하지 않으면 오늘날짜로 자동 저장됩니다.",
+            label: '스토리 날짜',
+            hintText: "날짜를 선택해주세요",
             controller: storyDateController,
             readOnly: true,
             onTap: () {
-              _selectDate(context, storyDateController);
+              _showIOSDateTimePicker(
+                context: context,
+                initialDateTime: selectedDate,
+                onDateTimeChanged: (DateTime newDateTime) {
+                  setState(() {
+                    selectedDate = newDateTime;
+                    storyDateController.text =
+                        "${newDateTime.toLocal()}".split('.')[0];
+                  });
+                },
+                dateOnly: true,
+              );
             },
           ),
           const SizedBox(height: 24),
@@ -602,13 +653,26 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
         if (label.isNotEmpty) ...[
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 8),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14.0,
-                fontWeight: FontWeight.w600,
-                color: AppColors().mainColor,
-              ),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: AppColors().mainColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors().mainColor,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -618,12 +682,16 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, 2),
+                color: Colors.black.withOpacity(0.12),
+                spreadRadius: 2,
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
+            border: Border.all(
+              color: AppColors().mainColor.withOpacity(0.1),
+              width: 1,
+            ),
           ),
           child: TextField(
             controller: controller,
@@ -665,10 +733,10 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
     borderRadius: BorderRadius.circular(16),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.04),
-        spreadRadius: 1,
-        blurRadius: 8,
-        offset: const Offset(0, 4),
+        color: Colors.black.withOpacity(0.15),
+        spreadRadius: 2,
+        blurRadius: 15,
+        offset: const Offset(0, 5),
       ),
     ],
   );
@@ -707,6 +775,88 @@ class _AddimageFromAlbumScreenState extends State<AddimageFromAlbumScreen> {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  void _showIOSDateTimePicker({
+    required BuildContext context,
+    required DateTime initialDateTime,
+    required Function(DateTime) onDateTimeChanged,
+    bool dateOnly = false,
+  }) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 280,
+        padding: const EdgeInsets.only(top: 6.0),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColors().lightGrey.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Text(
+                        '취소',
+                        style: TextStyle(
+                          color: AppColors().mainColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Text(
+                        '완료',
+                        style: TextStyle(
+                          color: AppColors().mainColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onDateTimeChanged(initialDateTime);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: dateOnly
+                      ? CupertinoDatePickerMode.date
+                      : CupertinoDatePickerMode.dateAndTime,
+                  initialDateTime: initialDateTime,
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    initialDateTime = newDateTime;
+                  },
+                  use24hFormat: true,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

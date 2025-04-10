@@ -58,19 +58,42 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
 
   final storage = const FlutterSecureStorage();
 
+  // 공통으로 사용할 그림자 스타일
+  final BoxShadow commonShadow = BoxShadow(
+    color: Colors.black.withOpacity(0.08),
+    offset: const Offset(0, 4),
+    blurRadius: 12,
+    spreadRadius: 0,
+  );
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    // 현재 시간의 분을 5의 배수로 조정
+    final now = DateTime.now();
+    final adjustedTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      (now.minute ~/ 5) * 5,
+    );
+
     setState(() {
       startTodoDayController.text = "$selectedDay".split(".")[0];
-      startTodoTimeController.text = TimeOfDay.now().toString();
+      startTodoTimeController.text =
+          TimeOfDay.fromDateTime(adjustedTime).toString();
       initalStartDay = DateTime.parse(selectedDay.toString()).toLocal();
+      initalStartTime = TimeOfDay.fromDateTime(adjustedTime);
 
       endTodoDayController.text = "$selectedDay".split(".")[0];
-      endTodoTimeController.text = TimeOfDay.now().toString();
+      endTodoTimeController.text =
+          TimeOfDay.fromDateTime(adjustedTime).toString();
       initalEndDay = DateTime.parse(selectedDay.toString()).toLocal();
+      initalEndTime = TimeOfDay.fromDateTime(adjustedTime);
     });
+
     getColor();
   }
 
@@ -123,21 +146,133 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     );
   }
 
-  Future<void> _submitSchedule() async {
-    print("submitSchedule");
+  // _showIOSDateTimePicker 메서드 수정
+  void _showIOSDateTimePicker({
+    required BuildContext context,
+    required DateTime initialDateTime,
+    required Function(DateTime) onDateTimeChanged,
+    bool dateOnly = false,
+  }) {
+    // 초기 시간의 분을 5의 배수로 조정
+    final adjustedDateTime = DateTime(
+      initialDateTime.year,
+      initialDateTime.month,
+      initialDateTime.day,
+      initialDateTime.hour,
+      (initialDateTime.minute ~/ 5) * 5, // 5의 배수로 내림
+    );
 
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 280,
+        padding: const EdgeInsets.only(top: 6.0),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: AppColors().white,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColors().lightGrey.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Text(
+                        '취소',
+                        style: TextStyle(
+                          color: Color(int.parse("0xFF$chosenColorCode")),
+                          fontSize: 16,
+                        ),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Text(
+                        '완료',
+                        style: TextStyle(
+                          color: Color(int.parse("0xFF$chosenColorCode")),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onDateTimeChanged(initialDateTime);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: dateOnly
+                      ? CupertinoDatePickerMode.date
+                      : CupertinoDatePickerMode.dateAndTime,
+                  initialDateTime: adjustedDateTime, // 조정된 시간 사용
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    initialDateTime = newDateTime;
+                  },
+                  use24hFormat: true,
+                  minuteInterval: 5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitSchedule() async {
     if (titleTextController.text.isEmpty) {
       setState(() {
         errorMsg = "제목을 입력해주세요.";
       });
       return CustomToast().alert(errorMsg);
     }
-    if (DateTime.parse(endTodoDayController.text)
-        .isBefore(DateTime.parse(startTodoDayController.text))) {
-      setState(() {
-        errorMsg = "시작 날짜가 종료날짜보다 이전 날짜일 수 없습니다.";
-      });
-      return CustomToast().alert(errorMsg);
+
+    // 종일이 아닐 때만 날짜 범위 검증
+    if (!_isDateChecked) {
+      // DateTime 객체로 시작 시간과 종료 시간 생성
+      final startDateTime = DateTime(
+        initalStartDay.year,
+        initalStartDay.month,
+        initalStartDay.day,
+        initalStartTime.hour,
+        initalStartTime.minute,
+      );
+
+      final endDateTime = DateTime(
+        initalEndDay.year,
+        initalEndDay.month,
+        initalEndDay.day,
+        initalEndTime.hour,
+        initalEndTime.minute,
+      );
+
+      // 정확한 DateTime 비교
+      if (endDateTime.isBefore(startDateTime)) {
+        setState(() {
+          errorMsg = "종료 시간이 시작 시간보다 빠를 수 없습니다.";
+        });
+        return CustomToast().alert(errorMsg);
+      }
     }
 
     // 데이터 통신 전 로딩 상태 변경
@@ -146,7 +281,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     });
 
     // 등록 데이터 모델
-    // 종일 체크 시 시작 && 끝 날자 선택 오늘 날짜로 디폴트 들어감
     Map<String, dynamic> dataSource = {
       "title": titleTextController.text,
       "content": contentTextController.text.isEmpty
@@ -154,10 +288,10 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
           : contentTextController.text,
       "allDay": _isDateChecked,
       "startDate": _isDateChecked
-          ? "${startTodoDayController.text.split(' ')[0]} "
+          ? "${startTodoDayController.text.split(' ')[0]} 00:00:00"
           : "${startTodoDayController.text.split(' ')[0]} ${startTodoTimeController.text.substring(10, 15)}:00",
       "endDate": _isDateChecked
-          ? endTodoDayController.text.split(' ')[0]
+          ? "${endTodoDayController.text.split(' ')[0]} 00:00:00"
           : "${endTodoDayController.text.split(' ')[0]} ${endTodoTimeController.text.substring(10, 15)}:00",
       "color": chosenColorCode
     };
@@ -180,324 +314,252 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Color(int.parse("0xFF$chosenColorCode")),
+            size: 22,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
+        title: Text(
+          '일정 추가',
+          style: TextStyle(
+            color: Color(int.parse("0xFF$chosenColorCode")),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
         actions: [
-          TextButton(
-            onPressed: () => _submitSchedule(),
-            child: Text(
-              '저장',
-              style: TextStyle(
-                color: Color(int.parse("0xFF$chosenColorCode")),
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: TextButton(
+              onPressed: () => _submitSchedule(),
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                backgroundColor:
+                    Color(int.parse("0xFF$chosenColorCode")).withOpacity(0.1),
+              ),
+              child: Text(
+                '저장',
+                style: TextStyle(
+                  color: Color(int.parse("0xFF$chosenColorCode")),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
         ],
       ),
       body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
+        onTap: () => FocusScope.of(context).unfocus(),
         child: LoadingOverlay(
           isLoading: isLoading,
-          child: Padding(
+          child: Container(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Gap(12),
-
                 Expanded(
                   child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        LabelTextField(
-                          label: '할 일',
-                          hintText: "Title",
-                          controller: titleTextController,
-                          fillColor: AppColors().toDoGrey,
-                          customColor: Color(
-                            int.parse("0xFF$chosenColorCode"),
-                          ),
-                          textStyle: TextStyle(
-                            fontSize: 16,
-                            color: Color(
-                              int.parse("0xFF$chosenColorCode"),
-                            ),
-                          ),
-                        ),
-                        const Gap(15),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // 제목 입력 필드
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.note_alt_outlined,
-                                  color: Color(
-                                    int.parse("0xFF$chosenColorCode"),
-                                  ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 4, bottom: 8),
+                              child: Text(
+                                '할 일',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      Color(int.parse("0xFF$chosenColorCode")),
                                 ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  '메모',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(
-                                      int.parse("0xFF$chosenColorCode"),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                            CupertinoSwitch(
-                              value: _isMemoChecked,
-                              activeTrackColor: AppColors().mainColor,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isMemoChecked = value ?? false;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        const Gap(6),
-                        _isMemoChecked
-                            ? LabelTextField(
-                                multiLine: true,
-                                hintText: "메모를 적어주세요",
-                                controller: contentTextController,
-                                fillColor: AppColors().toDoGrey,
-                                customColor: Color(
-                                  int.parse("0xFF$chosenColorCode"),
-                                ),
-                                textStyle: TextStyle(
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColors().toDoGrey,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [commonShadow],
+                              ),
+                              child: TextField(
+                                controller: titleTextController,
+                                style: const TextStyle(
                                   fontSize: 16,
-                                  color: Color(
-                                    int.parse("0xFF$chosenColorCode"),
+                                  color: Colors.black,
+                                ),
+                                cursorColor:
+                                    Color(int.parse("0xFF$chosenColorCode")),
+                                decoration: InputDecoration(
+                                  hintText: "할 일을 입력해주세요",
+                                  hintStyle: TextStyle(
+                                    color:
+                                        AppColors().darkGrey.withOpacity(0.5),
                                   ),
-                                ),
-                              )
-                            : const SizedBox(),
-                        const Gap(12),
-                        // 날짜 범위 선택
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.history_outlined,
-                                  color: Color(
-                                    int.parse("0xFF$chosenColorCode"),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
                                   ),
+                                  contentPadding: const EdgeInsets.all(16),
                                 ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  '종일',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(
-                                      int.parse("0xFF$chosenColorCode"),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            CupertinoSwitch(
-                              value: _isDateChecked,
-                              activeTrackColor: AppColors().mainColor,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isDateChecked = value ?? false;
-                                });
-                              },
+                              ),
                             ),
                           ],
                         ),
-                        const Gap(10),
-                        // 날짜 섹션
-                        !_isDateChecked
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Divider(),
-                                  const Gap(15),
-                                  Text(
-                                    '시작',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(
-                                        int.parse("0xFF$chosenColorCode"),
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: DateTimeWidget(
-                                          valueText: initalStartDay
-                                                  .toString()
-                                                  .split(" ")[0] ??
-                                              'dd/mm/yy',
-                                          iconSection: CupertinoIcons.calendar,
-                                          onTap: () async {
-                                            final picked = await showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.parse(
-                                                      selectedDay.toString())
-                                                  .toLocal(),
-                                              firstDate: DateTime(2021),
-                                              lastDate: DateTime(2100),
-                                            );
+                        const Gap(24),
 
-                                            if (picked != initalStartDay &&
-                                                picked != null) {
-                                              setState(() {
-                                                initalStartDay = picked;
-                                                startTodoDayController.text =
-                                                    "${picked.toLocal()}";
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                      const Gap(20),
-                                      Expanded(
-                                        child: DateTimeWidget(
-                                          valueText:
-                                              "${initalStartTime.hour}:${initalStartTime.minute}" ??
-                                                  'hh : mm',
-                                          iconSection: CupertinoIcons.clock,
-                                          onTap: () async {
-                                            final picked = await showTimePicker(
-                                              context: context,
-                                              initialTime: initalStartTime ??
-                                                  TimeOfDay.now(),
-                                            );
-                                            if (picked != initalStartTime &&
-                                                picked != null) {
-                                              setState(() {
-                                                initalStartTime = picked;
-                                                startTodoTimeController.text =
-                                                    "$picked";
-                                              });
+                        // 메모 섹션
+                        _buildSectionHeader(
+                          icon: Icons.note_alt_outlined,
+                          title: '메모',
+                          trailing: CupertinoSwitch(
+                            value: _isMemoChecked,
+                            activeTrackColor:
+                                Color(int.parse("0xFF$chosenColorCode")),
+                            onChanged: (value) =>
+                                setState(() => _isMemoChecked = value),
+                          ),
+                        ),
+                        if (_isMemoChecked) ...[
+                          const Gap(16),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors().toDoGrey,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [commonShadow],
+                            ),
+                            child: TextField(
+                              controller: contentTextController,
+                              maxLines: 5,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                              cursorColor:
+                                  Color(int.parse("0xFF$chosenColorCode")),
+                              decoration: InputDecoration(
+                                hintText: "메모를 입력해주세요",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.all(16),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const Gap(24),
 
-                                              print("TIME ::: $picked");
-                                            }
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const Gap(15),
-                                  // end time
-                                  Text(
-                                    '종료',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(
-                                        int.parse("0xFF$chosenColorCode"),
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: DateTimeWidget(
-                                          valueText: initalEndDay
-                                                  .toString()
-                                                  .split(" ")[0] ??
-                                              'dd/mm/yy',
-                                          iconSection: CupertinoIcons.calendar,
-                                          onTap: () async {
-                                            final picked = await showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.parse(
-                                                      selectedDay.toString())
-                                                  .toLocal(),
-                                              firstDate: DateTime(2021),
-                                              lastDate: DateTime(2100),
-                                            );
+                        // 종일 섹션
+                        _buildSectionHeader(
+                          icon: Icons.access_time_rounded,
+                          title: '종일',
+                          trailing: CupertinoSwitch(
+                            value: _isDateChecked,
+                            activeTrackColor:
+                                Color(int.parse("0xFF$chosenColorCode")),
+                            onChanged: (value) {
+                              setState(() {
+                                _isDateChecked = value;
+                                if (value) {
+                                  // 종일 체크 시 시작/종료 시간을 00:00:00으로 설정
+                                  final startDate = DateTime(
+                                    initalStartDay.year,
+                                    initalStartDay.month,
+                                    initalStartDay.day,
+                                    0,
+                                    0,
+                                    0,
+                                  );
+                                  final endDate = DateTime(
+                                    initalEndDay.year,
+                                    initalEndDay.month,
+                                    initalEndDay.day,
+                                    0,
+                                    0,
+                                    0,
+                                  );
 
-                                            if (picked != initalEndDay &&
-                                                picked != null) {
-                                              setState(() {
-                                                initalEndDay = picked;
-                                                endTodoDayController.text =
-                                                    "${picked.toLocal()}";
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                      const Gap(20),
-                                      Expanded(
-                                        child: DateTimeWidget(
-                                          valueText:
-                                              "${initalEndTime.hour}:${initalEndTime.minute}" ??
-                                                  'hh : mm',
-                                          iconSection: CupertinoIcons.clock,
-                                          onTap: () async {
-                                            final picked = await showTimePicker(
-                                              context: context,
-                                              initialTime: initalEndTime ??
-                                                  TimeOfDay.now(),
-                                            );
-                                            if (picked != initalEndTime &&
-                                                picked != null) {
-                                              setState(() {
-                                                initalEndTime = picked;
-                                                endTodoTimeController.text =
-                                                    "$picked";
-                                              });
+                                  initalStartDay = startDate;
+                                  initalEndDay = endDate;
+                                  initalStartTime =
+                                      const TimeOfDay(hour: 0, minute: 0);
+                                  initalEndTime =
+                                      const TimeOfDay(hour: 0, minute: 0);
 
-                                              print("TIME ::: $picked");
-                                            }
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : const SizedBox(),
-                        const Gap(10),
+                                  startTodoDayController.text =
+                                      startDate.toString();
+                                  endTodoDayController.text =
+                                      endDate.toString();
+                                  startTodoTimeController.text =
+                                      const TimeOfDay(hour: 0, minute: 0)
+                                          .toString();
+                                  endTodoTimeController.text =
+                                      const TimeOfDay(hour: 0, minute: 0)
+                                          .toString();
+                                }
+                              });
+                            },
+                          ),
+                        ),
+
+                        if (!_isDateChecked) ...[
+                          const Gap(16),
+                          _buildDateTimeSection(
+                            title: '시작',
+                            date: initalStartDay,
+                            time: initalStartTime,
+                            onDateTap: () {},
+                            onTimeTap: () {},
+                          ),
+                          _buildDateTimeSection(
+                            title: '종료',
+                            date: initalEndDay,
+                            time: initalEndTime,
+                            onDateTap: () {},
+                            onTimeTap: () {},
+                          ),
+                        ],
+
+                        const Gap(24),
+
+                        // 라벨 컬러 선택
                         InkWell(
                           onTap: () async {
                             var result = await _showColorPicker();
-                            print("_showColorPicker : $result");
-                            // 컬러 리스트에 들어갔다가 아무것도 고르지 않고 나오는 경우를 제외한
                             if (result != null) {
                               var decode = json.decode(result);
-
                               setState(() {
                                 chosenColorCode = decode["code"];
                               });
                               await storage.write(key: "color", value: result);
                             }
                           },
-                          borderRadius: BorderRadius.circular(10),
-                          child: SizedBox(
-                            height: 45,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors().toDoGrey,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.08),
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 12,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -506,45 +568,189 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                                     Icon(
                                       Icons.color_lens_outlined,
                                       color: Color(
-                                        int.parse("0xFF$chosenColorCode"),
-                                      ),
+                                          int.parse("0xFF$chosenColorCode")),
                                     ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
+                                    const SizedBox(width: 12),
                                     Text(
-                                      '라벨컬러',
+                                      '라벨 컬러',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w600,
                                         color: Color(
-                                          int.parse("0xFF$chosenColorCode"),
-                                        ),
+                                            int.parse("0xFF$chosenColorCode")),
                                       ),
                                     ),
                                   ],
                                 ),
-                                Icon(
-                                  Icons.arrow_forward_ios_sharp,
-                                  color: Color(
-                                    int.parse("0xFF$chosenColorCode"),
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: Color(
+                                        int.parse("0xFF$chosenColorCode")),
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-
-                        const Gap(10),
                       ],
                     ),
                   ),
-                )
-                // 제목
+                ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader({
+    required IconData icon,
+    required String title,
+    required Widget trailing,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors().toDoGrey,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            offset: const Offset(0, 4),
+            blurRadius: 12,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: Color(int.parse("0xFF$chosenColorCode")),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(int.parse("0xFF$chosenColorCode")),
+                ),
+              ),
+            ],
+          ),
+          trailing,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeSection({
+    required String title,
+    required DateTime date,
+    required TimeOfDay time,
+    required VoidCallback onDateTap,
+    required VoidCallback onTimeTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 8),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Color(int.parse("0xFF$chosenColorCode")),
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors().toDoGrey,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors().lightGrey.withOpacity(0.3),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  offset: const Offset(0, 4),
+                  blurRadius: 12,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  _showIOSDateTimePicker(
+                    context: context,
+                    initialDateTime: DateTime(
+                      date.year,
+                      date.month,
+                      date.day,
+                      time.hour,
+                      time.minute,
+                    ),
+                    onDateTimeChanged: (DateTime newDateTime) {
+                      setState(() {
+                        if (title == '시작') {
+                          initalStartDay = newDateTime;
+                          initalStartTime = TimeOfDay.fromDateTime(newDateTime);
+                          startTodoDayController.text = newDateTime.toString();
+                          startTodoTimeController.text =
+                              TimeOfDay.fromDateTime(newDateTime).toString();
+                        } else {
+                          initalEndDay = newDateTime;
+                          initalEndTime = TimeOfDay.fromDateTime(newDateTime);
+                          endTodoDayController.text = newDateTime.toString();
+                          endTodoTimeController.text =
+                              TimeOfDay.fromDateTime(newDateTime).toString();
+                        }
+                      });
+                    },
+                  );
+                },
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Row(
+                    children: [
+                      Icon(
+                        CupertinoIcons.clock,
+                        color: Color(int.parse("0xFF$chosenColorCode")),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        "${date.year}년 ${date.month}월 ${date.day}일 ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: AppColors().darkGrey,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

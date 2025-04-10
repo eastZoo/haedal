@@ -56,18 +56,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
               valueColor: AlwaysStoppedAnimation<Color>(AppColors().mainColor),
             ),
             const Gap(20), // Gap for spacing
-            InkWell(
-              onTap: () {
-                checkAutoLogout(token, connectState);
-              },
-              child: Text(
-                "로그아웃 하기",
-                style: TextStyle(
-                  color: AppColors().mainColor,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+            // InkWell(
+            //   onTap: () {
+            //     checkAutoLogout(token, connectState);
+            //   },
+            //   child: Text(
+            //     "로그아웃 하기",
+            //     style: TextStyle(
+            //       color: AppColors().mainColor,
+            //       fontSize: 20,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
